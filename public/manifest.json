@@ -1,0 +1,35 @@
+{
+  "name": "سالوني | منصة إدارة وحجوزات الصالونات",
+  "short_name": "سالوني",
+  "description": "منصة سحابية متكاملة لإدارة وحجوزات الصالونات والسبا",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#8B5CF6",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "lifestyle", "health"],
+  "screenshots": [
+    {
+      "src": "/screenshots/booking.png",
+      "type": "image/png",
+      "sizes": "390x844",
+      "form_factor": "narrow"
+    }
+  ]
+}

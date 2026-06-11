@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سالوني — منصة إدارة الصالونات الذكية</title>
+  <meta name="description" content="منصة سعودية متكاملة لإدارة الصالونات — حجوزات ذكية، واتساب تلقائي، نظام ولاء، مدفوعات مدى و Apple Pay">
+  <meta name="keywords" content="سالوني, صالون, إدارة صالون, حجوزات, واتساب بزنس, مدى, Apple Pay, SaaS, السعودية">
+  <meta property="og:title" content="سالوني — أدِري صالونك بذكاء">
+  <meta property="og:description" content="منصة سعودية متكاملة لإدارة الصالونات — حجوزات ذكية، واتساب تلقائي، نظام ولاء، مدفوعات مدى و Apple Pay">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ar_SA">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💇‍♀️</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwindcss.config={theme:{extend:{fontFamily:{sans:['IBM Plex Arabic','Tajawal','sans-serif']}}}}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{font-family:'Tajawal',sans-serif}
+    .gradient-text{background:linear-gradient(to left,#9333ea,#ec4899,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-gradient{background:linear-gradient(135deg,#9333ea 0%,#ec4899 50%,#f59e0b 100%)}
+    .card-hover{transition:all .3s ease}
+    .card-hover:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(147,51,234,.1)}
+    .fade-in{opacity:0;transform:translateY(20px);transition:all .6s ease}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+    .pulse-dot{animation:pulse-dot 2s infinite}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+    .counter{animation:counter-up 2s ease-out forwards}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .float{animation:float 3s ease-in-out infinite}
+    .faq-answer{max-height:0;overflow:hidden;transition:max-height .3s ease}
+    .faq-answer.open{max-height:200px}
+    .blob{border-radius:30% 70% 70% 30%/30% 30% 70% 70%}
+  </style>
+</head>
+<body class="bg-white text-gray-900 overflow-x-hidden">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-10 h-10 hero-gradient rounded-xl flex items-center justify-center text-white font-bold text-lg">س</div>
+        <span class="text-xl font-bold gradient-text">سالوني</span>
+      </div>
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+        <a href="#features" class="hover:text-purple-600 transition-colors">المزايا</a>
+        <a href="#improvements" class="hover:text-purple-600 transition-colors">ما الجديد</a>
+        <a href="#testimonials" class="hover:text-purple-600 transition-colors">الآراء</a>
+        <a href="#pricing" class="hover:text-purple-600 transition-colors">الأسعار</a>
+        <a href="#faq" class="hover:text-purple-600 transition-colors">أسئلة شائعة</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-purple-600 transition-colors">دخول</a>
+        <a href="#pricing" class="px-4 py-2 hero-gradient text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all">ابدأ مجاناً</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="relative pt-32 pb-20 overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute top-20 right-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl blob"></div>
+      <div class="absolute bottom-10 left-10 w-96 h-96 bg-pink-200/20 rounded-full blur-3xl blob"></div>
+      <div class="absolute top-40 left-1/3 w-64 h-64 bg-yellow-200/20 rounded-full blur-3xl blob"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-4xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 border border-purple-100 rounded-full text-sm text-purple-700 mb-8">
+          <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+          <span>الإصدار 2.0 — مزايا ذكية جديدة</span>
+          <span>🎉</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-black leading-tight mb-6">
+          أدِري صالونك <span class="gradient-text">بذكاء</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          منصة سعودية متكاملة لإدارة الصالونات — حجوزات ذكية، واتساب تلقائي، نظام ولاء، 
+          مدفوعات مدى و Apple Pay. كل ما تحتاجينه في مكان واحد.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+          <a href="#pricing" class="w-full sm:w-auto px-8 py-4 hero-gradient text-white font-bold rounded-xl text-lg hover:shadow-xl hover:shadow-purple-500/20 transition-all hover:-translate-y-0.5">
+            ابدأ تجربتك المجانية — 14 يوم 🚀
+          </a>
+          <a href="#features" class="w-full sm:w-auto px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl text-lg hover:border-purple-300 hover:text-purple-600 transition-all">
+            اكتشف المزايا ←
+          </a>
+        </div>
+        <p class="text-sm text-gray-400">بدون بطاقة ائتمان • إعداد في 5 دقايق • دعم عربي كامل</p>
+      </div>
+      <!-- Stats -->
+      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+        <div class="text-center p-4 bg-white/60 backdrop-blur rounded-xl border border-gray-100">
+          <div class="text-3xl font-black gradient-text">500+</div>
+          <div class="text-sm text-gray-500 mt-1">صالون نشط</div>
+        </div>
+        <div class="text-center p-4 bg-white/60 backdrop-blur rounded-xl border border-gray-100">
+          <div class="text-3xl font-black gradient-text">50K+</div>
+          <div class="text-sm text-gray-500 mt-1">حجز شهرياً</div>
+        </div>
+        <div class="text-center p-4 bg-white/60 backdrop-blur rounded-xl border border-gray-100">
+          <div class="text-3xl font-black gradient-text">98%</div>
+          <div class="text-sm text-gray-500 mt-1">رضا العملاء</div>
+        </div>
+        <div class="text-center p-4 bg-white/60 backdrop-blur rounded-xl border border-gray-100">
+          <div class="text-3xl font-black gradient-text">40%</div>
+          <div class="text-sm text-gray-500 mt-1">زيادة الإيرادات</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="py-20 bg-gray-50/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-black mb-4">كل ما يحتاجه صالونك</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">من الحجز الأول للعميلة الـ VIP — سالوني يدير كل شيء</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">📅</div><h3 class="text-lg font-bold mb-2">حجوزات ذكية</h3><p class="text-sm text-gray-600 leading-relaxed">محرك حجوزات متقدم بمنع التعارض وتوزيع تلقائي وقائمة انتظار ذكية</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">📱</div><h3 class="text-lg font-bold mb-2">واتساب تلقائي</h3><p class="text-sm text-gray-600 leading-relaxed">7 رسائل تلقائية — تأكيد، تذكير، شكر، تقييم، إشعار انتظار، عيد ميلاد، اشتقنالك</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">👥</div><h3 class="text-lg font-bold mb-2">CRM متكامل</h3><p class="text-sm text-gray-600 leading-relaxed">ملف جمال لكل عميلة — بشرة، شعر، حساسيات، ملاحظات، تفضيلات</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">💎</div><h3 class="text-lg font-bold mb-2">نظام ولاء</h3><p class="text-sm text-gray-600 leading-relaxed">4 مستويات برونزي → VIP مع نقاط وكوبونات وبطاقات هدايا وإحالات</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">💳</div><h3 class="text-lg font-bold mb-2">دفع سعودي</h3><p class="text-sm text-gray-600 leading-relaxed">مدى، فيزا، ماستركارد، Apple Pay، STC Pay — عربون أو دفع كامل</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">📊</div><h3 class="text-lg font-bold mb-2">لوحة قائد</h3><p class="text-sm text-gray-600 leading-relaxed">KPIs حية، تقارير PDF، تحليل اتجاهات، تتبع أداء الموظفات</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">🎨</div><h3 class="text-lg font-bold mb-2">هوية مخصصة</h3><p class="text-sm text-gray-600 leading-relaxed">نطاق فرعي، ألوان وشعار، صفحة صالون احترافية، معرض صور</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">👩‍🎨</div><h3 class="text-lg font-bold mb-2">بوابة موظفات</h3><p class="text-sm text-gray-600 leading-relaxed">جدول يومي، حالة الخدمة، طلبات إجازة، تقييمات وتحفيز</p></div>
+        <div class="card-hover p-6 bg-white rounded-2xl border border-gray-100"><div class="text-4xl mb-4">🏢</div><h3 class="text-lg font-bold mb-2">إدارة فروع</h3><p class="text-sm text-gray-600 leading-relaxed">حتى 5 فروع مع إدارة مركزية وتقارير موحدة</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPROVEMENTS v2.0 -->
+  <section id="improvements" class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-100 rounded-full text-sm text-amber-700 mb-4">🆕 الإصدار 2.0</div>
+        <h2 class="text-3xl sm:text-4xl font-black mb-4">مزايا تطوير وتحسين جديدة</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">طورنا المنصة بشكل كبير — هذي أبرز التحسينات</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-100">
+          <div class="text-3xl mb-3">🧠</div><h3 class="text-lg font-bold mb-3">نظام ذكي متطور</h3>
+          <ul class="space-y-2"><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>محرك حجوزات ذكي بمنع التعارض</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>توزيع تلقائي على الموظفات</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>قائمة انتظار ذكية مع إشعار تلقائي</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>تحليلات تنبؤية للطلب</li></ul>
+        </div>
+        <div class="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-100">
+          <div class="text-3xl mb-3">📱</div><h3 class="text-lg font-bold mb-3">واتساب بزنس متكامل</h3>
+          <ul class="space-y-2"><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>7 رسائل تلقائية</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>حملات تسويقية موجهة</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>قوالب قابلة للتخصيص</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>تقارير وصول وقراءة</li></ul>
+        </div>
+        <div class="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-100">
+          <div class="text-3xl mb-3">💎</div><h3 class="text-lg font-bold mb-3">نظام ولاء متقدم</h3>
+          <ul class="space-y-2"><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>4 مستويات: برونزي، فضي، ذهبي، VIP</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>نقاط لكل ريال تنفق</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>بطاقات هدايا رقمية</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>كوبونات وعروض ذكية</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>برنامج إحالة مع مكافآت</li></ul>
+        </div>
+        <div class="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-100">
+          <div class="text-3xl mb-3">🎨</div><h3 class="text-lg font-bold mb-3">هوية قابلة للتخصيص</h3>
+          <ul class="space-y-2"><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>نطاق فرعي خاص (salon.saloni.sa)</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>ألوان وشعار مخصصة</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>صفحة صالون احترافية</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>دعم عربي/إنجليزي</li></ul>
+        </div>
+        <div class="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-100">
+          <div class="text-3xl mb-3">📊</div><h3 class="text-lg font-bold mb-3">تحليلات متقدمة</h3>
+          <ul class="space-y-2"><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>لوحة قائد مع KPIs حية</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>تتبع أداء الموظفات</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>تقارير مخصصة بالـ PDF</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>رسوم بيانية تفاعلية</li></ul>
+        </div>
+        <div class="p-6 bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-100">
+          <div class="text-3xl mb-3">💳</div><h3 class="text-lg font-bold mb-3">دفع سعودي متكامل</h3>
+          <ul class="space-y-2"><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>مدى، فيزا، ماستركارد</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>Apple Pay و STC Pay</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>عربون أو دفع كامل</li><li class="flex items-start gap-2 text-sm text-gray-600"><span class="text-green-500 mt-0.5">✓</span>مزامنة تلقائية مع الحجوزات</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="py-20 bg-gray-50/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-black mb-4">صالونات تأكدت النتيجة 💪</h2>
+        <p class="text-lg text-gray-600">3 صالونات تجريبية جرّبت سالوني — وهذي تجربتهم</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:#8B5CF6">ML</div>
+            <div><div class="font-bold text-sm">منال الشمري</div><div class="text-xs text-gray-500">لوكس بيوتي — جدة</div></div>
+            <div class="mr-auto px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#8B5CF6">+40% إيرادات</div>
+          </div>
+          <div class="flex gap-1 mb-3"><span class="text-amber-400">★★★★★</span></div>
+          <p class="text-gray-700 text-sm leading-relaxed">"سالوني غيّر طريقة إدارتنا تماماً. الحجوزات صارت أسهل، العملاء أسعد، والإيرادات زادت 40% خلال الشهر الأول!"</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:#EC4899">Nع</div>
+            <div><div class="font-bold text-sm">نورة العتيبي</div><div class="text-xs text-gray-500">صالون نورة — جدة</div></div>
+            <div class="mr-auto px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#EC4899">+65% عملاء راجعين</div>
+          </div>
+          <div class="flex gap-1 mb-3"><span class="text-amber-400">★★★★★</span></div>
+          <p class="text-gray-700 text-sm leading-relaxed">"أخيراً صار عندي نظام يدير كل شي — من الحجوزات للواتساب للنقاط. العملاء يحبون نظام الولاء ويرجعون أكثر!"</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:#F59E0B">لح</div>
+            <div><div class="font-bold text-sm">لمياء الحربي</div><div class="text-xs text-gray-500">غلام ستوديو — الرياض</div></div>
+            <div class="mr-auto px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#F59E0B">-70% عدم حضور</div>
+          </div>
+          <div class="flex gap-1 mb-3"><span class="text-amber-400">★★★★★</span></div>
+          <p class="text-gray-700 text-sm leading-relaxed">"نظام واتساب الذكي وفر عليّ ساعات من المتابعة. التذكيرات التلقائية قلّلت عدم الحضور بنسبة 70%. كل صالون يحتاج هذا!"</p>
+        </div>
+      </div>
+      <div class="mt-8 text-center"><p class="text-sm text-gray-500">🎁 كل صالون تجريبي يحصل على شهرين مجاناً — <a href="#pricing" class="text-purple-600 font-medium hover:underline">انضمي الآن</a></p></div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-black mb-4">خطط تناسب كل صالون</h2>
+        <p class="text-lg text-gray-600 mb-8">ابدئي مجاناً — بدون بطاقة ائتمان</p>
+        <div class="inline-flex items-center gap-3 bg-gray-100 p-1 rounded-xl" id="billing-toggle">
+          <button onclick="setBilling('monthly')" id="btn-monthly" class="px-4 py-2 rounded-lg text-sm font-medium bg-white shadow text-gray-900">شهري</button>
+          <button onclick="setBilling('yearly')" id="btn-yearly" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-500">سنوي <span class="mr-1 px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-bold">وفر 17%</span></button>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <!-- Basic -->
+        <div class="p-6 rounded-2xl border-2 border-gray-200 bg-white">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold mb-1">أساسية</h3><p class="text-sm text-gray-500">Basic</p>
+            <div class="mt-4"><span class="text-4xl font-black" id="price-basic">299</span><span class="text-gray-500"> ر.س/شهر</span></div>
+            <p class="text-sm text-green-600 mt-1 hidden yearly-note" id="yearly-basic">2,990 ر.س/سنة — وفري 589 ر.س</p>
+          </div>
+          <ul class="space-y-3 mb-6 text-sm">
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>حجوزات غير محدودة</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>نظام CRM كامل</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>واتساب تذكيرات</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>صفحة صالون</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>حتى 2 موظفات</li>
+            <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">✗</span><span class="line-through">نظام ولاء</span></li>
+            <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">✗</span><span class="line-through">بطاقات هدايا</span></li>
+            <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">✗</span><span class="line-through">حملات واتساب</span></li>
+            <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">✗</span><span class="line-through">تقارير متقدمة</span></li>
+            <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">✗</span><span class="line-through">دعم أولوية</span></li>
+          </ul>
+          <a href="#pricing" class="block w-full py-3 rounded-xl text-center font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">ابدأ التجربة المجانية</a>
+        </div>
+        <!-- Professional -->
+        <div class="relative p-6 rounded-2xl border-2 border-purple-500 bg-purple-50/50 shadow-xl shadow-purple-500/10 scale-105">
+          <div class="absolute -top-3 right-4 px-3 py-1 hero-gradient text-white text-xs font-bold rounded-full">الأكثر طلباً ⭐</div>
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold mb-1">احترافية</h3><p class="text-sm text-gray-500">Professional</p>
+            <div class="mt-4"><span class="text-4xl font-black" id="price-pro">599</span><span class="text-gray-500"> ر.س/شهر</span></div>
+            <p class="text-sm text-green-600 mt-1 hidden yearly-note" id="yearly-pro">5,990 ر.س/سنة — وفري 1,198 ر.س</p>
+          </div>
+          <ul class="space-y-3 mb-6 text-sm">
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>كل مزايا الأساسية</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>موظفات غير محدودات</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>نظام ولاء متقدم</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>بطاقات هدايا رقمية</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>حملات واتساب تسويقية</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>كوبونات وعروض</li>
+            <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">✗</span><span class="line-through">تقارير متقدمة</span></li>
+            <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">✗</span><span class="line-through">دعم أولوية</span></li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>فرع واحد فقط</li>
+          </ul>
+          <a href="#pricing" class="block w-full py-3 rounded-xl text-center font-bold hero-gradient text-white hover:shadow-lg transition-all">ابدأ التجربة المجانية</a>
+        </div>
+        <!-- Advanced -->
+        <div class="p-6 rounded-2xl border-2 border-gray-200 bg-white">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold mb-1">متقدمة</h3><p class="text-sm text-gray-500">Advanced</p>
+            <div class="mt-4"><span class="text-4xl font-black" id="price-adv">999</span><span class="text-gray-500"> ر.س/شهر</span></div>
+            <p class="text-sm text-green-600 mt-1 hidden yearly-note" id="yearly-adv">9,990 ر.س/سنة — وفري 1,998 ر.س</p>
+          </div>
+          <ul class="space-y-3 mb-6 text-sm">
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>كل مزايا الاحترافية</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>حتى 5 فروع</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>تقارير متقدمة + PDF</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>دعم أولوية VIP</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>نطاق مخصص</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>API متكامل</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>تحليلات تنبؤية</li>
+            <li class="flex items-center gap-2 text-gray-700"><span class="text-green-500">✓</span>مدير حساب مخصص</li>
+          </ul>
+          <a href="#pricing" class="block w-full py-3 rounded-xl text-center font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all">ابدأ التجربة المجانية</a>
+        </div>
+      </div>
+      <p class="text-center text-sm text-gray-400 mt-8">14 يوم تجربة مجانية • إلغاء بأي وقت • دعم عربي 24/7</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-20 bg-gray-50/50">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12"><h2 class="text-3xl sm:text-4xl font-black mb-4">أسئلة شائعة</h2></div>
+      <div class="space-y-3" id="faq-list">
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden faq-item">
+          <button onclick="toggleFaq(this)" class="w-full px-6 py-4 flex items-center justify-between text-right"><span class="font-medium">هل أحتاج خبرة تقنية لاستخدام سالوني؟</span><span class="text-gray-400 transition-transform duration-200 faq-arrow">▼</span></button>
+          <div class="faq-answer px-6 pb-4 text-sm text-gray-600 leading-relaxed">لا! سالوني مصمم ليكون سهل الاستخدام. تقدري تبدأين خلال 5 دقايق بدون أي خبرة تقنية.</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden faq-item">
+          <button onclick="toggleFaq(this)" class="w-full px-6 py-4 flex items-center justify-between text-right"><span class="font-medium">هل العملاء يحتاجون تحميل تطبيق؟</span><span class="text-gray-400 transition-transform duration-200 faq-arrow">▼</span></button>
+          <div class="faq-answer px-6 pb-4 text-sm text-gray-600 leading-relaxed">لا، العملاء يحجزون من رابط الصالون مباشرة في المتصفح. الصفحة تعمل كتطبيق على الجوال.</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden faq-item">
+          <button onclick="toggleFaq(this)" class="w-full px-6 py-4 flex items-center justify-between text-right"><span class="font-medium">كم مدة التجربة المجانية؟</span><span class="text-gray-400 transition-transform duration-200 faq-arrow">▼</span></button>
+          <div class="faq-answer px-6 pb-4 text-sm text-gray-600 leading-relaxed">14 يوم مجاناً بدون بطاقة ائتمان. وبعدها تختارين الخطة المناسبة.</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden faq-item">
+          <button onclick="toggleFaq(this)" class="w-full px-6 py-4 flex items-center justify-between text-right"><span class="font-medium">هل يدعم سالوني أكثر من فرع؟</span><span class="text-gray-400 transition-transform duration-200 faq-arrow">▼</span></button>
+          <div class="faq-answer px-6 pb-4 text-sm text-gray-600 leading-relaxed">نعم! خطة متقدمة تدعم حتى 5 فروع مع إدارة مركزية لكل فروعك.</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden faq-item">
+          <button onclick="toggleFaq(this)" class="w-full px-6 py-4 flex items-center justify-between text-right"><span class="font-medium">كيف تختلفون عن المنافسين؟</span><span class="text-gray-400 transition-transform duration-200 faq-arrow">▼</span></button>
+          <div class="faq-answer px-6 pb-4 text-sm text-gray-600 leading-relaxed">سالوني مصمم خصيصاً للسوق السعودي — دعم عربي كامل، واتساب بزنس، مدى، Apple Pay، وخدمة عملاء محلية.</div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden faq-item">
+          <button onclick="toggleFaq(this)" class="w-full px-6 py-4 flex items-center justify-between text-right"><span class="font-medium">هل أقدر ألغي اشتراكي بأي وقت؟</span><span class="text-gray-400 transition-transform duration-200 faq-arrow">▼</span></button>
+          <div class="faq-answer px-6 pb-4 text-sm text-gray-600 leading-relaxed">طبعاً! تقدري تلغين بأي وقت بدون رسوم إضافية. بياناتك تظل محفوظة 30 يوم بعد الإلغاء.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      <div class="relative p-8 sm:p-12 hero-gradient rounded-3xl text-white text-center overflow-hidden">
+        <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+        <div class="absolute bottom-0 left-0 w-60 h-60 bg-white/5 rounded-full blur-3xl"></div>
+        <div class="relative z-10">
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">جاهزة تبدأين؟</h2>
+          <p class="text-lg text-white/80 mb-8 max-w-xl mx-auto">انضمي لأكثر من 500 صالون trust سالوني في إدارة أعمالهم. ابدئي تجربتك المجانية اليوم!</p>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#pricing" class="w-full sm:w-auto px-8 py-4 bg-white text-purple-700 font-bold rounded-xl text-lg hover:shadow-xl transition-all">ابدأ التجربة المجانية 🚀</a>
+            <a href="https://wa.me/966500000000" class="w-full sm:w-auto px-8 py-4 bg-white/10 border border-white/30 text-white font-bold rounded-xl text-lg hover:bg-white/20 transition-all">تواصلي عبر واتساب 💬</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div>
+          <div class="flex items-center gap-2 mb-4"><div class="w-10 h-10 hero-gradient rounded-xl flex items-center justify-center text-white font-bold text-lg">س</div><span class="text-xl font-bold">سالوني</span></div>
+          <p class="text-sm text-gray-400 leading-relaxed">منصة سعودية متكاملة لإدارة الصالونات والسبا. حجوزات ذكية، واتساب تلقائي، نظام ولاء، ومدفوعات سعودية.</p>
+        </div>
+        <div><h4 class="font-bold mb-4">المنتج</h4><ul class="space-y-2 text-sm text-gray-400"><li><a href="#features" class="hover:text-white transition-colors">المزايا</a></li><li><a href="#pricing" class="hover:text-white transition-colors">الأسعار</a></li><li><a href="#improvements" class="hover:text-white transition-colors">التحديثات</a></li><li><a href="#" class="hover:text-white transition-colors">التكاملات</a></li></ul></div>
+        <div><h4 class="font-bold mb-4">الشركة</h4><ul class="space-y-2 text-sm text-gray-400"><li><a href="#" class="hover:text-white transition-colors">عن سالوني</a></li><li><a href="#" class="hover:text-white transition-colors">المدونة</a></li><li><a href="#" class="hover:text-white transition-colors">الوظائف</a></li><li><a href="#" class="hover:text-white transition-colors">تواصلي معنا</a></li></ul></div>
+        <div><h4 class="font-bold mb-4">الدعم</h4><ul class="space-y-2 text-sm text-gray-400"><li><a href="#" class="hover:text-white transition-colors">مركز المساعدة</a></li><li><a href="#" class="hover:text-white transition-colors">دليل المستخدم</a></li><li><a href="#" class="hover:text-white transition-colors">API Docs</a></li><li><a href="#" class="hover:text-white transition-colors">حالة النظام</a></li></ul></div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-gray-500">© 2026 سالوني. جميع الحقوق محفوظة.</p>
+        <div class="flex items-center gap-4 text-sm text-gray-500"><a href="#" class="hover:text-white transition-colors">سياسة الخصوصية</a><a href="#" class="hover:text-white transition-colors">شروط الاستخدام</a><a href="#" class="hover:text-white transition-colors">ملفات الارتباط</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Billing toggle
+    function setBilling(type) {
+      const monthly = type === 'monthly';
+      document.getElementById('btn-monthly').className = 'px-4 py-2 rounded-lg text-sm font-medium ' + (monthly ? 'bg-white shadow text-gray-900' : 'text-gray-500');
+      document.getElementById('btn-yearly').className = 'px-4 py-2 rounded-lg text-sm font-medium ' + (!monthly ? 'bg-white shadow text-gray-900' : 'text-gray-500');
+      document.getElementById('price-basic').textContent = monthly ? '299' : '249';
+      document.getElementById('price-pro').textContent = monthly ? '599' : '499';
+      document.getElementById('price-adv').textContent = monthly ? '999' : '833';
+      document.querySelectorAll('.yearly-note').forEach(el => el.classList.toggle('hidden', monthly));
+    }
+
+    // FAQ toggle
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const arrow = item.querySelector('.faq-arrow');
+      const isOpen = answer.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-arrow').forEach(a => a.style.transform = '');
+      if (!isOpen) {
+        answer.classList.add('open');
+        arrow.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('section').forEach(s => { s.classList.add('fade-in'); observer.observe(s) });
+    // Make first section visible immediately
+    document.querySelector('section').classList.add('visible');
+  </script>
+</body>
+</html>

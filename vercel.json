@@ -1,0 +1,15 @@
+{
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?<subdomain>[a-z0-9-]+)\\.saloni\\.sa"
+        }
+      ],
+      "destination": "/$1"
+    }
+  ]
+}
