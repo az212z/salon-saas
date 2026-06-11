@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   BadgePercent,
@@ -30,7 +31,7 @@ import {
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -90,12 +91,24 @@ const statusClasses: Record<string, string> = {
   deposit: "bg-spa-blush text-rose-950",
 };
 
-export function SalonSaasApp() {
-  const [portal, setPortal] = useState<PortalKey>("salon");
+export function SalonSaasApp({
+  initialPortal = "salon",
+  lockedPortal = false,
+}: {
+  initialPortal?: PortalKey;
+  lockedPortal?: boolean;
+}) {
+  const [portal, setPortalState] = useState<PortalKey>(initialPortal);
   const [activeCustomerId, setActiveCustomerId] = useState(customers[0].id);
   const [activeServiceId, setActiveServiceId] = useState(services[0].id);
   const [activeStaffId, setActiveStaffId] = useState(staff[0].id);
   const [search, setSearch] = useState("");
+
+  const setPortal = (nextPortal: PortalKey) => {
+    if (!lockedPortal) {
+      setPortalState(nextPortal);
+    }
+  };
 
   const activeCustomer =
     customers.find((customer) => customer.id === activeCustomerId) ?? customers[0];
@@ -120,12 +133,12 @@ export function SalonSaasApp() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,hsl(var(--spa-blush)/0.22),transparent_28rem),linear-gradient(135deg,hsl(var(--background)),hsl(var(--accent)/0.42))] text-foreground">
       <div className="mx-auto grid min-h-screen w-full min-w-0 max-w-[1600px] gap-0 overflow-x-hidden lg:grid-cols-[minmax(0,1fr)_280px]">
         <aside className="min-w-0 overflow-hidden border-b border-border bg-card/90 px-4 py-4 backdrop-blur lg:col-start-2 lg:row-start-1 lg:h-screen lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
-          <Sidebar />
+          <Sidebar lockedPortal={lockedPortal} portal={portal} />
         </aside>
 
         <main className="min-w-0 overflow-x-hidden lg:col-start-1 lg:row-start-1 lg:h-screen lg:overflow-y-auto">
           <div className="flex min-h-screen min-w-0 flex-col gap-5 px-4 py-4 sm:px-6 lg:px-7 lg:py-6">
-            <TopBar portal={portal} setPortal={setPortal} />
+            <TopBar lockedPortal={lockedPortal} portal={portal} setPortal={setPortal} />
 
             {portal === "salon" ? (
               <SalonAdminSurface
@@ -168,7 +181,41 @@ export function SalonSaasApp() {
   );
 }
 
-function Sidebar() {
+const portalPageMeta: Record<PortalKey, { eyebrow: string; title: string; domain: string }> = {
+  salon: {
+    eyebrow: "صفحة المدير",
+    title: "لوحة المدير اليومية للحجوزات والعميلات",
+    domain: "lumier.platform.com/manager",
+  },
+  client: {
+    eyebrow: "صفحة العميلة",
+    title: "بوابة الحجز والملف الشخصي للعميلة",
+    domain: "lumier.platform.com/client",
+  },
+  staff: {
+    eyebrow: "صفحة الموظفة",
+    title: "جدول الموظفة وتجهيزات خدمات اليوم",
+    domain: "lumier.platform.com/staff",
+  },
+  platform: {
+    eyebrow: "مالك المنصة",
+    title: "مركز تشغيل الاشتراكات والمستأجرين",
+    domain: "lumier.platform.com/platform",
+  },
+};
+
+const clientNavItems = [
+  { label: "الرئيسية", hint: "صالون لوميير", icon: Sparkles },
+  { label: "احجزي موعد", hint: "خدمة ووقت ودفع", icon: CalendarPlus },
+  { label: "ملفي", hint: "تفضيلات الجمال", icon: Gem },
+  { label: "نقاطي", hint: "محفظة وولاء", icon: Star },
+  { label: "الهدايا", hint: "بطاقات وكوبونات", icon: WalletCards },
+  { label: "واتساب", hint: "تأكيد وتذكير", icon: Send },
+];
+
+function Sidebar({ lockedPortal, portal }: { lockedPortal: boolean; portal: PortalKey }) {
+  const scopedNavItems = lockedPortal && portal === "client" ? clientNavItems : navItems;
+
   return (
     <div className="flex h-full min-w-0 flex-col gap-5">
       <div className="flex items-center justify-between gap-3 lg:justify-start">
@@ -184,7 +231,7 @@ function Sidebar() {
       <Separator />
 
       <nav className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1">
-        {navItems.map((item, index) => {
+        {scopedNavItems.map((item, index) => {
           const Icon = item.icon;
           const active = index < 3;
 
@@ -221,10 +268,12 @@ function Sidebar() {
       <div className="mt-auto hidden rounded-lg border bg-muted/50 p-3 lg:block">
         <div className="mb-3 flex items-center gap-2 text-sm font-bold">
           <ShieldCheck aria-hidden="true" />
-          عزل المستأجرين
+          {lockedPortal ? "رابط مستقل" : "عزل المستأجرين"}
         </div>
         <p className="text-xs leading-6 text-muted-foreground">
-          كل شاشة في هذا النموذج مبنية حول `tenant_id` وسياسات RLS في قاعدة Supabase.
+          {lockedPortal
+            ? "هذه الصفحة تفتح مباشرة للبوابة المطلوبة، مع بقاء بياناتها معزولة داخل tenant_id."
+            : "كل شاشة في هذا النموذج مبنية حول `tenant_id` وسياسات RLS في قاعدة Supabase."}
         </p>
       </div>
     </div>
@@ -232,26 +281,30 @@ function Sidebar() {
 }
 
 function TopBar({
+  lockedPortal,
   portal,
   setPortal,
 }: {
+  lockedPortal: boolean;
   portal: PortalKey;
   setPortal: (portal: PortalKey) => void;
 }) {
+  const meta = portalPageMeta[portal];
+
   return (
     <header className="flex min-w-0 flex-col gap-4 rounded-lg border bg-card/90 p-3 soft-shadow sm:p-4">
       <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <p className="text-xs font-bold text-muted-foreground">صالون لوميير سبا</p>
+          <p className="text-xs font-bold text-muted-foreground">{meta.eyebrow}</p>
           <h1 className="font-heading text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
-            مركز التشغيل اليومي للحجوزات والعميلات
+            {meta.title}
           </h1>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="sm">
             <Globe2 data-icon="inline-start" />
-            lumier.platform.com
+            {meta.domain}
           </Button>
           <Button variant="outline" size="icon-sm" aria-label="تنبيهات">
             <Bell />
@@ -266,29 +319,55 @@ function TopBar({
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {portalTabs.map((tab) => {
-          const Icon = tab.icon;
-          const active = portal === tab.key;
+      {lockedPortal ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/40 p-2">
+          <Link
+            className={buttonVariants({
+              variant: portal === "client" ? "default" : "outline",
+              size: "sm",
+            })}
+            href="/client"
+          >
+            صفحة العميلة
+          </Link>
+          <Link
+            className={buttonVariants({
+              variant: portal === "salon" ? "default" : "outline",
+              size: "sm",
+            })}
+            href="/manager"
+          >
+            صفحة المدير
+          </Link>
+          <Link className={buttonVariants({ variant: "ghost", size: "sm" })} href="/">
+            النموذج الكامل
+          </Link>
+        </div>
+      ) : (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {portalTabs.map((tab) => {
+            const Icon = tab.icon;
+            const active = portal === tab.key;
 
-          return (
-            <button
-              key={tab.key}
-              className={cn(
-                "inline-flex h-9 shrink-0 items-center gap-2 rounded-md border px-3 text-sm font-bold transition",
-                active
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background text-muted-foreground hover:text-foreground"
-              )}
-              type="button"
-              onClick={() => setPortal(tab.key)}
-            >
-              <Icon aria-hidden="true" />
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={tab.key}
+                className={cn(
+                  "inline-flex h-9 shrink-0 items-center gap-2 rounded-md border px-3 text-sm font-bold transition",
+                  active
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background text-muted-foreground hover:text-foreground"
+                )}
+                type="button"
+                onClick={() => setPortal(tab.key)}
+              >
+                <Icon aria-hidden="true" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </header>
   );
 }
@@ -806,7 +885,7 @@ function ClientPortalSurface({
                 </h2>
                 <div className="mt-5 flex flex-wrap gap-2">
                   <Button className="bg-white text-primary hover:bg-white/90">احجزي الآن</Button>
-                  <Button className="border-white/30 text-white hover:bg-white/10" variant="outline">
+                  <Button className="border-white/30 bg-transparent text-white hover:bg-white/10" variant="outline">
                     معرض الصالون
                   </Button>
                 </div>

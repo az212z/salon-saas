@@ -22,9 +22,17 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+## Online Pages
+
+- `/client` - public-facing client booking and profile portal.
+- `/manager` - salon manager dashboard for bookings, CRM, revenue, and staff.
+- `/admin` - alias for the manager dashboard.
+
 ## Key Files
 
 - `src/components/salon-saas-app.tsx` - the main RTL SaaS interface.
+- `src/app/client/page.tsx` - dedicated client page.
+- `src/app/manager/page.tsx` - dedicated manager page.
 - `src/lib/demo-data.ts` - typed local demo data for the prototype.
 - `supabase/migrations/20260611000000_phase0_multi_tenant_schema.sql` - Phase 0 schema and RLS.
 - `docs/phase-0-architecture.md` - phase summary and suggested next steps.
