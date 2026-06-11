@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getAvailableSlots, getAvailableSlotsForAnyStaff } from '@/lib/bookings/engine';
 
+export const dynamic = 'force-dynamic';
+
 // ============================================================
 // GET /api/bookings/availability — Get available time slots
 // ============================================================

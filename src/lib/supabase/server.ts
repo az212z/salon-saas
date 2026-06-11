@@ -1,12 +1,25 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// ==============================
-// Supabase Server Client (for Server Components & Actions)
-// ==============================
+function valueLooksConfigured(value: string | undefined, blocked: string[]) {
+  if (!value) return false;
+  return !blocked.some((item) => value.includes(item));
+}
+
+export function isSupabaseConfigured() {
+  return (
+    valueLooksConfigured(process.env.NEXT_PUBLIC_SUPABASE_URL, ["example.supabase.co", "your-project", "localhost"]) &&
+    valueLooksConfigured(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, ["dummy", "your-anon-key"])
+  );
+}
+
 export async function createClient() {
+  if (!isSupabaseConfigured()) {
+    throw new Error("Supabase is not configured. Demo pages remain available without database access.");
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -21,15 +34,14 @@ export async function createClient() {
           try {
             cookieStore.set({ name, value, ...options });
           } catch {
-            // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing sessions.
+            // Server Components cannot write cookies directly.
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: '', ...options });
+            cookieStore.set({ name, value: "", ...options });
           } catch {
-            // Same as above
+            // Server Components cannot write cookies directly.
           }
         },
       },
@@ -37,10 +49,11 @@ export async function createClient() {
   );
 }
 
-// ==============================
-// Middleware — Multi-Tenant Subdomain Resolution
-// ==============================
 export async function updateSession(request: NextRequest) {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -55,60 +68,44 @@ export async function updateSession(request: NextRequest) {
         },
         set(name: string, value: string, options: CookieOptions) {
           request.cookies.set(name, value);
-          supabaseResponse = NextResponse.next({
-            request,
-          });
+          supabaseResponse = NextResponse.next({ request });
           supabaseResponse.cookies.set(name, value, options);
         },
         remove(name: string, options: CookieOptions) {
-          request.cookies.set(name, '');
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          supabaseResponse.cookies.set(name, '', options);
+          request.cookies.set(name, "");
+          supabaseResponse = NextResponse.next({ request });
+          supabaseResponse.cookies.set(name, "", options);
         },
       },
     }
   );
 
-  // Refresh session
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // Resolve tenant from subdomain
   const url = request.nextUrl.clone();
-  const hostname = request.headers.get('host') || '';
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'saloni.sa';
+  const hostname = request.headers.get("host") || "";
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "saloni.sa";
+  const subdomain = hostname.replace(`.${rootDomain}`, "").replace("www.", "");
 
-  // Extract subdomain (e.g., "luxe-beauty" from "luxe-beauty.saloni.sa")
-  const subdomain = hostname.replace(`.${rootDomain}`, '').replace('www.', '');
-
-  // Store tenant slug in headers for downstream use
-  if (subdomain && subdomain !== hostname && subdomain !== 'app' && subdomain !== 'admin') {
-    request.headers.set('x-tenant-slug', subdomain);
+  if (subdomain && subdomain !== hostname && subdomain !== "app" && subdomain !== "admin") {
+    request.headers.set("x-tenant-slug", subdomain);
   }
 
-  // Protect admin/app routes
-  if (url.pathname.startsWith('/app') || url.pathname.startsWith('/admin')) {
-    if (!user) {
-      url.pathname = '/login';
-      return NextResponse.redirect(url);
-    }
+  if ((url.pathname.startsWith("/app") || url.pathname.startsWith("/admin")) && !user) {
+    url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
   }
 
-  // Protect salon admin routes
-  if (url.pathname.startsWith('/dashboard')) {
-    if (!user) {
-      url.pathname = '/login';
-      return NextResponse.redirect(url);
-    }
+  if (url.pathname.startsWith("/dashboard") && !user) {
+    url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
   }
 
-  // Protect staff routes
-  if (url.pathname.startsWith('/staff')) {
-    if (!user) {
-      url.pathname = '/staff/login';
-      return NextResponse.redirect(url);
-    }
+  if (url.pathname.startsWith("/staff") && !user) {
+    url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

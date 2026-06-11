@@ -10,6 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        ink: "#211829",
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
         card: {
