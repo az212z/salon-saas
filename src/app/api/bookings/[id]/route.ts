@@ -2,14 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { updateBookingStatus, checkWaitlistOnCancellation } from '@/lib/bookings/engine';
 
+type BookingRouteContext = {
+  params: Promise<{ id: string }>;
+};
+
 // ============================================================
 // GET /api/bookings/[id] — Get single booking
 // ============================================================
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: BookingRouteContext
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -26,7 +31,7 @@ export async function GET(
     const { data: booking, error } = await supabase
       .from('bookings')
       .select('*, customer:customers(*), staff:staff(*), booking_items(*, service:services(*))')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('tenant_id', userProfile?.tenant_id)
       .single();
 
@@ -46,9 +51,10 @@ export async function GET(
 // ============================================================
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: BookingRouteContext
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -71,7 +77,7 @@ export async function PATCH(
 
     if (status) {
       const result = await updateBookingStatus(
-        params.id,
+        id,
         userProfile.tenant_id,
         status,
         reason
@@ -86,7 +92,7 @@ export async function PATCH(
         const { data: booking } = await supabase
           .from('bookings')
           .select('booking_items(service_id), booking_date, start_time')
-          .eq('id', params.id)
+          .eq('id', id)
           .single();
 
         if (booking) {
@@ -111,7 +117,7 @@ export async function PATCH(
       await supabase
         .from('bookings')
         .update(updateData)
-        .eq('id', params.id)
+        .eq('id', id)
         .eq('tenant_id', userProfile.tenant_id);
     }
 
@@ -127,9 +133,10 @@ export async function PATCH(
 // ============================================================
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: BookingRouteContext
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -144,7 +151,7 @@ export async function DELETE(
       .single();
 
     const result = await updateBookingStatus(
-      params.id,
+      id,
       userProfile?.tenant_id,
       'cancelled',
       'تم الإلغاء بواسطة المستخدم'

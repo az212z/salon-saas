@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
+type CustomerNotesRouteContext = {
+  params: Promise<{ id: string }>;
+};
+
 // ============================================================
 // POST /api/customers/[id]/notes — Add internal note to customer
 // ============================================================
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: CustomerNotesRouteContext
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -28,7 +33,7 @@ export async function POST(
       .from('customer_notes')
       .insert({
         tenant_id: userProfile?.tenant_id,
-        customer_id: params.id,
+        customer_id: id,
         created_by: user.id,
         note: body.note,
         is_important: body.is_important || false,
@@ -52,9 +57,10 @@ export async function POST(
 // ============================================================
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: CustomerNotesRouteContext
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -80,7 +86,7 @@ export async function PUT(
       .from('loyalty_transactions')
       .insert({
         tenant_id: userProfile?.tenant_id,
-        customer_id: params.id,
+        customer_id: id,
         points: points,
         type: points > 0 ? 'bonus' : 'admin_adjust',
         description: description || (points > 0 ? 'هدية نقاط من الإدارة' : 'تعديل نقاط'),
@@ -97,7 +103,7 @@ export async function PUT(
     const { data: customer } = await supabase
       .from('customers')
       .select('loyalty_points')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('tenant_id', userProfile?.tenant_id)
       .single();
 
@@ -111,7 +117,7 @@ export async function PUT(
       await supabase
         .from('customers')
         .update({ loyalty_points: newPoints, loyalty_tier: newTier })
-        .eq('id', params.id);
+        .eq('id', id);
     }
 
     return NextResponse.json({ transaction });
