@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-
 import { StaffExperience } from "@/components/premium-shell";
 
 export const metadata: Metadata = {
-  title: "صفحة الموظفة | سالوني",
-  description: "جدول الموظفة اليومي وحالة الحجوزات.",
+  title: "بوابة الفريق | Saloni Pro",
+  description: "صفحة موظفة الصالون للجدول والحضور وملاحظات المواعيد.",
 };
 
-export default function StaffPortalPage() {
+export default function StaffPage() {
   return <StaffExperience />;
 }

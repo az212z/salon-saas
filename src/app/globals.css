@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,147 +6,69 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 260 25% 10%;
+    --background: 20 29% 96%;
+    --foreground: 270 26% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 260 25% 10%;
+    --card-foreground: 270 26% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 260 25% 10%;
-    --primary: 263 70% 58%;
+    --popover-foreground: 270 26% 13%;
+    --primary: 270 26% 13%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 263 30% 96%;
-    --secondary-foreground: 263 70% 35%;
-    --muted: 260 15% 95%;
-    --muted-foreground: 260 10% 45%;
-    --accent: 263 50% 93%;
-    --accent-foreground: 263 70% 35%;
-    --destructive: 0 84% 60%;
+    --secondary: 12 39% 95%;
+    --secondary-foreground: 270 26% 13%;
+    --muted: 20 29% 96%;
+    --muted-foreground: 285 8% 47%;
+    --accent: 6 54% 93%;
+    --accent-foreground: 353 33% 45%;
+    --destructive: 5 67% 47%;
     --destructive-foreground: 0 0% 100%;
-    --border: 260 15% 90%;
-    --input: 260 15% 90%;
-    --ring: 263 70% 58%;
-    --radius: 0.75rem;
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
-    --info: 199 89% 48%;
+    --border: 12 28% 89%;
+    --input: 12 28% 89%;
+    --ring: 4 54% 67%;
+    --radius: 0.5rem;
   }
 
-  .dark {
-    --background: 260 30% 8%;
-    --foreground: 260 15% 95%;
-    --card: 260 25% 12%;
-    --card-foreground: 260 15% 95%;
-    --popover: 260 25% 12%;
-    --popover-foreground: 260 15% 95%;
-    --primary: 263 70% 65%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 263 30% 18%;
-    --secondary-foreground: 263 70% 80%;
-    --muted: 260 20% 15%;
-    --muted-foreground: 260 10% 60%;
-    --accent: 263 50% 20%;
-    --accent-foreground: 263 70% 80%;
-    --destructive: 0 84% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 260 15% 20%;
-    --input: 260 15% 20%;
-    --ring: 263 70% 65%;
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
-    --info: 199 89% 48%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+    letter-spacing: 0;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    letter-spacing: 0;
   }
 }
 
-/* RTL Support */
 [dir="rtl"] {
   text-align: right;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--muted));
-  border-radius: 3px;
+  background: #f1e9e6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
-  border-radius: 3px;
+  background: #cdbfbd;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
-}
-
-/* Animations */
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.3s ease-out;
-}
-
-.animate-slide-in-left {
-  animation: slide-in-left 0.3s ease-out;
-}
-
-/* Glass morphism */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dark .glass {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Gradient text */
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-l from-primary to-purple-400;
-}
-
-/* Booking steps */
-.booking-step-active {
-  @apply bg-primary text-primary-foreground shadow-lg;
-}
-
-.booking-step-completed {
-  @apply bg-green-500 text-white;
-}
-
-.booking-step-pending {
-  @apply bg-muted text-muted-foreground;
+  background: #aa9a98;
 }

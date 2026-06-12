@@ -1,13 +1,36 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-
 import { demoOwner, salon } from "@/lib/demo-platform";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import type { UserRole } from "@/types";
 
-interface AuthContextType {
+type UserProfile = {
+  id: string;
+  tenant_id: string | null;
+  role: UserRole;
+  email: string | null;
+  phone: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  locale: string;
+};
+
+type TenantInfo = {
+  id: string;
+  slug: string;
+  name: Record<string, string>;
+  primary_color: string;
+  secondary_color: string;
+  logo_url: string | null;
+  currency: string;
+  locale: string;
+  settings: Record<string, unknown>;
+};
+
+type AuthContextType = {
   user: User | null;
   session: Session | null;
   profile: UserProfile | null;
@@ -18,36 +41,41 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string, metadata: Record<string, string>) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
-}
-
-interface UserProfile {
-  id: string;
-  tenant_id: string | null;
-  role: UserRole;
-  email: string | null;
-  phone: string | null;
-  full_name: string | null;
-  avatar_url: string | null;
-  locale: string;
-}
-
-interface TenantInfo {
-  id: string;
-  slug: string;
-  name: Record<string, string>;
-  primary_color: string;
-  secondary_color: string;
-  logo_url: string | null;
-  currency: string;
-  locale: string;
-  settings: Record<string, unknown>;
-}
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const DEMO_STORAGE_KEY = "saloni-demo-user";
 
+const demoProfile: UserProfile = {
+  id: "demo-ali-owner",
+  tenant_id: "demo-saloni-pro",
+  role: "salon_owner",
+  email: demoOwner.email,
+  phone: null,
+  full_name: demoOwner.name,
+  avatar_url: null,
+  locale: "ar",
+};
+
+const demoTenant: TenantInfo = {
+  id: "demo-saloni-pro",
+  slug: salon.slug,
+  name: { ar: salon.arabicName, en: salon.name },
+  primary_color: "#211829",
+  secondary_color: "#d88782",
+  logo_url: null,
+  currency: "SAR",
+  locale: "ar",
+  settings: {
+    whatsapp_enabled: false,
+    deposit_percentage: salon.depositPercent,
+  },
+};
+
 function normalizeDigits(value: string) {
-  return value.replace(/[٠-٩]/g, (digit) => "٠١٢٣٤٥٦٧٨٩".indexOf(digit).toString());
+  return value
+    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
 }
 
 function makeDemoUser(data: { email?: string; phone?: string } = {}) {
@@ -62,33 +90,7 @@ function makeDemoUser(data: { email?: string; phone?: string } = {}) {
   } as User;
 }
 
-const demoProfile: UserProfile = {
-  id: "demo-ali-owner",
-  tenant_id: "demo-luxe-beauty",
-  role: "salon_owner",
-  email: demoOwner.email,
-  phone: null,
-  full_name: demoOwner.name,
-  avatar_url: null,
-  locale: "ar",
-};
-
-const demoTenant: TenantInfo = {
-  id: "demo-luxe-beauty",
-  slug: salon.slug,
-  name: { ar: salon.name, en: "Luxe Beauty" },
-  primary_color: "#211829",
-  secondary_color: "#b76d77",
-  logo_url: null,
-  currency: "SAR",
-  locale: "ar",
-  settings: {
-    whatsapp_enabled: false,
-    deposit_percentage: 30,
-  },
-};
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -100,9 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const stored = window.localStorage.getItem(DEMO_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored) as { email?: string; phone?: string };
-      setUser(makeDemoUser(parsed));
-      setProfile(demoProfile);
-      setCurrentTenant(demoTenant);
+      setDemoSession(parsed);
       setIsLoading(false);
       return;
     }
@@ -112,23 +112,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        void fetchProfile(session.user.id);
-      }
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setUser(data.session?.user ?? null);
       setIsLoading(false);
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      } else {
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+      if (!nextSession) {
         setProfile(null);
         setCurrentTenant(null);
       }
@@ -136,31 +131,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, [supabase]);
-
-  async function fetchProfile(userId: string) {
-    if (!supabase) return;
-
-    const { data } = await supabase.from("users").select("*").eq("id", userId).single();
-
-    if (data) {
-      setProfile(data as UserProfile);
-      if (data.tenant_id) {
-        await fetchTenant(data.tenant_id);
-      }
-    }
-  }
-
-  async function fetchTenant(tenantId: string) {
-    if (!supabase) return;
-
-    const { data } = await supabase.from("tenants").select("*").eq("id", tenantId).single();
-
-    if (data) {
-      setCurrentTenant(data as TenantInfo);
-      document.documentElement.style.setProperty("--primary-tenant", data.primary_color);
-      document.documentElement.style.setProperty("--secondary-tenant", data.secondary_color);
-    }
-  }
 
   function setDemoSession(data: { email?: string; phone?: string }) {
     window.localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(data));
@@ -193,7 +163,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setDemoSession({ email: demoOwner.email });
       return {};
     }
-
     if (!supabase) return { error: `بيانات الاختبار: ${demoOwner.email} / ${demoOwner.password}` };
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error?.message };
@@ -204,12 +173,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setDemoSession({ email });
       return {};
     }
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: metadata },
-    });
+    const { error } = await supabase.auth.signUp({ email, password, options: { data: metadata } });
     return { error: error?.message };
   }
 
