@@ -356,6 +356,151 @@ export const settingsGroups = [
   { title: "الربط", items: ["Supabase", "Moyasar", "WhatsApp Cloud API", "Netlify"] },
 ];
 
+export const subscriptionPlans = [
+  {
+    slug: "basic",
+    name: "أساسية",
+    price: 299,
+    yearly: 2990,
+    staffLimit: "موظفتان",
+    branchLimit: "فرع واحد",
+    trial: "14 يوم تجربة مجانية",
+    bestFor: "صالون صغير يبدأ بالحجز وCRM",
+    features: ["الحجوزات", "CRM العملاء", "تذكيرات واتساب", "رابط حجز مستقل"],
+    locked: ["الحملات", "بطاقات الهدايا", "دومين خاص"],
+  },
+  {
+    slug: "professional",
+    name: "احترافية",
+    price: 599,
+    yearly: 5990,
+    staffLimit: "موظفات بلا حد",
+    branchLimit: "فرع واحد",
+    trial: "14 يوم تجربة مجانية",
+    bestFor: "أفضل خيار لإطلاق SaaS مدفوع",
+    features: ["كل مزايا الأساسية", "الولاء والنقاط", "الهدايا الرقمية", "حملات واتساب segmented"],
+    locked: ["فروع متعددة", "تقارير متقدمة جدًا"],
+  },
+  {
+    slug: "advanced",
+    name: "متقدمة",
+    price: 999,
+    yearly: 9990,
+    staffLimit: "بلا حد",
+    branchLimit: "حتى 5 فروع",
+    trial: "14 يوم تجربة مجانية",
+    bestFor: "سلاسل الصالونات والفروع",
+    features: ["كل مزايا الاحترافية", "دومين خاص", "تقارير متقدمة", "دعم أولوية", "فروع متعددة"],
+    locked: [],
+  },
+];
+
+export const platformMetrics = [
+  { label: "الصالونات المشتركة", value: "198", note: "8 صالونات جديدة هذا الشهر" },
+  { label: "التجارب الجارية", value: "23", note: "تنتهي خلال 7 أيام" },
+  { label: "MRR المتوقع", value: "47,850 ر.س", note: "+12.4% عن الشهر السابق" },
+  { label: "متوسط جاهزية الربط", value: "94%", note: "Supabase وVercel جاهزة" },
+];
+
+export const platformTenants = [
+  {
+    name: "صالوني برو - الرياض",
+    owner: "علي",
+    plan: "احترافية",
+    status: "نشط",
+    trial: "ينتهي بعد 11 يوم",
+    mrr: "599 ر.س",
+    subdomain: "luxe-beauty.saloni.sa",
+    readiness: 98,
+    issues: "لا يوجد",
+  },
+  {
+    name: "Belleza Spa",
+    owner: "نورة",
+    plan: "متقدمة",
+    status: "نشط",
+    trial: "اشتراك مدفوع",
+    mrr: "999 ر.س",
+    subdomain: "belleza.saloni.sa",
+    readiness: 93,
+    issues: "قالبان بانتظار Meta",
+  },
+  {
+    name: "Lume Nails",
+    owner: "سارة",
+    plan: "أساسية",
+    status: "تجربة",
+    trial: "3 أيام متبقية",
+    mrr: "299 ر.س",
+    subdomain: "lume.saloni.sa",
+    readiness: 76,
+    issues: "Moyasar غير مفعّل",
+  },
+  {
+    name: "Glow Beauty",
+    owner: "ريم",
+    plan: "احترافية",
+    status: "مراجعة",
+    trial: "تمديد 7 أيام",
+    mrr: "599 ر.س",
+    subdomain: "glow.saloni.sa",
+    readiness: 64,
+    issues: "بيانات الخدمات ناقصة",
+  },
+];
+
+export const integrationChecks = [
+  { name: "Supabase PostgreSQL + Auth + RLS", status: "جاهز بالبنية", value: 100, note: "tenant_id وRLS في المخطط" },
+  { name: "Vercel Wildcard Subdomains", status: "جاهز للنشر", value: 92, note: "يتطلب ربط الدومين النهائي" },
+  { name: "WhatsApp Business Cloud API", status: "ينتظر مفاتيح Meta", value: 54, note: "OTP والحملات تعمل Demo" },
+  { name: "Moyasar / Tap Payments", status: "ينتظر مفاتيح الدفع", value: 58, note: "موجود في الكود كتكامل قابل للتهيئة" },
+  { name: "PWA + Mobile RTL", status: "جاهز", value: 88, note: "manifest وواجهة متجاوبة" },
+];
+
+export const implementationPhases = [
+  { phase: "0", title: "البنية متعددة المستأجرين", status: "مكتملة", progress: 100, detail: "مخطط Supabase، خطط الاشتراك، tenant_id، RLS، الأدوار." },
+  { phase: "1", title: "محرك الحجوزات", status: "مكتملة جزئيا", progress: 72, detail: "منع التعارض وقفل الموعد موجودان في migration؛ واجهة demo تعمل." },
+  { phase: "2", title: "بوابة العميل", status: "جاهزة للعرض", progress: 82, detail: "حجز متعدد الخطوات، OTP تجريبي، ملف عميلة وولاء." },
+  { phase: "3", title: "لوحة الصالون + CRM", status: "جاهزة للعرض", progress: 84, detail: "تقويم، حجوزات، عملاء، خدمات، فريق، تقارير، واتساب." },
+  { phase: "4", title: "بوابة الموظفات", status: "MVP", progress: 62, detail: "جدول اليوم وتسجيل حضور وملاحظات الخدمة." },
+  { phase: "5", title: "واتساب والأتمتة", status: "ينتظر ربط حقيقي", progress: 55, detail: "القوالب والحملات موجودة؛ الإرسال يحتاج Meta." },
+  { phase: "6", title: "الولاء والهدايا والعروض", status: "جاهزة للعرض", progress: 76, detail: "نقاط، مستويات، كوبونات، بطاقات هدايا في المخطط." },
+  { phase: "7", title: "طبقة SaaS والدفع", status: "قيد التقوية", progress: 68, detail: "لوحة مالك المنصة، التجارب، الخطط، الفوترة، Subdomains." },
+];
+
+export const onboardingSteps = [
+  {
+    title: "هوية الصالون",
+    description: "الاسم، الشعار، المدينة، رابط الحجز، والألوان.",
+    fields: ["اسم الصالون", "اسم المالك", "البريد", "الجوال", "المدينة", "العنوان"],
+  },
+  {
+    title: "اختيار الخطة",
+    description: "أساسية أو احترافية أو متقدمة مع تجربة مجانية 14 يوم.",
+    fields: ["حد الموظفات", "حد الفروع", "ميزات الولاء", "الحملات", "الدومين الخاص"],
+  },
+  {
+    title: "الخدمات والموظفات",
+    description: "استيراد الخدمات، ربط الموظفات بالخدمات، وجدولة الدوام.",
+    fields: ["تصنيفات", "أسعار", "مدد", "عمولات", "إجازات"],
+  },
+  {
+    title: "الدفع والعربون",
+    description: "Moyasar أو Tap، طرق الدفع، العربون، وسياسة الإلغاء.",
+    fields: ["مدى", "Apple Pay", "دفع كامل", "عربون", "في الصالون"],
+  },
+  {
+    title: "واتساب والإشعارات",
+    description: "OTP، تأكيد الحجز، التذكيرات، الشكر، الاسترجاع، والحملات.",
+    fields: ["Phone Number ID", "Verify Token", "قوالب Meta", "موافقة تسويقية"],
+  },
+  {
+    title: "Subdomain والدومين",
+    description: "رابط salon-name.saloni.sa أو دومين خاص للخطة المتقدمة.",
+    fields: ["Slug", "Custom domain", "SSL", "Vercel rewrite"],
+  },
+];
+
 export const whatsappStatus = {
   mode: "demo",
   sender: "WhatsApp Business Cloud API",

@@ -6,26 +6,32 @@ import Link from "next/link";
 import {
   ArrowLeft,
   BarChart3,
+  Building2,
   CalendarDays,
   CheckCircle2,
   ChevronLeft,
   ClipboardList,
   Clock3,
+  CreditCard,
   Crown,
+  Database,
   Gauge,
   Gem,
   Gift,
+  Globe2,
   LayoutDashboard,
   LogIn,
   MessageCircle,
   Plus,
   ReceiptText,
+  Rocket,
   Search,
   Send,
   Settings,
   ShieldCheck,
   Sparkles,
   Tags,
+  UserPlus,
   UserRound,
   UsersRound,
   type LucideIcon,
@@ -38,13 +44,19 @@ import {
   customers,
   dashboardStats,
   demoOwner,
+  implementationPhases,
+  integrationChecks,
   loyaltyRows,
+  onboardingSteps,
   pageMeta,
+  platformMetrics,
+  platformTenants,
   reportMetrics,
   salon,
   services,
   settingsGroups,
   staffMembers,
+  subscriptionPlans,
   timeSlots,
   weeklyRevenue,
   whatsappStatus,
@@ -382,6 +394,90 @@ export function PublicHome() {
           </Panel>
         </div>
       </section>
+
+      <section className="border-y border-[#eadfdd] bg-white">
+        <div className="mx-auto grid max-w-7xl gap-4 px-4 py-7 sm:px-6 md:grid-cols-4">
+          {platformMetrics.map((metric) => (
+            <div key={metric.label} className="rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4">
+              <p className="text-sm font-semibold text-[#7f7482]">{metric.label}</p>
+              <p className="mt-3 text-2xl font-semibold">{metric.value}</p>
+              <p className="mt-1 text-xs font-semibold text-[#8f6b67]">{metric.note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <h2 className="text-2xl font-semibold sm:text-3xl">منصة SaaS كاملة، وليست صفحة حجز فقط.</h2>
+          <p className="mt-3 max-w-xl text-sm leading-7 text-[#6f6571]">
+            الخطة المرفقة تحولت إلى أربع واجهات قابلة للتجربة: مالك المنصة، إدارة الصالون، بوابة العميل، وبوابة الموظفة؛ مع قاعدة بيانات متعددة المستأجرين وخطوات ربط واضحة.
+          </p>
+          <div className="mt-5 grid gap-3">
+            {[
+              { title: "عزل بيانات كل صالون", icon: Database },
+              { title: "Subdomain أو دومين خاص", icon: Globe2 },
+              { title: "اشتراكات شهرية وتجربة 14 يوم", icon: CreditCard },
+              { title: "واتساب وحملات وOTP", icon: MessageCircle },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="flex items-center gap-3 rounded-lg border border-[#eadfdd] bg-white p-4">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#211829] text-[#f5c8bf]">
+                    <Icon size={19} />
+                  </span>
+                  <strong>{item.title}</strong>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {subscriptionPlans.map((plan) => (
+            <Panel key={plan.slug} className={cx("p-5", plan.slug === "professional" && "border-[#d88782] shadow-[0_22px_70px_rgba(216,135,130,0.16)]")}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-[#b87776]">{plan.bestFor}</p>
+                  <h3 className="mt-2 text-2xl font-semibold">{plan.name}</h3>
+                </div>
+                {plan.slug === "professional" && <StatusPill status="الأفضل للانطلاق" />}
+              </div>
+              <p className="mt-5 text-3xl font-semibold">{plan.price} <span className="text-sm text-[#7f7482]">ر.س / شهر</span></p>
+              <p className="mt-2 text-sm text-[#7f7482]">{plan.trial}</p>
+              <div className="mt-5 grid gap-2 text-sm">
+                <MiniStat label="الموظفات" value={plan.staffLimit} />
+                <MiniStat label="الفروع" value={plan.branchLimit} />
+              </div>
+              <ul className="mt-5 space-y-2 text-sm text-[#5f5363]">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-center gap-2">
+                    <CheckCircle2 size={16} className="text-[#17733a]" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
+        <Panel title="خريطة التنفيذ حسب البرومبت">
+          <div className="grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-4">
+            {implementationPhases.map((phase) => (
+              <div key={phase.phase} className="rounded-lg border border-[#eadfdd] p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#211829] text-sm font-semibold text-white">{phase.phase}</span>
+                  <StatusPill status={phase.status} />
+                </div>
+                <h3 className="mt-4 font-semibold">{phase.title}</h3>
+                <p className="mt-2 min-h-12 text-sm leading-6 text-[#6f6571]">{phase.detail}</p>
+                <div className="mt-4"><ProgressBar value={phase.progress} tone="bg-[#b87776]" /></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </section>
     </main>
   );
 }
@@ -451,7 +547,7 @@ export function ClientExperience() {
         <div className="grid gap-5">
           <Panel className="overflow-hidden">
             <div className="border-b border-[#eadfdd] bg-[#211829] p-5 text-white">
-              <p className="text-sm font-semibold text-[#f5c8bf]">{salon.arabicName} - {salon.district}</p>
+              <p className="text-sm font-semibold text-[#f5c8bf]">بوابة العميل | {salon.arabicName} - {salon.district}</p>
               <h1 className="mt-2 text-2xl font-semibold sm:text-4xl">احجزي موعدك وتابعي رصيد الولاء من نفس الصفحة.</h1>
               <div className="mt-5 grid gap-2 sm:grid-cols-4">
                 {["الخدمة", "الموظفة", "التاريخ والوقت", "التأكيد"].map((step, index) => (
@@ -630,7 +726,7 @@ export function ClientExperience() {
             </div>
             <div className="mt-5 grid gap-3">
               <div className="rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4">
-                <p className="text-sm text-[#7f7482]">الموعد القادم</p>
+                <p className="text-sm text-[#7f7482]">الحجوزات القادمة</p>
                 <p className="mt-2 font-semibold">{selectedService.name}</p>
                 <p className="mt-1 text-sm text-[#7f7482]">{dateOptions[dateIndex]} - {slot}</p>
               </div>
@@ -859,7 +955,7 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
           <div className="px-4 py-5 sm:px-6 lg:px-8">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold text-[#b87776]">{managerMode ? "صفحة المدير" : "مركز التشغيل"}</p>
+                <p className="text-sm font-semibold text-[#b87776]">{managerMode ? "لوحة المدير" : "مركز التشغيل"}</p>
                 <h1 className="mt-1 text-2xl font-semibold sm:text-4xl">{meta.title}</h1>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[#7f7482]">{meta.description}</p>
               </div>
@@ -1562,36 +1658,182 @@ export function LoginExperience() {
 
 export function RegisterExperience() {
   const [created, setCreated] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [selectedPlanSlug, setSelectedPlanSlug] = useState("professional");
+  const [form, setForm] = useState({
+    salonName: "صالون لمسة علي",
+    ownerName: demoOwner.name,
+    email: demoOwner.email,
+    phone: "+966 5X XXX XXXX",
+    city: "الرياض",
+    slug: "lamset-ali",
+  });
+
+  const selectedPlan = subscriptionPlans.find((plan) => plan.slug === selectedPlanSlug) ?? subscriptionPlans[1];
+  const readiness = created ? 100 : Math.round(((activeStep + 1) / onboardingSteps.length) * 100);
+
+  function updateField(key: keyof typeof form, value: string) {
+    setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function nextStep() {
+    setActiveStep((current) => Math.min(current + 1, onboardingSteps.length - 1));
+  }
 
   return (
-    <main dir="rtl" className="grid min-h-screen place-items-center bg-[#f8f5f3] px-4 py-8 text-[#211829]">
-      <Panel className="w-full max-w-2xl p-6">
-        <BrandMark />
-        <h1 className="mt-6 text-3xl font-semibold">إنشاء صالون جديد</h1>
-        <p className="mt-2 text-sm text-[#7f7482]">نموذج تجريبي يوضح رحلة التهيئة للمالك قبل ربط Supabase وWhatsApp وميسر.</p>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {["بيانات الصالون", "الخدمات والطاقم", "الدفع والعربون", "واتساب والإشعارات"].map((step, index) => (
-            <div key={step} className="rounded-lg border border-[#eadfdd] bg-white p-4">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#211829] text-sm font-semibold text-white">{index + 1}</span>
-              <p className="mt-3 font-semibold">{step}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6">
-          <ActionButton icon={CheckCircle2} variant="dark" onClick={() => setCreated(true)}>
-            إنشاء نسخة تجريبية
-          </ActionButton>
-        </div>
-        {created && (
-          <div className="mt-5 rounded-lg border border-[#cfe5d2] bg-[#edf8ef] p-4 text-sm font-semibold text-[#17733a]">
-            تم إنشاء النسخة التجريبية. يمكنك فتح لوحة التحكم الآن.
+    <main dir="rtl" className="min-h-screen bg-[#f8f5f3] px-4 py-6 text-[#211829] sm:px-6">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <BrandMark />
+          <div className="flex gap-2">
+            <AppLink href="/admin" className="rounded-lg border border-[#eadfdd] bg-white px-4 py-2 text-sm font-semibold">إدارة المنصة</AppLink>
+            <AppLink href="/auth/login" className="rounded-lg bg-[#211829] px-4 py-2 text-sm font-semibold text-white">تسجيل الدخول</AppLink>
           </div>
-        )}
-        <div className="mt-5 flex flex-wrap gap-2">
-          <AppLink href="/dashboard" className="rounded-lg bg-[#211829] px-4 py-2 text-sm font-semibold text-white">لوحة التحكم</AppLink>
-          <AppLink href="/auth/login" className="rounded-lg border border-[#eadfdd] px-4 py-2 text-sm font-semibold">تسجيل الدخول</AppLink>
-        </div>
-      </Panel>
+        </header>
+
+        <section className="grid gap-5 lg:grid-cols-[360px_1fr]">
+          <Panel className="p-5">
+            <p className="text-sm font-semibold text-[#b87776]">تجربة مجانية 14 يوم</p>
+            <h1 className="mt-2 text-3xl font-semibold">إنشاء صالون جديد</h1>
+            <p className="mt-3 text-sm leading-7 text-[#6f6571]">
+              هذه رحلة التهيئة التي يحتاجها أي صالون قبل تشغيل الحجز، CRM، الدفع، الواتساب، والرابط الخاص.
+            </p>
+
+            <div className="mt-6">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-semibold">جاهزية التهيئة</span>
+                <strong>{readiness}%</strong>
+              </div>
+              <div className="mt-2"><ProgressBar value={readiness} tone="bg-[#8f9d84]" /></div>
+            </div>
+
+            <div className="mt-6 grid gap-2">
+              {onboardingSteps.map((step, index) => (
+                <button
+                  key={step.title}
+                  type="button"
+                  onClick={() => setActiveStep(index)}
+                  className={cx(
+                    "rounded-lg border p-3 text-right transition",
+                    activeStep === index ? "border-[#211829] bg-[#211829] text-white" : "border-[#eadfdd] bg-white text-[#211829] hover:border-[#d8c7c3]",
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={cx("flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold", activeStep === index ? "bg-white text-[#211829]" : "bg-[#fbf7f6] text-[#6f6571]")}>{index + 1}</span>
+                    <span>
+                      <span className="block font-semibold">{step.title}</span>
+                      <span className={cx("text-xs", activeStep === index ? "text-white/70" : "text-[#7f7482]")}>{step.description}</span>
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </Panel>
+
+          <div className="grid gap-5">
+            <Panel className="p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-semibold">{onboardingSteps[activeStep].title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-[#6f6571]">{onboardingSteps[activeStep].description}</p>
+                </div>
+                <StatusPill status={created ? "تم إنشاء الصالون" : "قيد التهيئة"} />
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                {[
+                  ["salonName", "اسم الصالون"],
+                  ["ownerName", "اسم المالك"],
+                  ["email", "البريد الإلكتروني"],
+                  ["phone", "رقم الجوال"],
+                  ["city", "المدينة"],
+                  ["slug", "رابط الصالون"],
+                ].map(([key, label]) => (
+                  <label key={key} className="grid gap-2 text-sm font-semibold">
+                    {label}
+                    <input
+                      dir={key === "email" || key === "slug" || key === "phone" ? "ltr" : "rtl"}
+                      value={form[key as keyof typeof form]}
+                      onChange={(event) => updateField(key as keyof typeof form, event.target.value)}
+                      className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 outline-none focus:border-[#d88782]"
+                    />
+                  </label>
+                ))}
+              </div>
+
+              <div className="mt-6 grid gap-3 md:grid-cols-3">
+                {subscriptionPlans.map((plan) => (
+                  <button
+                    key={plan.slug}
+                    type="button"
+                    onClick={() => setSelectedPlanSlug(plan.slug)}
+                    className={cx("rounded-lg border p-4 text-right transition", selectedPlanSlug === plan.slug ? "border-[#d88782] bg-[#fff7f6]" : "border-[#eadfdd] bg-white hover:border-[#d8c7c3]")}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <strong>{plan.name}</strong>
+                      {selectedPlanSlug === plan.slug && <CheckCircle2 size={18} className="text-[#d88782]" />}
+                    </div>
+                    <p className="mt-3 text-2xl font-semibold">{plan.price} <span className="text-xs text-[#7f7482]">ر.س / شهر</span></p>
+                    <p className="mt-2 text-xs leading-5 text-[#6f6571]">{plan.bestFor}</p>
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4">
+                <p className="font-semibold">حقول هذه المرحلة</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {onboardingSteps[activeStep].fields.map((field) => (
+                    <span key={field} className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#6f6571]">{field}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                <ActionButton icon={Rocket} variant="dark" onClick={activeStep === onboardingSteps.length - 1 ? () => setCreated(true) : nextStep}>
+                  {activeStep === onboardingSteps.length - 1 ? "إنشاء النسخة التجريبية" : "حفظ والمتابعة"}
+                </ActionButton>
+                <ActionButton icon={CheckCircle2} variant="green" onClick={() => setCreated(true)}>
+                  إنشاء سريع للتجربة
+                </ActionButton>
+              </div>
+            </Panel>
+
+            <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+              <Panel title="معاينة الاشتراك">
+                <div className="grid gap-4 p-5 md:grid-cols-3">
+                  <MiniStat label="الخطة" value={selectedPlan.name} />
+                  <MiniStat label="السعر الشهري" value={`${selectedPlan.price} ر.س`} />
+                  <MiniStat label="التجربة" value={selectedPlan.trial} />
+                  <MiniStat label="الموظفات" value={selectedPlan.staffLimit} />
+                  <MiniStat label="الفروع" value={selectedPlan.branchLimit} />
+                  <MiniStat label="الرابط" value={`${form.slug || "salon"}.saloni.sa`} />
+                </div>
+              </Panel>
+
+              <Panel title="حالة الإنشاء">
+                <div className="grid gap-3 p-5">
+                  {[
+                    created ? "تم تجهيز Tenant + Trial" : "بانتظار إنشاء Tenant",
+                    "RLS يعتمد tenant_id",
+                    "WhatsApp يحتاج مفاتيح Meta",
+                    "Moyasar/Tap يحتاج مفاتيح إنتاج",
+                  ].map((item, index) => (
+                    <div key={item} className="flex items-center justify-between rounded-lg border border-[#eadfdd] bg-white p-3 text-sm">
+                      <span className="font-semibold">{item}</span>
+                      {index === 0 && created ? <CheckCircle2 size={18} className="text-[#17733a]" /> : <ShieldCheck size={18} className="text-[#8f9d84]" />}
+                    </div>
+                  ))}
+                  {created && (
+                    <AppLink href="/dashboard" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+                      فتح لوحة الصالون
+                    </AppLink>
+                  )}
+                </div>
+              </Panel>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
@@ -1606,12 +1848,13 @@ export function StaffExperience() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <BrandMark />
           <AppLink href="/dashboard/staff" className="rounded-lg bg-[#211829] px-4 py-2 text-sm font-semibold text-white">
-            إدارة الفريق
+            بوابة الموظفة
           </AppLink>
         </div>
       </header>
       <section className="mx-auto grid max-w-6xl gap-5 px-4 py-6 sm:px-6 lg:grid-cols-[340px_1fr]">
         <Panel className="p-5">
+          <p className="text-sm font-semibold text-[#b87776]">بوابة الموظفة</p>
           <Avatar initials="ن" />
           <h1 className="mt-4 text-2xl font-semibold">نورة العتيبي</h1>
           <p className="mt-1 text-sm text-[#7f7482]">خبيرة شعر - جدول اليوم</p>
@@ -1643,11 +1886,7 @@ export function StaffExperience() {
 }
 
 export function AdminExperience() {
-  const tenantRows = [
-    { name: "صالوني برو - الرياض", plan: "Premium", status: "نشط", users: 18, health: 98 },
-    { name: "فرع جدة التجريبي", plan: "Growth", status: "تهيئة", users: 6, health: 74 },
-    { name: "فرع الخبر", plan: "Starter", status: "مراجعة", users: 3, health: 61 },
-  ];
+  const [actionLog, setActionLog] = useState("جاهز: راقب الاشتراكات والتجارب والربط من لوحة مالك المنصة.");
 
   return (
     <main dir="rtl" className="min-h-screen bg-[#f8f5f3] text-[#211829]">
@@ -1660,35 +1899,139 @@ export function AdminExperience() {
         </div>
       </header>
       <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        <div className="mb-5">
-          <p className="text-sm font-semibold text-[#b87776]">إدارة المنصة</p>
-          <h1 className="mt-1 text-3xl font-semibold">مراقبة الفروع والربط والجاهزية</h1>
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-[#b87776]">لوحة مالك المنصة</p>
+            <h1 className="mt-1 text-3xl font-semibold">إدارة الصالونات، الاشتراكات، والجاهزية</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6f6571]">
+              هذه هي طبقة SaaS العليا: تتابع الصالونات، التجارب المجانية، حدود الخطط، حالة الربط، ومراحل المنتج قبل البيع الفعلي.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <AppLink href="/auth/register" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+              <UserPlus size={17} />
+              إضافة صالون
+            </AppLink>
+            <ActionButton icon={ReceiptText} variant="light" onClick={() => setActionLog("تم تجهيز تقرير الاشتراكات الشهري للتصدير.")}>
+              تقرير الاشتراكات
+            </ActionButton>
+          </div>
         </div>
-        <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
-          <Panel title="الفروع">
+
+        <div className="mb-5 rounded-lg border border-[#eadfdd] bg-white px-4 py-3 text-sm text-[#5f5363]">
+          <span className="font-semibold text-[#211829]">آخر إجراء:</span> {actionLog}
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {platformMetrics.map((metric, index) => (
+            <MetricCard
+              key={metric.label}
+              label={metric.label}
+              value={metric.value}
+              note={metric.note}
+              icon={[Building2, Gift, ReceiptText, ShieldCheck][index] ?? BarChart3}
+            />
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_380px]">
+          <Panel title="الصالونات المشتركة" action={<ActionButton icon={Building2} variant="outline" onClick={() => setActionLog("تم تطبيق فلتر الصالونات التي تحتاج متابعة.")}>تحتاج متابعة</ActionButton>}>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[900px] border-collapse text-sm">
+                <thead>
+                  <tr className="border-b border-[#eadfdd] bg-[#fbf7f6] text-[#7f7482]">
+                    {["الصالون", "الخطة", "الحالة", "التجربة/الدفع", "MRR", "الرابط", "الجاهزية", "إجراء"].map((head) => (
+                      <th key={head} className="px-4 py-3 text-right font-semibold">{head}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {platformTenants.map((tenant) => (
+                    <tr key={tenant.subdomain} className="border-b border-[#f0e7e4]">
+                      <td className="px-4 py-4">
+                        <p className="font-semibold">{tenant.name}</p>
+                        <p className="mt-1 text-xs text-[#7f7482]">المالك: {tenant.owner}</p>
+                      </td>
+                      <td className="px-4 py-4">{tenant.plan}</td>
+                      <td className="px-4 py-4"><StatusPill status={tenant.status} /></td>
+                      <td className="px-4 py-4">{tenant.trial}</td>
+                      <td className="px-4 py-4 font-semibold">{tenant.mrr}</td>
+                      <td className="px-4 py-4" dir="ltr">{tenant.subdomain}</td>
+                      <td className="px-4 py-4">
+                        <div className="min-w-28">
+                          <div className="mb-2 flex justify-between text-xs"><span>جاهزية</span><strong>{tenant.readiness}%</strong></div>
+                          <ProgressBar value={tenant.readiness} tone={tenant.readiness > 80 ? "bg-[#8f9d84]" : "bg-[#d88782]"} />
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <button
+                          type="button"
+                          onClick={() => setActionLog(`تم فتح ملف ${tenant.name}. الملاحظة: ${tenant.issues}.`)}
+                          className="rounded-md border border-[#eadfdd] px-3 py-1.5 text-xs font-semibold"
+                        >
+                          فتح الملف
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Panel>
+
+          <Panel title="صحة الربط">
             <div className="grid gap-3 p-5">
-              {tenantRows.map((tenant) => (
-                <div key={tenant.name} className="grid gap-3 rounded-lg border border-[#eadfdd] p-4 md:grid-cols-[1fr_120px_120px_160px]">
-                  <div>
-                    <p className="font-semibold">{tenant.name}</p>
-                    <p className="mt-1 text-sm text-[#7f7482]">{tenant.users} مستخدم</p>
+              {integrationChecks.map((check) => (
+                <div key={check.name} className="rounded-lg border border-[#eadfdd] bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold">{check.name}</p>
+                      <p className="mt-1 text-xs leading-5 text-[#7f7482]">{check.note}</p>
+                    </div>
+                    <StatusPill status={check.status} />
                   </div>
-                  <MiniStat label="الخطة" value={tenant.plan} />
-                  <MiniStat label="الحالة" value={tenant.status} />
-                  <div>
-                    <div className="flex justify-between text-sm"><span>الصحة</span><strong>{tenant.health}%</strong></div>
-                    <div className="mt-2"><ProgressBar value={tenant.health} tone="bg-[#8f9d84]" /></div>
+                  <div className="mt-3"><ProgressBar value={check.value} tone={check.value > 80 ? "bg-[#8f9d84]" : "bg-[#d88782]"} /></div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
+          <Panel title="خطط الاشتراك وحدود الميزات">
+            <div className="grid gap-4 p-5 md:grid-cols-3">
+              {subscriptionPlans.map((plan) => (
+                <div key={plan.slug} className="rounded-lg border border-[#eadfdd] bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h2 className="text-xl font-semibold">{plan.name}</h2>
+                      <p className="mt-1 text-xs leading-5 text-[#7f7482]">{plan.bestFor}</p>
+                    </div>
+                    <CreditCard size={19} className="text-[#b87776]" />
+                  </div>
+                  <p className="mt-4 text-2xl font-semibold">{plan.price} <span className="text-xs text-[#7f7482]">ر.س</span></p>
+                  <div className="mt-4 grid gap-2 text-xs">
+                    <MiniStat label="الموظفات" value={plan.staffLimit} />
+                    <MiniStat label="الفروع" value={plan.branchLimit} />
                   </div>
                 </div>
               ))}
             </div>
           </Panel>
-          <Panel title="بيئة التشغيل">
-            <div className="grid gap-3 p-5">
-              {["Supabase متصل تجريبيا", "Netlify Production", "WhatsApp يحتاج مفاتيح", "Moyasar جاهز للتهيئة"].map((item) => (
-                <div key={item} className="flex items-center justify-between rounded-lg border border-[#eadfdd] p-4">
-                  <span className="font-semibold">{item}</span>
-                  <ShieldCheck className="text-[#8f9d84]" size={18} />
+
+          <Panel title="مراحل المنتج">
+            <div className="grid gap-3 p-5 md:grid-cols-2">
+              {implementationPhases.map((phase) => (
+                <div key={phase.phase} className="rounded-lg border border-[#eadfdd] bg-white p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#211829] text-xs font-semibold text-white">{phase.phase}</span>
+                      <strong>{phase.title}</strong>
+                    </div>
+                    <StatusPill status={phase.status} />
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-[#6f6571]">{phase.detail}</p>
+                  <div className="mt-3"><ProgressBar value={phase.progress} tone="bg-[#b87776]" /></div>
                 </div>
               ))}
             </div>
