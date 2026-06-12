@@ -262,13 +262,13 @@ function AppLink({
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#211829] text-[#f5c8bf] shadow-sm">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#211d24] text-[#f3c7ce] shadow-[0_14px_34px_rgba(33,29,36,0.16)]">
         <Crown size={21} strokeWidth={1.8} />
       </div>
       {!compact && (
         <div>
-          <p className="text-lg font-semibold leading-6 text-[#211829]">Saloni Pro</p>
-          <p className="text-xs font-medium text-[#7f7482]">منصة تشغيل الصالونات</p>
+          <p className="text-lg font-semibold leading-6 text-[#211d24]">Saloni Pro</p>
+          <p className="text-xs font-medium text-[#6f6871]">منصة تشغيل الصالونات</p>
         </div>
       )}
     </div>
@@ -287,10 +287,10 @@ function Panel({
   action?: ReactNode;
 }) {
   return (
-    <section className={cx("rounded-lg border border-[#eadfdd] bg-white shadow-[0_18px_60px_rgba(33,24,41,0.06)]", className)}>
+    <section className={cx("saloni-panel overflow-hidden rounded-xl", className)}>
       {(title || action) && (
-        <div className="flex items-center justify-between gap-4 border-b border-[#f0e7e4] px-5 py-4">
-      {title && <h2 className="text-base font-semibold text-[#211829]">{title}</h2>}
+        <div className="saloni-panel-header flex items-center justify-between gap-4 px-5 py-4">
+          {title && <h2 className="text-base font-semibold text-[#211d24]">{title}</h2>}
           {action}
         </div>
       )}
@@ -315,11 +315,11 @@ function ActionButton({
   disabled?: boolean;
 }) {
   const variants = {
-    dark: "border-[#211829] bg-[#211829] text-white hover:bg-[#33263f]",
-    light: "border-[#eadfdd] bg-white text-[#211829] hover:bg-[#fbf6f5]",
-    outline: "border-[#d8c7c3] bg-transparent text-[#211829] hover:bg-white",
-    green: "border-[#cfe5d2] bg-[#edf8ef] text-[#167339] hover:bg-[#e2f3e5]",
-    danger: "border-[#f2c9c5] bg-[#fff2f1] text-[#b93f34] hover:bg-[#ffe8e6]",
+    dark: "border-[#211d24] bg-[#211d24] text-white hover:bg-[#312b34]",
+    light: "border-[#e8e1dc] bg-white text-[#211d24] hover:bg-[#fbf8f6]",
+    outline: "border-[#ded6d1] bg-white/55 text-[#211d24] hover:bg-white",
+    green: "border-[#cfe4d6] bg-[#eef8f1] text-[#176f3e] hover:bg-[#e2f1e7]",
+    danger: "border-[#f1c7cc] bg-[#fff2f4] text-[#b2384a] hover:bg-[#ffe8ec]",
   };
 
   return (
@@ -328,7 +328,7 @@ function ActionButton({
       onClick={onClick}
       disabled={disabled}
       className={cx(
-        "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#d88782]/30",
+        "saloni-button inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#c44f64]/25",
         variants[variant],
         disabled && "cursor-not-allowed opacity-50",
       )}
@@ -363,22 +363,22 @@ function ProgressBar({ value, tone = "bg-[#d88782]" }: { value: number; tone?: s
 
 function MetricCard({ label, value, note, icon: Icon }: { label: string; value: string; note: string; icon: LucideIcon }) {
   return (
-    <div className="rounded-lg border border-[#eadfdd] bg-white p-4 shadow-sm">
+    <div className="saloni-panel rounded-xl p-4">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-medium text-[#7f7482]">{label}</p>
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#fbf2f1] text-[#b87776]">
+        <p className="text-sm font-medium text-[#6f6871]">{label}</p>
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#f8e8eb] text-[#b9465a]">
           <Icon size={17} />
         </span>
       </div>
-      <p className="mt-4 text-2xl font800 font-semibold text-[#211829]">{value}</p>
-      <p className="mt-1 text-xs font-semibold text-[#36854c]">{note}</p>
+      <p className="mt-4 text-2xl font-semibold text-[#211d24]">{value}</p>
+      <p className="mt-1 text-xs font-semibold text-[#24784a]">{note}</p>
     </div>
   );
 }
 
 function Avatar({ initials }: { initials: string }) {
   return (
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#211829] text-sm font-semibold text-[#f5c8bf]">
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#211d24] text-sm font-semibold text-[#f4c9d0] shadow-[0_10px_24px_rgba(33,29,36,0.12)]">
       {initials}
     </span>
   );
@@ -398,46 +398,46 @@ function OperationsMetricCard({
   icon: LucideIcon;
 }) {
   return (
-    <div className="rounded-lg border border-[#e6ddda] bg-white px-4 py-3 shadow-[0_12px_35px_rgba(38,29,44,0.04)]">
+    <div className="saloni-panel rounded-xl px-4 py-3">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold text-[#7c727c]">{label}</p>
-        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#f8eeee] text-[#ad5f62]">
+        <p className="text-xs font-semibold text-[#726b73]">{label}</p>
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f8e8eb] text-[#b9465a]">
           <Icon size={16} />
         </span>
       </div>
       <div className="mt-3 flex items-end gap-1">
-        <strong className="font-mono text-2xl font-semibold tracking-normal text-[#1d1723]">{value}</strong>
+        <strong className="font-mono text-2xl font-semibold tracking-normal text-[#211d24]">{value}</strong>
         {suffix && <span className="pb-1 text-xs font-semibold text-[#675d68]">{suffix}</span>}
       </div>
-      <p className="mt-1 text-xs font-semibold text-[#247b50]">{note}</p>
+      <p className="mt-1 text-xs font-semibold text-[#24784a]">{note}</p>
     </div>
   );
 }
 
 function OperationsCalendarBoard({ onSelect }: { onSelect?: (message: string) => void }) {
-  const hours = ["09:00", "10:00", "11:30", "13:00", "14:30", "16:00", "17:30", "19:00"];
-  const staff = staffMembers.slice(0, 5);
+  const hours = ["09:00", "10:30", "12:00", "13:30", "15:00", "17:00"];
+  const staff = staffMembers.slice(0, 4);
 
   return (
     <Panel
       title="تقويم اليوم"
       action={
         <div className="flex items-center gap-2 text-xs font-semibold text-[#6f6571]">
-          <button type="button" className="rounded-md border border-[#e6ddda] bg-white px-2.5 py-1.5">
+          <button type="button" className="saloni-button rounded-lg border border-[#e8e1dc] bg-[#211d24] px-3 py-1.5 text-white">
             يوم
           </button>
-          <button type="button" className="rounded-md px-2.5 py-1.5 text-[#8a7f88]">
+          <button type="button" className="rounded-lg px-3 py-1.5 text-[#817982] transition hover:bg-white">
             أسبوع
           </button>
         </div>
       }
     >
       <div className="overflow-x-auto p-4">
-        <div className="min-w-[820px] rounded-lg border border-[#e8dfdc] bg-white">
-          <div className="grid grid-cols-[76px_repeat(5,minmax(128px,1fr))] border-b border-[#e8dfdc] bg-[#fbf8f6]">
+        <div className="saloni-soft-grid min-w-[760px] overflow-hidden rounded-xl border border-[#e8e1dc] bg-white/86">
+          <div className="grid grid-cols-[68px_repeat(4,minmax(132px,1fr))] border-b border-[#e8e1dc] bg-white/86">
             <div className="px-3 py-3 text-xs font-semibold text-[#7c727c]">الوقت</div>
             {staff.map((member) => (
-              <div key={member.id} className="border-r border-[#e8dfdc] px-3 py-3">
+              <div key={member.id} className="border-r border-[#eee8e4] px-3 py-3">
                 <div className="flex items-center gap-2">
                   <Avatar initials={member.initials} />
                   <div className="min-w-0">
@@ -450,24 +450,24 @@ function OperationsCalendarBoard({ onSelect }: { onSelect?: (message: string) =>
             ))}
           </div>
           {hours.map((hour, hourIndex) => (
-            <div key={hour} className="grid grid-cols-[76px_repeat(5,minmax(128px,1fr))] border-b border-[#f0e8e5] last:border-b-0">
+            <div key={hour} className="grid grid-cols-[68px_repeat(4,minmax(132px,1fr))] border-b border-[#f0eae6] last:border-b-0">
               <div className="px-3 py-3 font-mono text-xs text-[#7c727c]">{hour}</div>
               {staff.map((member, staffIndex) => {
                 const booking = bookings[(hourIndex + staffIndex) % bookings.length];
                 const booked = (hourIndex + staffIndex) % 3 !== 1;
                 const blocked = (hourIndex + staffIndex) % 7 === 0;
                 return (
-                  <div key={`${hour}-${member.id}`} className="min-h-[74px] border-r border-[#f0e8e5] p-2">
+                  <div key={`${hour}-${member.id}`} className="min-h-[74px] border-r border-[#f0eae6] p-2">
                     <button
                       type="button"
                       onClick={() => onSelect?.(booked ? `تم اختيار موعد ${booking.client} مع ${member.name} الساعة ${hour}.` : `تم اختيار خانة متاحة مع ${member.name} الساعة ${hour}.`)}
                       className={cx(
-                        "h-full min-h-[58px] w-full rounded-md border px-3 py-2 text-right text-xs transition hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0",
+                        "h-full min-h-[56px] w-full rounded-lg border px-3 py-2 text-right text-xs transition hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(37,32,41,0.08)] active:translate-y-0",
                         booked
                           ? blocked
-                            ? "border-[#ead0b3] bg-[#fff8ed] text-[#6f4d20]"
-                            : "border-[#efcaca] bg-[#fff1f1] text-[#7b3f44]"
-                          : "border-[#dbe7df] bg-[#f3faf5] text-[#50725d]",
+                            ? "border-[#eadbc5] bg-[#fff9ef] text-[#6f4d20]"
+                            : "border-[#f0cbd1] bg-[#fff3f5] text-[#793645]"
+                          : "border-[#dce8df] bg-[#f4faf6] text-[#4f725d]",
                       )}
                     >
                       <span className="block font-semibold">{booked ? booking.client : "متاح"}</span>
@@ -602,11 +602,11 @@ export function PublicHome() {
   const [selectedLayer, setSelectedLayer] = useState("الصالون");
 
   return (
-    <main dir="rtl" className="min-h-screen overflow-x-hidden bg-[#f6f3f1] text-[#1d1723]">
-      <header className="sticky top-0 z-30 border-b border-[#e6ddda] bg-[#fbfaf8]/94 backdrop-blur">
+    <main dir="rtl" className="saloni-page min-h-screen overflow-x-hidden text-[#211d24]">
+      <header className="sticky top-0 z-30 border-b border-[#e8e1dc] bg-[#fdfcfb]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <BrandMark />
-          <nav className="hidden items-center rounded-lg border border-[#e6ddda] bg-white p-1 text-sm font-semibold md:flex">
+          <nav className="hidden items-center rounded-xl border border-[#e8e1dc] bg-white/84 p-1 text-sm font-semibold shadow-[0_16px_44px_rgba(37,32,41,0.045)] md:flex">
             {[
               ["المنصة", "/admin"],
               ["الصالون", "/dashboard"],
@@ -617,8 +617,8 @@ export function PublicHome() {
                 key={label}
                 href={href}
                 className={cx(
-                  "rounded-md px-3 py-2 transition",
-                  selectedLayer === label ? "bg-[#211829] text-white" : "text-[#5f5363] hover:bg-[#f6f3f1]",
+                  "rounded-lg px-3 py-2 transition",
+                  selectedLayer === label ? "bg-[#211d24] text-white shadow-sm" : "text-[#5f5363] hover:bg-[#f7f3f0]",
                 )}
               >
                 {label}
@@ -632,11 +632,11 @@ export function PublicHome() {
                 platform.resetDemo();
                 setSelectedLayer("الصالون");
               }}
-              className="hidden rounded-lg border border-[#e6ddda] bg-white px-3 py-2 text-sm font-semibold text-[#5f5363] sm:inline-flex"
+              className="saloni-button hidden rounded-xl border border-[#e8e1dc] bg-white px-3 py-2 text-sm font-semibold text-[#5f5363] sm:inline-flex"
             >
               إعادة بيانات التجربة
             </button>
-            <AppLink href="/auth/login" className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+            <AppLink href="/auth/login" className="saloni-button inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#211d24] px-4 text-sm font-semibold text-white">
               دخول علي
               <LogIn size={16} />
             </AppLink>
@@ -644,13 +644,13 @@ export function PublicHome() {
         </div>
       </header>
 
-      <section className="mx-auto grid max-w-[1500px] gap-5 px-4 py-5 sm:px-6 xl:grid-cols-[250px_minmax(0,1fr)_340px]">
+      <section className="mx-auto grid max-w-[1500px] gap-5 px-4 py-5 sm:px-6 xl:grid-cols-[260px_minmax(0,1fr)_330px]">
         <aside className="grid gap-4 xl:sticky xl:top-20 xl:self-start">
           <Panel className="p-5">
-            <p className="text-sm font-semibold text-[#b36a68]">الطبقات المتكاملة</p>
-            <h1 className="mt-2 text-2xl font-semibold leading-tight">نظام صالونات يعمل كمنتج واحد.</h1>
+            <p className="text-sm font-semibold text-[#b9465a]">طبقة تشغيل موحدة</p>
+            <h1 className="mt-2 text-2xl font-semibold leading-tight text-balance">صالون، عميل، فريق، ورسائل في تدفق واحد.</h1>
             <p className="mt-3 text-sm leading-7 text-[#675d68]">
-              الحجز، العميل، الموظفة، واتساب، العربون، والولاء مترابطة في تجربة واحدة قابلة للاختبار.
+              تجربة مصممة لتقليل الفوضى اليومية: حجز واضح، متابعة دفع، ملف عميل، وتنبيهات قابلة للتجربة.
             </p>
             <div className="mt-5 grid gap-2">
               {[
@@ -664,7 +664,7 @@ export function PublicHome() {
                   <AppLink
                     key={item.label}
                     href={item.href}
-                    className="flex min-h-11 items-center justify-between rounded-lg border border-[#e6ddda] bg-white px-3 text-sm font-semibold text-[#211829] transition hover:border-[#d6c7c3]"
+                    className="saloni-button flex min-h-11 items-center justify-between rounded-xl border border-[#e8e1dc] bg-white/86 px-3 text-sm font-semibold text-[#211d24]"
                   >
                     <span className="flex items-center gap-2"><Icon size={16} />{item.label}</span>
                     <ArrowLeft size={15} />
@@ -686,23 +686,25 @@ export function PublicHome() {
         </aside>
 
         <section className="min-w-0">
-          <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+          <div className="mb-5 rounded-xl border border-[#e8e1dc] bg-white/62 p-5 shadow-[0_18px_55px_rgba(37,32,41,0.045)] backdrop-blur-xl">
+            <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-[#b36a68]">مركز العمليات</p>
-              <h2 className="mt-1 text-3xl font-semibold leading-tight sm:text-4xl">رزنامة اليوم، المدفوعات، العملاء، والرسائل في شاشة واحدة.</h2>
+              <p className="text-sm font-semibold text-[#b9465a]">مركز العمليات</p>
+              <h2 className="mt-1 max-w-3xl text-3xl font-semibold leading-[1.18] text-balance sm:text-4xl 2xl:text-[44px]">مركز تشغيل يومي للحجوزات، المدفوعات، والعميل.</h2>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-[#675d68]">
-                مبني على نمط أنظمة الصالونات الحديثة: تقويم عملي، حماية عدم الحضور، دفع عربون، ملف عميل، رسائل تلقائية، وقائمة انتظار.
+                واجهة واحدة تربط التقويم، العربون، الانتظار، محادثات واتساب، وتنبيهات المخزون بدون قفز بين أدوات منفصلة.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <AppLink href="/auth/register" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#e6ddda] bg-white px-4 text-sm font-semibold">
+              <AppLink href="/auth/register" className="saloni-button inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#e8e1dc] bg-white px-4 text-sm font-semibold">
                 <UserPlus size={16} />
                 إضافة صالون
               </AppLink>
-              <AppLink href="/dashboard" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+              <AppLink href="/dashboard" className="saloni-button inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#211d24] px-4 text-sm font-semibold text-white">
                 فتح النظام
                 <ArrowLeft size={16} />
               </AppLink>
+            </div>
             </div>
           </div>
 
@@ -774,7 +776,7 @@ export function PublicHome() {
                   <AppLink
                     key={item.label}
                     href={item.href}
-                    className="flex min-h-11 items-center justify-between rounded-lg border border-[#e6ddda] bg-white px-3 text-sm font-semibold transition hover:border-[#d6c7c3]"
+                    className="saloni-button flex min-h-11 items-center justify-between rounded-xl border border-[#e8e1dc] bg-white/86 px-3 text-sm font-semibold"
                   >
                     <span className="flex items-center gap-2"><Icon size={16} />{item.label}</span>
                     <ArrowLeft size={14} />
@@ -885,15 +887,15 @@ export function ClientExperience() {
   }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f8f5f3] text-[#211829]">
-      <header className="border-b border-[#eadfdd] bg-white/90 backdrop-blur">
+    <main dir="rtl" className="saloni-page min-h-screen text-[#211d24]">
+      <header className="border-b border-[#e8e1dc] bg-[#fdfcfb]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
           <BrandMark />
           <div className="flex items-center gap-2">
-            <AppLink href={`/${salon.slug}/profile`} className="hidden rounded-lg border border-[#eadfdd] px-3 py-2 text-sm font-semibold text-[#211829] sm:inline-flex">
+            <AppLink href={`/${salon.slug}/profile`} className="saloni-button hidden rounded-xl border border-[#e8e1dc] bg-white px-3 py-2 text-sm font-semibold text-[#211d24] sm:inline-flex">
               حسابي
             </AppLink>
-            <AppLink href="/manager" className="rounded-lg bg-[#211829] px-3 py-2 text-sm font-semibold text-white">
+            <AppLink href="/manager" className="saloni-button rounded-xl bg-[#211d24] px-3 py-2 text-sm font-semibold text-white">
               المدير
             </AppLink>
           </div>
@@ -903,13 +905,13 @@ export function ClientExperience() {
       <section className="mx-auto grid max-w-7xl gap-5 px-4 py-6 sm:px-6 lg:grid-cols-[1fr_360px]">
         <div className="grid gap-5">
           <Panel className="overflow-hidden">
-            <div className="border-b border-[#eadfdd] bg-[#211829] p-5 text-white">
-              <p className="text-sm font-semibold text-[#f5c8bf]">بوابة العميل | {salon.arabicName} - {salon.district}</p>
-              <h1 className="mt-2 text-2xl font-semibold sm:text-4xl">احجزي موعدك وتابعي رصيد الولاء من نفس الصفحة.</h1>
+            <div className="saloni-panel-header border-b border-[#eee8e4] p-5">
+              <p className="text-sm font-semibold text-[#b9465a]">بوابة العميل | {salon.arabicName} - {salon.district}</p>
+              <h1 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-balance sm:text-4xl">احجزي موعدك وتابعي رصيد الولاء من نفس الصفحة.</h1>
               <div className="mt-5 grid gap-2 sm:grid-cols-4">
                 {["الخدمة", "الموظفة", "التاريخ والوقت", "التأكيد"].map((step, index) => (
-                  <div key={step} className={cx("rounded-lg border px-3 py-2 text-sm", index === 0 || confirmed ? "border-[#f5c8bf] bg-white/10" : "border-white/10 bg-white/[0.04]")}>
-                    <span className="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-semibold text-[#211829]">{index + 1}</span>
+                  <div key={step} className={cx("rounded-xl border px-3 py-2 text-sm font-semibold", index === 0 || confirmed ? "border-[#f0cbd1] bg-[#fff3f5] text-[#8d2f42]" : "border-[#e8e1dc] bg-white/74 text-[#6f6871]")}>
+                    <span className={cx("ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold", index === 0 || confirmed ? "bg-[#c44f64] text-white" : "bg-[#f4efeb] text-[#6f6871]")}>{index + 1}</span>
                     {step}
                   </div>
                 ))}
@@ -929,10 +931,10 @@ export function ClientExperience() {
                       key={service.id}
                       onClick={() => chooseService(service.id)}
                       className={cx(
-                        "rounded-lg border p-4 text-right transition",
+                        "saloni-button rounded-xl border p-4 text-right",
                         selectedService.id === service.id
-                          ? "border-[#d88782] bg-[#fff7f6] shadow-[0_14px_34px_rgba(216,135,130,0.13)]"
-                          : "border-[#eadfdd] bg-white hover:border-[#d8c7c3]",
+                          ? "border-[#f0cbd1] bg-[#fff5f6] shadow-[0_14px_34px_rgba(196,79,100,0.12)]"
+                          : "border-[#e8e1dc] bg-white/86",
                       )}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -940,33 +942,33 @@ export function ClientExperience() {
                           <p className="font-semibold">{service.name}</p>
                           <p className="mt-1 text-sm text-[#7f7482]">{service.duration} مع {service.specialist}</p>
                         </div>
-                        {selectedService.id === service.id ? <CheckCircle2 className="text-[#d88782]" size={20} /> : <ChevronLeft className="text-[#9b8e98]" size={18} />}
+                        {selectedService.id === service.id ? <CheckCircle2 className="text-[#c44f64]" size={20} /> : <ChevronLeft className="text-[#9b8e98]" size={18} />}
                       </div>
                       <div className="mt-4 flex items-center justify-between text-sm">
                         <span className="font-semibold">{money(service.price)}</span>
-                        <span className="text-[#7f7482]">عربون {money(service.deposit)}</span>
+                        <span className="text-[#6f6871]">عربون {money(service.deposit)}</span>
                       </div>
                     </button>
                   ))}
                 </div>
               </section>
 
-              <aside className="rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4">
+              <aside className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4 shadow-[0_12px_34px_rgba(37,32,41,0.035)]">
                 <h3 className="font-semibold">ملخص الحجز</h3>
                 <div className="mt-4 space-y-3 text-sm">
                   <div className="flex justify-between gap-3">
-                    <span className="text-[#7f7482]">الخدمة</span>
+                    <span className="text-[#6f6871]">الخدمة</span>
                     <strong>{selectedService.name}</strong>
                   </div>
                   <div className="flex justify-between gap-3">
-                    <span className="text-[#7f7482]">الموظفة</span>
+                    <span className="text-[#6f6871]">الموظفة</span>
                     <strong>{selectedStaff.name}</strong>
                   </div>
                   <div className="flex justify-between gap-3">
-                    <span className="text-[#7f7482]">الموعد</span>
+                    <span className="text-[#6f6871]">الموعد</span>
                     <strong>{dateOptions[dateIndex]} - {slot}</strong>
                   </div>
-                  <div className="border-t border-[#eadfdd] pt-3">
+                  <div className="border-t border-[#e8e1dc] pt-3">
                     <div className="flex justify-between">
                       <span>الخدمة</span>
                       <strong>{money(selectedService.price)}</strong>
@@ -979,7 +981,7 @@ export function ClientExperience() {
                       <span>المطلوب الآن</span>
                       <strong>{money(selectedService.deposit)}</strong>
                     </div>
-                    <p className="mt-2 text-xs text-[#7f7482]">المتبقي عند زيارة الصالون: {money(total - selectedService.deposit)}</p>
+                    <p className="mt-2 text-xs text-[#6f6871]">المتبقي عند زيارة الصالون: {money(total - selectedService.deposit)}</p>
                   </div>
                 </div>
               </aside>
@@ -995,13 +997,13 @@ export function ClientExperience() {
                       type="button"
                       key={staff.id}
                       onClick={() => setStaffId(staff.id)}
-                      className={cx("flex items-center justify-between rounded-lg border p-3 text-right", selectedStaff.id === staff.id ? "border-[#d88782] bg-[#fff7f6]" : "border-[#eadfdd] bg-white")}
+                      className={cx("saloni-button flex items-center justify-between rounded-xl border p-3 text-right", selectedStaff.id === staff.id ? "border-[#f0cbd1] bg-[#fff5f6]" : "border-[#e8e1dc] bg-white/86")}
                     >
                       <span className="flex items-center gap-3">
                         <Avatar initials={staff.initials} />
                         <span>
                           <span className="block font-semibold">{staff.name}</span>
-                          <span className="text-sm text-[#7f7482]">{staff.role} - تقييم {staff.rating}</span>
+                          <span className="text-sm text-[#6f6871]">{staff.role} - تقييم {staff.rating}</span>
                         </span>
                       </span>
                       <StatusPill status={staff.status} />
@@ -1015,7 +1017,7 @@ export function ClientExperience() {
                       type="button"
                       key={date}
                       onClick={() => setDateIndex(index)}
-                      className={cx("rounded-lg border px-3 py-3 text-sm font-semibold", dateIndex === index ? "border-[#211829] bg-[#211829] text-white" : "border-[#eadfdd] bg-white text-[#211829]")}
+                      className={cx("saloni-button rounded-xl border px-3 py-3 text-sm font-semibold", dateIndex === index ? "border-[#211d24] bg-[#211d24] text-white" : "border-[#e8e1dc] bg-white text-[#211d24]")}
                     >
                       {date}
                     </button>
@@ -1028,7 +1030,7 @@ export function ClientExperience() {
                       type="button"
                       key={time}
                       onClick={() => setSlot(time)}
-                      className={cx("rounded-lg border px-3 py-3 text-sm font-semibold", slot === time ? "border-[#d88782] bg-[#fff0ef] text-[#a94c47]" : "border-[#eadfdd] bg-white text-[#211829]")}
+                      className={cx("saloni-button rounded-xl border px-3 py-3 text-sm font-semibold", slot === time ? "border-[#f0cbd1] bg-[#fff3f5] text-[#9a3548]" : "border-[#e8e1dc] bg-white text-[#211d24]")}
                     >
                       {time}
                     </button>
@@ -1045,7 +1047,7 @@ export function ClientExperience() {
                     dir="ltr"
                     value={phone}
                     onChange={(event) => setPhone(event.target.value)}
-                    className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 text-right font-semibold outline-none focus:border-[#d88782]"
+                    className="h-11 rounded-xl border border-[#e8e1dc] bg-white px-3 text-right font-semibold outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15"
                   />
                 </label>
                 <ActionButton icon={Send} variant="outline" onClick={sendOtp} disabled={!phoneReady}>
@@ -1058,13 +1060,13 @@ export function ClientExperience() {
                     value={otp}
                     onChange={(event) => setOtp(event.target.value)}
                     placeholder="123123"
-                    className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 text-center text-lg font-semibold tracking-normal outline-none focus:border-[#d88782]"
+                    className="h-11 rounded-xl border border-[#e8e1dc] bg-white px-3 text-center text-lg font-semibold tracking-normal outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15"
                   />
                 </label>
                 <ActionButton icon={CheckCircle2} variant="dark" onClick={confirmBooking} disabled={!otpSent}>
                   تأكيد الحجز
                 </ActionButton>
-                <div className={cx("rounded-lg border p-4 text-sm", confirmed ? "border-[#cfe5d2] bg-[#edf8ef] text-[#17733a]" : "border-[#f0dfb8] bg-[#fff8e7] text-[#7d5a10]")}>
+                <div className={cx("rounded-xl border p-4 text-sm", confirmed ? "border-[#cfe4d6] bg-[#eef8f1] text-[#17733a]" : "border-[#eadbc5] bg-[#fff9ef] text-[#7d5a10]")}>
                   {notice}
                 </div>
               </div>
@@ -1076,27 +1078,27 @@ export function ClientExperience() {
           <Panel className="p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-[#b87776]">حساب العميل</p>
+                <p className="text-sm font-semibold text-[#b9465a]">حساب العميل</p>
                 <h2 className="mt-1 text-xl font-semibold">أهلا أفنان</h2>
               </div>
               <Avatar initials="أ" />
             </div>
             <div className="mt-5 grid gap-3">
-              <div className="rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4">
-                <p className="text-sm text-[#7f7482]">الحجوزات القادمة</p>
+              <div className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4">
+                <p className="text-sm text-[#6f6871]">الحجوزات القادمة</p>
                 <p className="mt-2 font-semibold">{selectedService.name}</p>
-                <p className="mt-1 text-sm text-[#7f7482]">{dateOptions[dateIndex]} - {slot}</p>
+                <p className="mt-1 text-sm text-[#6f6871]">{dateOptions[dateIndex]} - {slot}</p>
               </div>
-              <div className="rounded-lg border border-[#eadfdd] bg-white p-4">
+              <div className="rounded-xl border border-[#e8e1dc] bg-white p-4">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold">نقاط الولاء</span>
-                  <Gem className="text-[#b87776]" size={18} />
+                  <Gem className="text-[#b9465a]" size={18} />
                 </div>
                 <p className="mt-3 text-3xl font-semibold">1,250</p>
-                <ProgressBar value={72} tone="bg-[#b87776]" />
-                <p className="mt-2 text-xs text-[#7f7482]">باقي 250 نقطة للوصول لمكافأة ذهبية.</p>
+                <ProgressBar value={72} tone="bg-[#c44f64]" />
+                <p className="mt-2 text-xs text-[#6f6871]">باقي 250 نقطة للوصول لمكافأة ذهبية.</p>
               </div>
-              <AppLink href={`/${salon.slug}/profile`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#eadfdd] bg-white px-4 text-sm font-semibold text-[#211829]">
+              <AppLink href={`/${salon.slug}/profile`} className="saloni-button inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#e8e1dc] bg-white px-4 text-sm font-semibold text-[#211d24]">
                 فتح حساب العميل
                 <ArrowLeft size={16} />
               </AppLink>
@@ -1104,7 +1106,7 @@ export function ClientExperience() {
           </Panel>
 
           {confirmed && (
-            <Panel className="border-[#cfe5d2] bg-[#f6fff7] p-5">
+            <Panel className="border-[#cfe4d6] bg-[#f6fff7] p-5">
               <CheckCircle2 className="text-[#17733a]" />
               <h3 className="mt-3 text-lg font-semibold text-[#17733a]">تم تأكيد الحجز</h3>
               <p className="mt-2 text-sm text-[#57725d]">رقم الحجز B-NEW-01. ستظهر الرسالة في لوحة المدير وملف العميل.</p>
@@ -1120,11 +1122,11 @@ export function ClientProfileExperience() {
   const customer = customers[0];
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f8f5f3] text-[#211829]">
-      <header className="border-b border-[#eadfdd] bg-white">
+    <main dir="rtl" className="saloni-page min-h-screen text-[#211d24]">
+      <header className="border-b border-[#e8e1dc] bg-[#fdfcfb]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <BrandMark />
-          <AppLink href="/client" className="rounded-lg bg-[#211829] px-4 py-2 text-sm font-semibold text-white">
+          <AppLink href="/client" className="saloni-button rounded-xl bg-[#211d24] px-4 py-2 text-sm font-semibold text-white">
             حجز جديد
           </AppLink>
         </div>
@@ -1135,11 +1137,11 @@ export function ClientProfileExperience() {
           <h1 className="mt-4 text-2xl font-semibold">{customer.name}</h1>
           <p className="mt-1 text-sm text-[#7f7482]" dir="ltr">{customer.phone}</p>
           <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-lg bg-[#fbf7f6] p-4">
+            <div className="rounded-xl bg-[#fbf8f6] p-4">
               <p className="text-sm text-[#7f7482]">المستوى</p>
               <p className="mt-1 font-semibold">{customer.tier}</p>
             </div>
-            <div className="rounded-lg bg-[#fbf7f6] p-4">
+            <div className="rounded-xl bg-[#fbf8f6] p-4">
               <p className="text-sm text-[#7f7482]">الزيارات</p>
               <p className="mt-1 font-semibold">{customer.visits}</p>
             </div>
@@ -1148,15 +1150,15 @@ export function ClientProfileExperience() {
         <div className="grid gap-5">
           <Panel title="موعدك القادم">
             <div className="grid gap-4 p-5 md:grid-cols-3">
-              <div className="rounded-lg border border-[#eadfdd] p-4">
+              <div className="rounded-xl border border-[#e8e1dc] p-4">
                 <p className="text-sm text-[#7f7482]">الخدمة</p>
                 <p className="mt-2 font-semibold">صبغة شعر احترافية</p>
               </div>
-              <div className="rounded-lg border border-[#eadfdd] p-4">
+              <div className="rounded-xl border border-[#e8e1dc] p-4">
                 <p className="text-sm text-[#7f7482]">الموعد</p>
                 <p className="mt-2 font-semibold">الأحد 18 مايو - 16:30</p>
               </div>
-              <div className="rounded-lg border border-[#eadfdd] p-4">
+              <div className="rounded-xl border border-[#e8e1dc] p-4">
                 <p className="text-sm text-[#7f7482]">الحالة</p>
                 <div className="mt-2"><StatusPill status="مؤكد" /></div>
               </div>
@@ -1165,7 +1167,7 @@ export function ClientProfileExperience() {
           <Panel title="الولاء والمحفظة">
             <div className="grid gap-4 p-5 md:grid-cols-3">
               {loyaltyRows.map((row) => (
-                <div key={row.tier} className="rounded-lg border border-[#eadfdd] p-4">
+                <div key={row.tier} className="rounded-xl border border-[#e8e1dc] p-4">
                   <p className="font-semibold">{row.tier}</p>
                   <p className="mt-2 text-3xl font-semibold">{row.points}</p>
                   <p className="mt-2 text-sm text-[#7f7482]">{row.reward}</p>
@@ -1228,24 +1230,24 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
   };
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f8f5f3] text-[#211829]">
+    <main dir="rtl" className="saloni-page min-h-screen text-[#211d24]">
       <div className="lg:flex lg:min-h-screen">
-        <aside className="hidden w-[282px] shrink-0 border-l border-[#32283b] bg-[#15111b] text-white lg:block">
+        <aside className="hidden w-[270px] shrink-0 border-l border-[#e8e1dc] bg-white/86 text-[#211d24] backdrop-blur-xl lg:block">
           <div className="sticky top-0 flex h-screen flex-col p-4">
-            <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div className="flex items-center justify-between gap-3 border-b border-[#eee8e4] pb-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#f5c8bf] text-[#211829]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#211d24] text-[#f3c7ce] shadow-[0_14px_34px_rgba(33,29,36,0.14)]">
                   <Crown size={21} />
                 </div>
                 <div>
                   <p className="font-semibold">Saloni Pro</p>
-                  <p className="text-xs text-white/55">مركز التشغيل</p>
+                  <p className="text-xs text-[#6f6871]">مركز التشغيل</p>
                 </div>
               </div>
               <StatusPill status="Live" />
             </div>
 
-            <nav className="mt-5 grid gap-1 overflow-y-auto pl-1">
+            <nav className="mt-5 grid gap-1.5 overflow-y-auto pl-1">
               {dashboardNav.map((item) => {
                 const Icon = item.icon;
                 const active = item.page === page;
@@ -1254,8 +1256,8 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
                     key={item.page}
                     href={item.href}
                     className={cx(
-                      "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition",
-                      active ? "bg-[#f5c8bf] text-[#211829]" : "text-white/70 hover:bg-white/8 hover:text-white",
+                      "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold transition",
+                      active ? "bg-[#f7d9de] text-[#8d2f42] shadow-sm" : "text-[#5f5861] hover:bg-[#f8f5f2] hover:text-[#211d24]",
                     )}
                   >
                     <Icon size={18} />
@@ -1265,30 +1267,30 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
               })}
             </nav>
 
-            <div className="mt-auto rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm">
-              <p className="font-semibold text-[#f5c8bf]">حساب الاختبار</p>
-              <p className="mt-2 text-white/70" dir="ltr">{demoOwner.email}</p>
-              <p className="mt-1 text-white/70">كلمة المرور: {demoOwner.password}</p>
+            <div className="mt-auto rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4 text-sm">
+              <p className="font-semibold text-[#b9465a]">حساب الاختبار</p>
+              <p className="mt-2 text-[#5f5861]" dir="ltr">{demoOwner.email}</p>
+              <p className="mt-1 text-[#5f5861]">كلمة المرور: {demoOwner.password}</p>
             </div>
           </div>
         </aside>
 
         <section className="min-w-0 flex-1">
-          <header className="sticky top-0 z-20 border-b border-[#eadfdd] bg-[#f8f5f3]/92 backdrop-blur">
+          <header className="sticky top-0 z-20 border-b border-[#e8e1dc] bg-[#fdfcfb]/90 backdrop-blur-xl">
             <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
               <div className="flex items-center gap-3 lg:hidden">
                 <BrandMark compact />
                 <strong>Saloni Pro</strong>
               </div>
-              <div className="hidden min-w-[280px] items-center gap-2 rounded-lg border border-[#eadfdd] bg-white px-3 py-2 text-sm text-[#7f7482] lg:flex">
+              <div className="hidden min-w-[280px] items-center gap-2 rounded-xl border border-[#e8e1dc] bg-white/88 px-3 py-2 text-sm text-[#6f6871] shadow-[0_14px_34px_rgba(37,32,41,0.035)] lg:flex">
                 <Search size={16} />
                 <span>بحث سريع عن حجز، عميلة، خدمة...</span>
               </div>
               <div className="flex items-center gap-2">
-                <AppLink href="/client" className="rounded-lg border border-[#eadfdd] bg-white px-3 py-2 text-sm font-semibold text-[#211829]">
+                <AppLink href="/client" className="saloni-button rounded-xl border border-[#e8e1dc] bg-white px-3 py-2 text-sm font-semibold text-[#211d24]">
                   تجربة العميل
                 </AppLink>
-                <AppLink href="/auth/login" className="rounded-lg bg-[#211829] px-3 py-2 text-sm font-semibold text-white">
+                <AppLink href="/auth/login" className="saloni-button rounded-xl bg-[#211d24] px-3 py-2 text-sm font-semibold text-white">
                   دخول
                 </AppLink>
               </div>
@@ -1301,8 +1303,8 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
                     key={item.page}
                     href={item.href}
                     className={cx(
-                      "shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold",
-                      active ? "border-[#211829] bg-[#211829] text-white" : "border-[#eadfdd] bg-white text-[#211829]",
+                      "shrink-0 rounded-xl border px-3 py-2 text-sm font-semibold",
+                      active ? "border-[#211d24] bg-[#211d24] text-white" : "border-[#e8e1dc] bg-white text-[#211d24]",
                     )}
                   >
                     {item.label}
@@ -1315,9 +1317,9 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
           <div className="px-4 py-5 sm:px-6 lg:px-8">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold text-[#b87776]">{managerMode ? "لوحة المدير" : "مركز التشغيل"}</p>
-                <h1 className="mt-1 text-2xl font-semibold sm:text-4xl">{meta.title}</h1>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#7f7482]">{meta.description}</p>
+                <p className="text-sm font-semibold text-[#b9465a]">{managerMode ? "لوحة المدير" : "مركز التشغيل"}</p>
+                <h1 className="mt-1 text-2xl font-semibold leading-tight text-balance sm:text-4xl">{meta.title}</h1>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6f6871]">{meta.description}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <ActionButton icon={Plus} variant="dark" onClick={() => logAction("تم فتح إجراء حجز جديد تجريبيا.")}>
@@ -1329,8 +1331,8 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
               </div>
             </div>
 
-            <div className="mb-5 rounded-lg border border-[#eadfdd] bg-white px-4 py-3 text-sm text-[#5f5363]">
-              <span className="font-semibold text-[#211829]">آخر إجراء:</span> {actionLog}
+            <div className="mb-5 rounded-xl border border-[#e8e1dc] bg-white/82 px-4 py-3 text-sm text-[#5f5861] shadow-[0_14px_34px_rgba(37,32,41,0.035)]">
+              <span className="font-semibold text-[#211d24]">آخر إجراء:</span> {actionLog}
             </div>
 
             {renderDashboardPage(page, context)}
@@ -1453,7 +1455,10 @@ function BookingsPage({ context }: { context: DashboardContext }) {
             key={filter}
             type="button"
             onClick={() => context.setStatusFilter(filter)}
-            className={cx("rounded-lg border px-4 py-2 text-sm font-semibold", context.statusFilter === filter ? "border-[#211829] bg-[#211829] text-white" : "border-[#eadfdd] bg-white text-[#211829]")}
+            className={cx(
+              "saloni-button rounded-xl border px-4 py-2 text-sm font-semibold",
+              context.statusFilter === filter ? "border-[#211d24] bg-[#211d24] text-white" : "border-[#e8e1dc] bg-white/88 text-[#211d24]",
+            )}
           >
             {filter}
           </button>
@@ -1471,11 +1476,11 @@ function BookingTable({ context, compact = false }: { context: DashboardContext;
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[920px] border-collapse text-sm">
+      <table className="saloni-data-table w-full min-w-[920px] border-collapse text-sm">
         <thead>
-          <tr className="border-b border-[#eadfdd] bg-[#fbf7f6] text-[#7f7482]">
+          <tr className="border-b border-[#e8e1dc] bg-[#fbf8f6] text-[#6f6871]">
             {["الوقت", "العميلة", "الخدمة", "الموظفة", "الدفع", "الحالة", compact ? "المصدر" : "إجراءات"].map((head) => (
-              <th key={head} className="px-4 py-3 text-right font-semibold">{head}</th>
+              <th key={head} className="px-4 py-3 text-right text-xs font-semibold">{head}</th>
             ))}
           </tr>
         </thead>
@@ -1483,17 +1488,17 @@ function BookingTable({ context, compact = false }: { context: DashboardContext;
           {visibleBookings.map((booking) => {
             const status = context.statuses[booking.id];
             return (
-              <tr key={booking.id} className="border-b border-[#f0e7e4]">
+              <tr key={booking.id} className="border-b border-[#f0eae6]">
                 <td className="px-4 py-4 font-semibold">{booking.time}</td>
                 <td className="px-4 py-4">
                   <p className="font-semibold">{booking.client}</p>
-                  <p className="mt-1 font-mono text-[11px] font-semibold text-[#b05f62]" dir="ltr">{booking.id}</p>
-                  <p className="text-xs text-[#7f7482]" dir="ltr">{booking.phone}</p>
+                  <p className="mt-1 font-mono text-[11px] font-semibold text-[#b9465a]" dir="ltr">{booking.id}</p>
+                  <p className="text-xs text-[#6f6871]" dir="ltr">{booking.phone}</p>
                 </td>
                 <td className="px-4 py-4">
                   <p className="font-semibold">{booking.service}</p>
-                  <p className="mt-1 text-xs text-[#7f7482]">{booking.source}</p>
-                  {booking.notes && <p className="mt-1 text-[11px] leading-5 text-[#9a6b5f]">{booking.notes}</p>}
+                  <p className="mt-1 text-xs text-[#6f6871]">{booking.source}</p>
+                  {booking.notes && <p className="mt-1 text-[11px] leading-5 text-[#9b5a63]">{booking.notes}</p>}
                 </td>
                 <td className="px-4 py-4">{booking.staff}</td>
                 <td className="px-4 py-4">{booking.payment}</td>
@@ -1503,9 +1508,9 @@ function BookingTable({ context, compact = false }: { context: DashboardContext;
                     booking.source
                   ) : (
                     <div className="flex flex-wrap gap-2">
-                      <button type="button" onClick={() => context.setBookingStatus(booking.id, "مؤكد")} className="rounded-md border border-[#cfe5d2] px-2 py-1 text-xs font-semibold text-[#17733a]">تأكيد</button>
-                      <button type="button" onClick={() => context.setBookingStatus(booking.id, "وصلت")} className="rounded-md border border-[#dcd4ff] px-2 py-1 text-xs font-semibold text-[#6550b9]">وصلت</button>
-                      <button type="button" onClick={() => context.setBookingStatus(booking.id, "ملغي")} className="rounded-md border border-[#f2c9c5] px-2 py-1 text-xs font-semibold text-[#b93f34]">إلغاء</button>
+                      <button type="button" onClick={() => context.setBookingStatus(booking.id, "مؤكد")} className="saloni-button rounded-lg border border-[#cfe4d6] bg-white px-2 py-1 text-xs font-semibold text-[#17733a]">تأكيد</button>
+                      <button type="button" onClick={() => context.setBookingStatus(booking.id, "وصلت")} className="saloni-button rounded-lg border border-[#e6d8ff] bg-white px-2 py-1 text-xs font-semibold text-[#6550b9]">وصلت</button>
+                      <button type="button" onClick={() => context.setBookingStatus(booking.id, "ملغي")} className="saloni-button rounded-lg border border-[#f1c7cc] bg-white px-2 py-1 text-xs font-semibold text-[#b2384a]">إلغاء</button>
                     </div>
                   )}
                 </td>
@@ -1991,7 +1996,7 @@ export function LoginExperience() {
   }
 
   return (
-    <main dir="rtl" className="grid min-h-screen place-items-center bg-[#f8f5f3] px-4 py-8 text-[#211829]">
+    <main dir="rtl" className="saloni-page grid min-h-screen place-items-center px-4 py-8 text-[#211d24]">
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center"><BrandMark /></div>
         <Panel className="p-6">
@@ -2000,20 +2005,20 @@ export function LoginExperience() {
           <form onSubmit={submitLogin} className="mt-6 grid gap-4">
             <label className="grid gap-2 text-sm font-semibold">
               البريد الإلكتروني
-              <input dir="ltr" value={email} onChange={(event) => setEmail(event.target.value)} className="h-11 rounded-lg border border-[#eadfdd] px-3 text-left outline-none focus:border-[#d88782]" />
+              <input dir="ltr" value={email} onChange={(event) => setEmail(event.target.value)} className="h-11 rounded-xl border border-[#e8e1dc] px-3 text-left outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15" />
             </label>
             <label className="grid gap-2 text-sm font-semibold">
               كلمة المرور
-              <input dir="ltr" type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="h-11 rounded-lg border border-[#eadfdd] px-3 text-left outline-none focus:border-[#d88782]" />
+              <input dir="ltr" type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="h-11 rounded-xl border border-[#e8e1dc] px-3 text-left outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15" />
             </label>
             <ActionButton type="submit" icon={LogIn} variant="dark" disabled={loading}>
               {loading ? "جار الدخول..." : "دخول لوحة التحكم"}
             </ActionButton>
           </form>
-          <div className="mt-5 rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4 text-sm text-[#5f5363]">{message}</div>
+          <div className="mt-5 rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4 text-sm text-[#5f5861]">{message}</div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <AppLink href="/client" className="rounded-lg border border-[#eadfdd] px-3 py-2 text-sm font-semibold">تجربة العميل</AppLink>
-            <AppLink href="/dashboard" className="rounded-lg border border-[#eadfdd] px-3 py-2 text-sm font-semibold">لوحة التحكم</AppLink>
+            <AppLink href="/client" className="saloni-button rounded-xl border border-[#e8e1dc] bg-white px-3 py-2 text-sm font-semibold">تجربة العميل</AppLink>
+            <AppLink href="/dashboard" className="saloni-button rounded-xl border border-[#e8e1dc] bg-white px-3 py-2 text-sm font-semibold">لوحة التحكم</AppLink>
           </div>
         </Panel>
       </div>
@@ -2056,19 +2061,19 @@ export function RegisterExperience() {
   }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f8f5f3] px-4 py-6 text-[#211829] sm:px-6">
+    <main dir="rtl" className="saloni-page min-h-screen px-4 py-6 text-[#211d24] sm:px-6">
       <div className="mx-auto max-w-7xl">
         <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <BrandMark />
           <div className="flex gap-2">
-            <AppLink href="/admin" className="rounded-lg border border-[#eadfdd] bg-white px-4 py-2 text-sm font-semibold">إدارة المنصة</AppLink>
-            <AppLink href="/auth/login" className="rounded-lg bg-[#211829] px-4 py-2 text-sm font-semibold text-white">تسجيل الدخول</AppLink>
+            <AppLink href="/admin" className="saloni-button rounded-xl border border-[#e8e1dc] bg-white px-4 py-2 text-sm font-semibold">إدارة المنصة</AppLink>
+            <AppLink href="/auth/login" className="saloni-button rounded-xl bg-[#211d24] px-4 py-2 text-sm font-semibold text-white">تسجيل الدخول</AppLink>
           </div>
         </header>
 
         <section className="grid gap-5 lg:grid-cols-[360px_1fr]">
           <Panel className="p-5">
-            <p className="text-sm font-semibold text-[#b87776]">تجربة مجانية 14 يوم</p>
+            <p className="text-sm font-semibold text-[#b9465a]">تجربة مجانية 14 يوم</p>
             <h1 className="mt-2 text-3xl font-semibold">إنشاء صالون جديد</h1>
             <p className="mt-3 text-sm leading-7 text-[#6f6571]">
               هذه رحلة التهيئة التي يحتاجها أي صالون قبل تشغيل الحجز، CRM، الدفع، الواتساب، والرابط الخاص.
@@ -2090,11 +2095,11 @@ export function RegisterExperience() {
                   onClick={() => setActiveStep(index)}
                   className={cx(
                     "rounded-lg border p-3 text-right transition",
-                    activeStep === index ? "border-[#211829] bg-[#211829] text-white" : "border-[#eadfdd] bg-white text-[#211829] hover:border-[#d8c7c3]",
+                    activeStep === index ? "border-[#211d24] bg-[#211d24] text-white" : "border-[#e8e1dc] bg-white text-[#211d24] hover:border-[#d8c7c3]",
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={cx("flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold", activeStep === index ? "bg-white text-[#211829]" : "bg-[#fbf7f6] text-[#6f6571]")}>{index + 1}</span>
+                    <span className={cx("flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold", activeStep === index ? "bg-white text-[#211d24]" : "bg-[#fbf8f6] text-[#6f6571]")}>{index + 1}</span>
                     <span>
                       <span className="block font-semibold">{step.title}</span>
                       <span className={cx("text-xs", activeStep === index ? "text-white/70" : "text-[#7f7482]")}>{step.description}</span>
@@ -2130,7 +2135,7 @@ export function RegisterExperience() {
                       dir={key === "email" || key === "slug" || key === "phone" ? "ltr" : "rtl"}
                       value={form[key as keyof typeof form]}
                       onChange={(event) => updateField(key as keyof typeof form, event.target.value)}
-                      className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 outline-none focus:border-[#d88782]"
+                      className="h-11 rounded-xl border border-[#e8e1dc] bg-white px-3 outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15"
                     />
                   </label>
                 ))}
@@ -2142,11 +2147,11 @@ export function RegisterExperience() {
                     key={plan.slug}
                     type="button"
                     onClick={() => setSelectedPlanSlug(plan.slug)}
-                    className={cx("rounded-lg border p-4 text-right transition", selectedPlanSlug === plan.slug ? "border-[#d88782] bg-[#fff7f6]" : "border-[#eadfdd] bg-white hover:border-[#d8c7c3]")}
+                    className={cx("saloni-button rounded-xl border p-4 text-right", selectedPlanSlug === plan.slug ? "border-[#f0cbd1] bg-[#fff5f6]" : "border-[#e8e1dc] bg-white")}
                   >
                     <div className="flex items-center justify-between gap-3">
                       <strong>{plan.name}</strong>
-                      {selectedPlanSlug === plan.slug && <CheckCircle2 size={18} className="text-[#d88782]" />}
+                    {selectedPlanSlug === plan.slug && <CheckCircle2 size={18} className="text-[#c44f64]" />}
                     </div>
                     <p className="mt-3 text-2xl font-semibold">{plan.price} <span className="text-xs text-[#7f7482]">ر.س / شهر</span></p>
                     <p className="mt-2 text-xs leading-5 text-[#6f6571]">{plan.bestFor}</p>
@@ -2154,11 +2159,11 @@ export function RegisterExperience() {
                 ))}
               </div>
 
-              <div className="mt-6 rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4">
+              <div className="mt-6 rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4">
                 <p className="font-semibold">حقول هذه المرحلة</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {onboardingSteps[activeStep].fields.map((field) => (
-                    <span key={field} className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#6f6571]">{field}</span>
+                    <span key={field} className="rounded-lg bg-white px-3 py-1 text-xs font-semibold text-[#6f6571]">{field}</span>
                   ))}
                 </div>
               </div>
@@ -2193,13 +2198,13 @@ export function RegisterExperience() {
                     "WhatsApp يحتاج مفاتيح Meta",
                     "Moyasar/Tap يحتاج مفاتيح إنتاج",
                   ].map((item, index) => (
-                    <div key={item} className="flex items-center justify-between rounded-lg border border-[#eadfdd] bg-white p-3 text-sm">
+                    <div key={item} className="flex items-center justify-between rounded-xl border border-[#e8e1dc] bg-white p-3 text-sm">
                       <span className="font-semibold">{item}</span>
                       {index === 0 && created ? <CheckCircle2 size={18} className="text-[#17733a]" /> : <ShieldCheck size={18} className="text-[#8f9d84]" />}
                     </div>
                   ))}
                   {created && (
-                    <AppLink href="/dashboard" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+                    <AppLink href="/dashboard" className="saloni-button inline-flex min-h-11 items-center justify-center rounded-xl bg-[#211d24] px-4 text-sm font-semibold text-white">
                       فتح لوحة الصالون
                     </AppLink>
                   )}
@@ -2219,18 +2224,18 @@ export function StaffExperience() {
   const nextBookings = bookings.filter((booking) => booking.staffId === "noura" || booking.staffId === "sarah").slice(0, 3);
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f8f5f3] text-[#211829]">
-      <header className="border-b border-[#eadfdd] bg-white">
+    <main dir="rtl" className="saloni-page min-h-screen text-[#211d24]">
+      <header className="border-b border-[#e8e1dc] bg-[#fdfcfb]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <BrandMark />
-          <AppLink href="/dashboard/staff" className="rounded-lg bg-[#211829] px-4 py-2 text-sm font-semibold text-white">
+          <AppLink href="/dashboard/staff" className="saloni-button rounded-xl bg-[#211d24] px-4 py-2 text-sm font-semibold text-white">
             بوابة الموظفة
           </AppLink>
         </div>
       </header>
       <section className="mx-auto grid max-w-6xl gap-5 px-4 py-6 sm:px-6 lg:grid-cols-[340px_1fr]">
         <Panel className="p-5">
-          <p className="text-sm font-semibold text-[#b87776]">بوابة الموظفة</p>
+          <p className="text-sm font-semibold text-[#b9465a]">بوابة الموظفة</p>
           <Avatar initials="ن" />
           <h1 className="mt-4 text-2xl font-semibold">نورة العتيبي</h1>
           <p className="mt-1 text-sm text-[#7f7482]">خبيرة شعر - جدول اليوم</p>
@@ -2254,7 +2259,7 @@ export function StaffExperience() {
         <Panel title="مواعيدي القادمة">
           <div className="grid gap-3 p-5">
             {nextBookings.map((booking) => (
-              <div key={booking.id} className="rounded-lg border border-[#eadfdd] p-4">
+              <div key={booking.id} className="rounded-xl border border-[#e8e1dc] p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="font-semibold">{booking.client}</p>
@@ -2262,7 +2267,7 @@ export function StaffExperience() {
                   </div>
                   <StatusPill status={booking.status} />
                 </div>
-                <p className="mt-3 rounded-lg bg-[#fbf7f6] p-3 text-sm text-[#5f5363]">{booking.notes}</p>
+                <p className="mt-3 rounded-xl bg-[#fbf8f6] p-3 text-sm text-[#5f5861]">{booking.notes}</p>
               </div>
             ))}
           </div>
@@ -2282,11 +2287,11 @@ export function AdminExperience() {
   }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f8f5f3] text-[#211829]">
-      <header className="border-b border-[#eadfdd] bg-white">
+    <main dir="rtl" className="saloni-page min-h-screen text-[#211d24]">
+      <header className="border-b border-[#e8e1dc] bg-[#fdfcfb]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
           <BrandMark />
-          <AppLink href="/dashboard" className="rounded-lg bg-[#211829] px-4 py-2 text-sm font-semibold text-white">
+          <AppLink href="/dashboard" className="saloni-button rounded-xl bg-[#211d24] px-4 py-2 text-sm font-semibold text-white">
             لوحة الصالون
           </AppLink>
         </div>
@@ -2294,14 +2299,14 @@ export function AdminExperience() {
       <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-[#b87776]">لوحة مالك المنصة</p>
+            <p className="text-sm font-semibold text-[#b9465a]">لوحة مالك المنصة</p>
             <h1 className="mt-1 text-3xl font-semibold">إدارة الصالونات، الاشتراكات، والجاهزية</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6f6571]">
               هذه هي طبقة SaaS العليا: تتابع الصالونات، التجارب المجانية، حدود الخطط، حالة الربط، ومراحل المنتج قبل البيع الفعلي.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <AppLink href="/auth/register" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+            <AppLink href="/auth/register" className="saloni-button inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#211d24] px-4 text-sm font-semibold text-white">
               <UserPlus size={17} />
               إضافة صالون
             </AppLink>
@@ -2311,8 +2316,8 @@ export function AdminExperience() {
           </div>
         </div>
 
-        <div className="mb-5 rounded-lg border border-[#eadfdd] bg-white px-4 py-3 text-sm text-[#5f5363]">
-          <span className="font-semibold text-[#211829]">آخر إجراء:</span> {actionLog}
+        <div className="mb-5 rounded-xl border border-[#e8e1dc] bg-white/82 px-4 py-3 text-sm text-[#5f5861] shadow-[0_14px_34px_rgba(37,32,41,0.035)]">
+          <span className="font-semibold text-[#211d24]">آخر إجراء:</span> {actionLog}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
