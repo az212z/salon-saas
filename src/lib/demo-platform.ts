@@ -165,6 +165,49 @@ export const dashboardStats = [
   { label: "رسائل واتساب", value: "352", note: "58 ردود", tone: "pink" },
 ];
 
+export const operatingMetrics = [
+  { label: "الإيراد اليومي", value: "12,540", suffix: "ر.س", note: "+18% عن أمس", tone: "green" },
+  { label: "الحجوزات", value: "48", suffix: "موعد", note: "8 عبر رابط الحجز", tone: "green" },
+  { label: "معدل الإشغال", value: "72%", suffix: "", note: "+6% عن الأسبوع", tone: "amber" },
+  { label: "العربون المحصل", value: "8,200", suffix: "ر.س", note: "65% من الإجمالي", tone: "green" },
+  { label: "قائمة الانتظار", value: "5", suffix: "عميلات", note: "3 قابلة للتحويل", tone: "rose" },
+  { label: "مخاطر اليوم", value: "4", suffix: "تنبيهات", note: "دفع ومخزون وغياب", tone: "red" },
+];
+
+export const operationAlerts = [
+  { title: "تأكيد عربون قبل 12:30", detail: "وجدان المالكي - مانيكير جل", action: "إرسال رابط دفع", severity: "دفع" },
+  { title: "مخزون منخفض", detail: "شامبو بوتانيك: 3 فقط", action: "طلب توريد", severity: "مخزون" },
+  { title: "متابعة غياب محتمل", detail: "هدى القحطاني لم تؤكد الموعد", action: "رسالة تذكير", severity: "حضور" },
+  { title: "فجوة تشغيل", detail: "ريم لديها 90 دقيقة متاحة 14:00", action: "تحويل انتظار", severity: "تقويم" },
+];
+
+export const waitlistEntries = [
+  { name: "مشاعل فهد", service: "صبغة + قص", preferred: "12:30", value: "520 ر.س", fit: "نورة أو سارة" },
+  { name: "وجدان المطيري", service: "أظافر جل", preferred: "13:00", value: "145 ر.س", fit: "هند" },
+  { name: "رغد الحربي", service: "عناية وجه", preferred: "14:00", value: "260 ر.س", fit: "ريم" },
+  { name: "منال العسيري", service: "مساج استرخاء", preferred: "15:30", value: "310 ر.س", fit: "لينا" },
+  { name: "شوق العتيبي", service: "استشارة لون", preferred: "16:30", value: "90 ر.س", fit: "نورة" },
+];
+
+export const paymentQueue = [
+  { label: "محصل", value: 65, amount: "12,540 ر.س", tone: "bg-[#1f9d67]" },
+  { label: "إيداع", value: 19, amount: "3,680 ر.س", tone: "bg-[#d7b56d]" },
+  { label: "متأخر", value: 16, amount: "2,950 ر.س", tone: "bg-[#bf5b5b]" },
+];
+
+export const conversationFeed = [
+  { time: "11:42", name: "نورة السبيعي", body: "هل يوجد وقت مساء اليوم؟", status: "جديد" },
+  { time: "11:10", name: "لمى العتيبي", body: "مشكلة في الدفع", status: "دفع" },
+  { time: "10:58", name: "أمل الحربي", body: "احتاج تعديل على الحجز", status: "تعديل" },
+  { time: "10:30", name: "هند القحطاني", body: "ما شاء الله النتيجة رائعة", status: "تقييم" },
+];
+
+export const inventoryAlerts = [
+  { item: "شامبو بوتانيك", stock: "3 قطع", status: "اطلب اليوم" },
+  { item: "أكسجين 20", stock: "6 عبوات", status: "يكفي يومين" },
+  { item: "طلاء Gel 041", stock: "2 قطع", status: "منخفض" },
+];
+
 export const bookings = [
   {
     id: "B-1042",

@@ -1,12 +1,14 @@
 "use client";
 
 import type { FormEvent, ReactNode } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  AlertTriangle,
   ArrowLeft,
   BarChart3,
   Building2,
+  CalendarCheck,
   CalendarDays,
   CheckCircle2,
   ChevronLeft,
@@ -14,14 +16,13 @@ import {
   Clock3,
   CreditCard,
   Crown,
-  Database,
   Gauge,
   Gem,
   Gift,
-  Globe2,
   LayoutDashboard,
   LogIn,
   MessageCircle,
+  PhoneCall,
   Plus,
   ReceiptText,
   Rocket,
@@ -32,23 +33,30 @@ import {
   Sparkles,
   Tags,
   UserPlus,
+  UserCheck,
   UserRound,
   UsersRound,
+  WalletCards,
   type LucideIcon,
 } from "lucide-react";
 import {
   bookings,
   calendarPlan,
   campaigns,
+  conversationFeed,
   coupons,
   customers,
   dashboardStats,
   demoOwner,
   implementationPhases,
   integrationChecks,
+  inventoryAlerts,
   loyaltyRows,
   onboardingSteps,
+  operatingMetrics,
+  operationAlerts,
   pageMeta,
+  paymentQueue,
   platformMetrics,
   platformTenants,
   reportMetrics,
@@ -58,6 +66,7 @@ import {
   staffMembers,
   subscriptionPlans,
   timeSlots,
+  waitlistEntries,
   weeklyRevenue,
   whatsappStatus,
   whatsappTemplates,
@@ -65,8 +74,22 @@ import {
 
 type DashboardPage = keyof typeof pageMeta;
 type BookingStatus = "مؤكد" | "وصلت" | "قيد الانتظار" | "ملغي";
+type DemoBooking = (typeof bookings)[number];
+type DemoEvent = {
+  id: string;
+  time: string;
+  title: string;
+  body: string;
+  type: "booking" | "payment" | "whatsapp" | "tenant" | "staff";
+};
+type DemoPlatformState = {
+  bookings: DemoBooking[];
+  statuses: Record<string, BookingStatus>;
+  events: DemoEvent[];
+};
 
 type DashboardContext = {
+  bookings: DemoBooking[];
   statuses: Record<string, BookingStatus>;
   setBookingStatus: (id: string, status: BookingStatus) => void;
   statusFilter: string;
@@ -84,7 +107,108 @@ type DashboardContext = {
     branch: string;
   };
   setSettingsDraft: (draft: DashboardContext["settingsDraft"]) => void;
+  addBooking: (booking: DemoBooking) => void;
+  addEvent: (event: Omit<DemoEvent, "id" | "time">) => void;
+  events: DemoEvent[];
 };
+
+const DEMO_STATE_KEY = "saloni-pro-demo-state-v4";
+
+function createInitialDemoState(): DemoPlatformState {
+  return {
+    bookings,
+    statuses: Object.fromEntries(bookings.map((booking) => [booking.id, booking.status as BookingStatus])),
+    events: [
+      { id: "EV-1", time: "11:42", title: "حجز مؤكد", body: "أفنان الدوسري دفعت العربون وتم تثبيت الموعد.", type: "booking" },
+      { id: "EV-2", time: "11:10", title: "رسالة واتساب", body: "لمى العتيبي تحتاج رابط دفع جديد.", type: "whatsapp" },
+      { id: "EV-3", time: "10:58", title: "تنبيه مخزون", body: "شامبو بوتانيك وصل حد الطلب.", type: "staff" },
+    ],
+  };
+}
+
+function eventTime() {
+  return new Intl.DateTimeFormat("ar-SA", { hour: "2-digit", minute: "2-digit" }).format(new Date());
+}
+
+function useDemoPlatformState() {
+  const [state, setState] = useState<DemoPlatformState>(createInitialDemoState);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(DEMO_STATE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as DemoPlatformState;
+        if (Array.isArray(parsed.bookings) && parsed.statuses && Array.isArray(parsed.events)) {
+          setState(parsed);
+        }
+      }
+    } catch {
+      setState(createInitialDemoState());
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(DEMO_STATE_KEY, JSON.stringify(state));
+    } catch {
+      // Local demo persistence is best-effort; the UI still works without storage.
+    }
+  }, [state]);
+
+  function addEvent(event: Omit<DemoEvent, "id" | "time">) {
+    setState((current) => ({
+      ...current,
+      events: [{ ...event, id: `EV-${Date.now()}`, time: eventTime() }, ...current.events].slice(0, 12),
+    }));
+  }
+
+  function addBooking(booking: DemoBooking) {
+    setState((current) => ({
+      ...current,
+      bookings: [booking, ...current.bookings.filter((item) => item.id !== booking.id)],
+      statuses: { ...current.statuses, [booking.id]: booking.status as BookingStatus },
+      events: [
+        {
+          id: `EV-${Date.now()}`,
+          time: eventTime(),
+          title: "حجز جديد",
+          body: `${booking.client} - ${booking.service} مع ${booking.staff}`,
+          type: "booking" as const,
+        },
+        ...current.events,
+      ].slice(0, 12),
+    }));
+  }
+
+  function setBookingStatus(id: string, status: BookingStatus) {
+    setState((current) => ({
+      ...current,
+      statuses: { ...current.statuses, [id]: status },
+      events: [
+        {
+          id: `EV-${Date.now()}`,
+          time: eventTime(),
+          title: "تحديث حالة الحجز",
+          body: `${current.bookings.find((item) => item.id === id)?.client ?? id}: ${status}`,
+          type: "booking" as const,
+        },
+        ...current.events,
+      ].slice(0, 12),
+    }));
+  }
+
+  function resetDemo() {
+    const initial = createInitialDemoState();
+    setState(initial);
+    try {
+      window.localStorage.setItem(DEMO_STATE_KEY, JSON.stringify(initial));
+    } catch {
+      // Ignore local storage failures in demo mode.
+    }
+  }
+
+  return { ...state, addBooking, setBookingStatus, addEvent, resetDemo };
+}
 
 const moneyFormatter = new Intl.NumberFormat("ar-SA");
 
@@ -260,229 +384,440 @@ function Avatar({ initials }: { initials: string }) {
   );
 }
 
-export function PublicHome() {
+function OperationsMetricCard({
+  label,
+  value,
+  suffix,
+  note,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  suffix?: string;
+  note: string;
+  icon: LucideIcon;
+}) {
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f7f4f2] text-[#211829]">
-      <header className="sticky top-0 z-30 border-b border-[#eadfdd]/80 bg-[#f7f4f2]/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    <div className="rounded-lg border border-[#e6ddda] bg-white px-4 py-3 shadow-[0_12px_35px_rgba(38,29,44,0.04)]">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs font-semibold text-[#7c727c]">{label}</p>
+        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#f8eeee] text-[#ad5f62]">
+          <Icon size={16} />
+        </span>
+      </div>
+      <div className="mt-3 flex items-end gap-1">
+        <strong className="font-mono text-2xl font-semibold tracking-normal text-[#1d1723]">{value}</strong>
+        {suffix && <span className="pb-1 text-xs font-semibold text-[#675d68]">{suffix}</span>}
+      </div>
+      <p className="mt-1 text-xs font-semibold text-[#247b50]">{note}</p>
+    </div>
+  );
+}
+
+function OperationsCalendarBoard({ onSelect }: { onSelect?: (message: string) => void }) {
+  const hours = ["09:00", "10:00", "11:30", "13:00", "14:30", "16:00", "17:30", "19:00"];
+  const staff = staffMembers.slice(0, 5);
+
+  return (
+    <Panel
+      title="تقويم اليوم"
+      action={
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#6f6571]">
+          <button type="button" className="rounded-md border border-[#e6ddda] bg-white px-2.5 py-1.5">
+            يوم
+          </button>
+          <button type="button" className="rounded-md px-2.5 py-1.5 text-[#8a7f88]">
+            أسبوع
+          </button>
+        </div>
+      }
+    >
+      <div className="overflow-x-auto p-4">
+        <div className="min-w-[820px] rounded-lg border border-[#e8dfdc] bg-white">
+          <div className="grid grid-cols-[76px_repeat(5,minmax(128px,1fr))] border-b border-[#e8dfdc] bg-[#fbf8f6]">
+            <div className="px-3 py-3 text-xs font-semibold text-[#7c727c]">الوقت</div>
+            {staff.map((member) => (
+              <div key={member.id} className="border-r border-[#e8dfdc] px-3 py-3">
+                <div className="flex items-center gap-2">
+                  <Avatar initials={member.initials} />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold">{member.name.split(" ")[0]}</p>
+                    <p className="truncate text-xs text-[#7c727c]">{member.role}</p>
+                  </div>
+                  <span className="mr-auto h-2 w-2 rounded-full bg-[#20a65a]" />
+                </div>
+              </div>
+            ))}
+          </div>
+          {hours.map((hour, hourIndex) => (
+            <div key={hour} className="grid grid-cols-[76px_repeat(5,minmax(128px,1fr))] border-b border-[#f0e8e5] last:border-b-0">
+              <div className="px-3 py-3 font-mono text-xs text-[#7c727c]">{hour}</div>
+              {staff.map((member, staffIndex) => {
+                const booking = bookings[(hourIndex + staffIndex) % bookings.length];
+                const booked = (hourIndex + staffIndex) % 3 !== 1;
+                const blocked = (hourIndex + staffIndex) % 7 === 0;
+                return (
+                  <div key={`${hour}-${member.id}`} className="min-h-[74px] border-r border-[#f0e8e5] p-2">
+                    <button
+                      type="button"
+                      onClick={() => onSelect?.(booked ? `تم اختيار موعد ${booking.client} مع ${member.name} الساعة ${hour}.` : `تم اختيار خانة متاحة مع ${member.name} الساعة ${hour}.`)}
+                      className={cx(
+                        "h-full min-h-[58px] w-full rounded-md border px-3 py-2 text-right text-xs transition hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0",
+                        booked
+                          ? blocked
+                            ? "border-[#ead0b3] bg-[#fff8ed] text-[#6f4d20]"
+                            : "border-[#efcaca] bg-[#fff1f1] text-[#7b3f44]"
+                          : "border-[#dbe7df] bg-[#f3faf5] text-[#50725d]",
+                      )}
+                    >
+                      <span className="block font-semibold">{booked ? booking.client : "متاح"}</span>
+                      <span className="mt-1 block text-[11px] text-current/70">{booked ? booking.service : "قابل للتحويل من الانتظار"}</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function ActiveClientPanel() {
+  const customer = customers[3] ?? customers[0];
+
+  return (
+    <Panel title="العميل الحالي">
+      <div className="p-5">
+        <div className="flex items-center gap-4">
+          <Avatar initials="أ" />
+          <div>
+            <h3 className="text-lg font-semibold">{customer.name}</h3>
+            <p className="mt-1 text-sm text-[#7c727c]" dir="ltr">{customer.phone}</p>
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+          <MiniStat label="رقم العميل" value={customer.id} />
+          <MiniStat label="المستوى" value={customer.tier} />
+          <MiniStat label="النقاط" value={String(customer.points)} />
+          <MiniStat label="الإنفاق" value={customer.spend} />
+        </div>
+        <div className="mt-4 rounded-lg border border-[#e8dfdc] bg-[#fbf8f6] p-3 text-sm leading-6 text-[#514753]">
+          {customer.nextAction}. تظهر هذه الملاحظة للفريق قبل بدء الخدمة.
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function WhatsAppInboxPanel({ onAction }: { onAction?: (message: string) => void }) {
+  return (
+    <Panel
+      title="صندوق الوارد - واتساب"
+      action={<StatusPill status="تجريبي" />}
+    >
+      <div className="grid gap-3 p-4">
+        {conversationFeed.map((item) => (
+          <button
+            key={`${item.time}-${item.name}`}
+            type="button"
+            onClick={() => onAction?.(`تم فتح محادثة ${item.name}: ${item.body}`)}
+            className="flex items-center justify-between gap-3 rounded-lg border border-[#e8dfdc] bg-white p-3 text-right transition hover:border-[#d7c8c4]"
+          >
+            <div>
+              <p className="text-sm font-semibold">{item.name}</p>
+              <p className="mt-1 text-xs text-[#7c727c]">{item.body}</p>
+            </div>
+            <div className="text-left">
+              <p className="font-mono text-xs text-[#7c727c]">{item.time}</p>
+              <span className="mt-1 inline-flex rounded-md bg-[#edf8ef] px-2 py-1 text-[11px] font-semibold text-[#17733a]">{item.status}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function WaitlistPanel({ onAction }: { onAction?: (message: string) => void }) {
+  return (
+    <Panel title="قائمة الانتظار">
+      <div className="divide-y divide-[#f0e8e5]">
+        {waitlistEntries.map((entry) => (
+          <div key={entry.name} className="grid grid-cols-[1fr_auto] gap-3 px-4 py-3 text-sm">
+            <div>
+              <p className="font-semibold">{entry.name}</p>
+              <p className="mt-1 text-xs text-[#7c727c]">{entry.service} - {entry.fit}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onAction?.(`تم تجهيز خانة انتظار ${entry.name} الساعة ${entry.preferred}.`)}
+              className="rounded-md border border-[#e8dfdc] px-3 py-1.5 text-xs font-semibold hover:bg-[#fbf8f6]"
+            >
+              {entry.preferred}
+            </button>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
+function PaymentAndInventoryPanel() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <Panel title="المدفوعات والعربون">
+        <div className="grid gap-3 p-4">
+          {paymentQueue.map((item) => (
+            <div key={item.label} className="rounded-lg border border-[#e8dfdc] bg-white p-3">
+              <div className="mb-2 flex items-center justify-between text-sm">
+                <span className="font-semibold">{item.label}</span>
+                <strong>{item.amount}</strong>
+              </div>
+              <ProgressBar value={item.value} tone={item.tone} />
+            </div>
+          ))}
+        </div>
+      </Panel>
+      <Panel title="تنبيهات المخزون">
+        <div className="grid gap-3 p-4">
+          {inventoryAlerts.map((item) => (
+            <div key={item.item} className="flex items-center justify-between gap-3 rounded-lg border border-[#e8dfdc] bg-white p-3 text-sm">
+              <div>
+                <p className="font-semibold">{item.item}</p>
+                <p className="mt-1 text-xs text-[#7c727c]">{item.stock}</p>
+              </div>
+              <StatusPill status={item.status} />
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+export function PublicHome() {
+  const platform = useDemoPlatformState();
+  const [selectedLayer, setSelectedLayer] = useState("الصالون");
+
+  return (
+    <main dir="rtl" className="min-h-screen overflow-x-hidden bg-[#f6f3f1] text-[#1d1723]">
+      <header className="sticky top-0 z-30 border-b border-[#e6ddda] bg-[#fbfaf8]/94 backdrop-blur">
+        <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <BrandMark />
-          <nav className="hidden items-center gap-2 md:flex">
-            <AppLink href="/client" className="rounded-lg px-3 py-2 text-sm font-semibold text-[#5f5363] hover:bg-white">
-              تجربة العميل
-            </AppLink>
-            <AppLink href="/manager" className="rounded-lg px-3 py-2 text-sm font-semibold text-[#5f5363] hover:bg-white">
-              لوحة المدير
-            </AppLink>
-            <AppLink href="/admin" className="rounded-lg px-3 py-2 text-sm font-semibold text-[#5f5363] hover:bg-white">
-              إدارة المنصة
-            </AppLink>
+          <nav className="hidden items-center rounded-lg border border-[#e6ddda] bg-white p-1 text-sm font-semibold md:flex">
+            {[
+              ["المنصة", "/admin"],
+              ["الصالون", "/dashboard"],
+              ["العميل", "/client"],
+              ["الموظفة", "/staff"],
+            ].map(([label, href]) => (
+              <AppLink
+                key={label}
+                href={href}
+                className={cx(
+                  "rounded-md px-3 py-2 transition",
+                  selectedLayer === label ? "bg-[#211829] text-white" : "text-[#5f5363] hover:bg-[#f6f3f1]",
+                )}
+              >
+                {label}
+              </AppLink>
+            ))}
           </nav>
-          <AppLink href="/auth/login" className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
-            دخول علي
-            <LogIn size={16} />
-          </AppLink>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                platform.resetDemo();
+                setSelectedLayer("الصالون");
+              }}
+              className="hidden rounded-lg border border-[#e6ddda] bg-white px-3 py-2 text-sm font-semibold text-[#5f5363] sm:inline-flex"
+            >
+              إعادة بيانات التجربة
+            </button>
+            <AppLink href="/auth/login" className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+              دخول علي
+              <LogIn size={16} />
+            </AppLink>
+          </div>
         </div>
       </header>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-12">
-        <div className="rounded-lg border border-[#2f2538] bg-[#15111b] p-5 text-white shadow-[0_24px_90px_rgba(33,24,41,0.22)] sm:p-7">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5">
-            <div>
-              <p className="text-sm font-semibold text-[#f5c8bf]">{salon.arabicName}</p>
-              <h1 className="mt-2 max-w-2xl text-3xl font-semibold leading-tight sm:text-5xl">
-                نظام واحد للحجز، الإدارة، العملاء، والواتساب.
-              </h1>
-            </div>
-            <StatusPill status="جاهز للاختبار" />
-          </div>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            {dashboardStats.slice(0, 3).map((stat, index) => (
-              <div key={stat.label} className="rounded-lg border border-white/10 bg-white/[0.06] p-4">
-                <p className="text-xs font-medium text-white/60">{stat.label}</p>
-                <p className="mt-3 text-2xl font-semibold">{stat.value}</p>
-                <p className={cx("mt-1 text-xs font-semibold", index === 2 ? "text-[#f2c56b]" : "text-[#8fd39e]")}>{stat.note}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-white">
-            <div className="grid min-w-[720px] grid-cols-[130px_repeat(5,1fr)] text-[#211829]">
-              <div className="border-b border-[#eadfdd] p-3 text-sm font-semibold">اليوم</div>
-              {["10:00", "11:30", "13:00", "15:30", "17:00"].map((hour) => (
-                <div key={hour} className="border-b border-r border-[#eadfdd] p-3 text-center text-xs font-semibold text-[#7f7482]">
-                  {hour}
-                </div>
-              ))}
-              {staffMembers.slice(0, 4).map((staff, staffIndex) => (
-                <div key={staff.id} className="contents">
-                  <div className="flex items-center gap-2 border-b border-[#f0e7e4] p-3">
-                    <Avatar initials={staff.initials} />
-                    <div>
-                      <p className="text-sm font-semibold">{staff.name}</p>
-                      <p className="text-xs text-[#7f7482]">{staff.role}</p>
-                    </div>
-                  </div>
-                  {Array.from({ length: 5 }).map((_, slotIndex) => {
-                    const isBooked = (slotIndex + staffIndex) % 2 === 0;
-                    return (
-                      <div key={`${staff.id}-${slotIndex}`} className="border-b border-r border-[#f0e7e4] p-2">
-                        <div className={cx("h-11 rounded-md px-2 py-1 text-xs", isBooked ? "bg-[#f4d7d5] text-[#713f42]" : "bg-[#f8f5f3] text-[#9a8d95]")}>
-                          {isBooked ? bookings[(slotIndex + staffIndex) % bookings.length].service : "متاح"}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="grid gap-4">
+      <section className="mx-auto grid max-w-[1500px] gap-5 px-4 py-5 sm:px-6 xl:grid-cols-[250px_minmax(0,1fr)_340px]">
+        <aside className="grid gap-4 xl:sticky xl:top-20 xl:self-start">
           <Panel className="p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold text-[#b87776]">اختبار سريع</p>
-                <h2 className="mt-2 text-2xl font-semibold">ادخل بحساب علي أو جرّب رحلة العميل مباشرة.</h2>
-              </div>
-              <ShieldCheck className="text-[#8f9d84]" size={28} />
-            </div>
-            <div className="mt-5 grid gap-3 rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4 text-sm">
-              <div className="flex justify-between gap-4">
-                <span className="text-[#7f7482]">البريد</span>
-                <strong dir="ltr">{demoOwner.email}</strong>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-[#7f7482]">كلمة المرور</span>
-                <strong dir="ltr">{demoOwner.password}</strong>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-[#7f7482]">OTP التجريبي</span>
-                <strong dir="ltr">{demoOwner.otp}</strong>
-              </div>
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <AppLink href="/client" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
-                تجربة العميل
-                <ArrowLeft size={17} />
-              </AppLink>
-              <AppLink href="/manager" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#eadfdd] bg-white px-4 text-sm font-semibold text-[#211829]">
-                لوحة المدير
-                <Gauge size={17} />
-              </AppLink>
+            <p className="text-sm font-semibold text-[#b36a68]">الطبقات المتكاملة</p>
+            <h1 className="mt-2 text-2xl font-semibold leading-tight">نظام صالونات يعمل كمنتج واحد.</h1>
+            <p className="mt-3 text-sm leading-7 text-[#675d68]">
+              الحجز، العميل، الموظفة، واتساب، العربون، والولاء مترابطة في تجربة واحدة قابلة للاختبار.
+            </p>
+            <div className="mt-5 grid gap-2">
+              {[
+                { label: "المنصة", icon: Building2, href: "/admin" },
+                { label: "الصالون", icon: LayoutDashboard, href: "/dashboard" },
+                { label: "العميل", icon: UserRound, href: "/client" },
+                { label: "الموظفة", icon: UserCheck, href: "/staff" },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <AppLink
+                    key={item.label}
+                    href={item.href}
+                    className="flex min-h-11 items-center justify-between rounded-lg border border-[#e6ddda] bg-white px-3 text-sm font-semibold text-[#211829] transition hover:border-[#d6c7c3]"
+                  >
+                    <span className="flex items-center gap-2"><Icon size={16} />{item.label}</span>
+                    <ArrowLeft size={15} />
+                  </AppLink>
+                );
+              })}
             </div>
           </Panel>
 
-          <Panel title="حالة الربط">
-            <div className="grid gap-3 p-5">
-              <div className="flex items-center justify-between rounded-lg border border-[#d7e7dc] bg-[#f1faf3] p-4">
-                <div>
-                  <p className="font-semibold text-[#17733a]">النظام يعمل بوضع تجريبي</p>
-                  <p className="mt-1 text-sm text-[#57725d]">كل الصفحات قابلة للتنقل والاختبار بدون Supabase حقيقي.</p>
-                </div>
-                <CheckCircle2 className="text-[#17733a]" />
-              </div>
-              <div className="flex items-center justify-between rounded-lg border border-[#f0dfb8] bg-[#fff8e7] p-4">
-                <div>
-                  <p className="font-semibold text-[#7d5a10]">واتساب غير مربوط برقم حقيقي بعد</p>
-                  <p className="mt-1 text-sm text-[#846d3d]">يتطلب مفاتيح Meta Cloud API وPhone Number ID.</p>
-                </div>
-                <MessageCircle className="text-[#a26a00]" />
-              </div>
+          <Panel title="حساب الاختبار">
+            <div className="grid gap-3 p-4 text-sm">
+              <MiniStat label="البريد" value={demoOwner.email} />
+              <MiniStat label="كلمة المرور" value={demoOwner.password} />
+              <MiniStat label="OTP" value={demoOwner.otp} />
             </div>
           </Panel>
-        </div>
-      </section>
 
-      <section className="border-y border-[#eadfdd] bg-white">
-        <div className="mx-auto grid max-w-7xl gap-4 px-4 py-7 sm:px-6 md:grid-cols-4">
-          {platformMetrics.map((metric) => (
-            <div key={metric.label} className="rounded-lg border border-[#eadfdd] bg-[#fbf7f6] p-4">
-              <p className="text-sm font-semibold text-[#7f7482]">{metric.label}</p>
-              <p className="mt-3 text-2xl font-semibold">{metric.value}</p>
-              <p className="mt-1 text-xs font-semibold text-[#8f6b67]">{metric.note}</p>
+          <WhatsAppInboxPanel onAction={(message) => platform.addEvent({ title: "واتساب", body: message, type: "whatsapp" })} />
+        </aside>
+
+        <section className="min-w-0">
+          <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-[#b36a68]">مركز العمليات</p>
+              <h2 className="mt-1 text-3xl font-semibold leading-tight sm:text-4xl">رزنامة اليوم، المدفوعات، العملاء، والرسائل في شاشة واحدة.</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-7 text-[#675d68]">
+                مبني على نمط أنظمة الصالونات الحديثة: تقويم عملي، حماية عدم الحضور، دفع عربون، ملف عميل، رسائل تلقائية، وقائمة انتظار.
+              </p>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
-        <div>
-          <h2 className="text-2xl font-semibold sm:text-3xl">منصة SaaS كاملة، وليست صفحة حجز فقط.</h2>
-          <p className="mt-3 max-w-xl text-sm leading-7 text-[#6f6571]">
-            الخطة المرفقة تحولت إلى أربع واجهات قابلة للتجربة: مالك المنصة، إدارة الصالون، بوابة العميل، وبوابة الموظفة؛ مع قاعدة بيانات متعددة المستأجرين وخطوات ربط واضحة.
-          </p>
-          <div className="mt-5 grid gap-3">
-            {[
-              { title: "عزل بيانات كل صالون", icon: Database },
-              { title: "Subdomain أو دومين خاص", icon: Globe2 },
-              { title: "اشتراكات شهرية وتجربة 14 يوم", icon: CreditCard },
-              { title: "واتساب وحملات وOTP", icon: MessageCircle },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.title} className="flex items-center gap-3 rounded-lg border border-[#eadfdd] bg-white p-4">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#211829] text-[#f5c8bf]">
-                    <Icon size={19} />
-                  </span>
-                  <strong>{item.title}</strong>
-                </div>
-              );
-            })}
+            <div className="flex flex-wrap gap-2">
+              <AppLink href="/auth/register" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#e6ddda] bg-white px-4 text-sm font-semibold">
+                <UserPlus size={16} />
+                إضافة صالون
+              </AppLink>
+              <AppLink href="/dashboard" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[#211829] px-4 text-sm font-semibold text-white">
+                فتح النظام
+                <ArrowLeft size={16} />
+              </AppLink>
+            </div>
           </div>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {subscriptionPlans.map((plan) => (
-            <Panel key={plan.slug} className={cx("p-5", plan.slug === "professional" && "border-[#d88782] shadow-[0_22px_70px_rgba(216,135,130,0.16)]")}>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold text-[#b87776]">{plan.bestFor}</p>
-                  <h3 className="mt-2 text-2xl font-semibold">{plan.name}</h3>
-                </div>
-                {plan.slug === "professional" && <StatusPill status="الأفضل للانطلاق" />}
-              </div>
-              <p className="mt-5 text-3xl font-semibold">{plan.price} <span className="text-sm text-[#7f7482]">ر.س / شهر</span></p>
-              <p className="mt-2 text-sm text-[#7f7482]">{plan.trial}</p>
-              <div className="mt-5 grid gap-2 text-sm">
-                <MiniStat label="الموظفات" value={plan.staffLimit} />
-                <MiniStat label="الفروع" value={plan.branchLimit} />
-              </div>
-              <ul className="mt-5 space-y-2 text-sm text-[#5f5363]">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2">
-                    <CheckCircle2 size={16} className="text-[#17733a]" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </Panel>
-          ))}
-        </div>
-      </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
-        <Panel title="خريطة التنفيذ حسب البرومبت">
-          <div className="grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-4">
-            {implementationPhases.map((phase) => (
-              <div key={phase.phase} className="rounded-lg border border-[#eadfdd] p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#211829] text-sm font-semibold text-white">{phase.phase}</span>
-                  <StatusPill status={phase.status} />
-                </div>
-                <h3 className="mt-4 font-semibold">{phase.title}</h3>
-                <p className="mt-2 min-h-12 text-sm leading-6 text-[#6f6571]">{phase.detail}</p>
-                <div className="mt-4"><ProgressBar value={phase.progress} tone="bg-[#b87776]" /></div>
-              </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+            {operatingMetrics.map((metric, index) => (
+              <OperationsMetricCard
+                key={metric.label}
+                label={metric.label}
+                value={metric.value}
+                suffix={metric.suffix}
+                note={metric.note}
+                icon={[WalletCards, CalendarCheck, Gauge, CreditCard, Clock3, AlertTriangle][index] ?? BarChart3}
+              />
             ))}
           </div>
-        </Panel>
+
+          <div className="mt-5 grid gap-5">
+            <OperationsCalendarBoard onSelect={(message) => platform.addEvent({ title: "تقويم", body: message, type: "booking" })} />
+
+            <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+              <Panel title="حجوزات متصلة بالنظام">
+                <BookingTable
+                  context={{
+                    bookings: platform.bookings,
+                    statuses: platform.statuses,
+                    setBookingStatus: platform.setBookingStatus,
+                    statusFilter: "الكل",
+                    setStatusFilter: () => undefined,
+                    selectedCustomerId: customers[0].id,
+                    setSelectedCustomerId: () => undefined,
+                    selectedServiceId: services[0].id,
+                    setSelectedServiceId: () => undefined,
+                    actionLog: "",
+                    logAction: (message) => platform.addEvent({ title: "إجراء", body: message, type: "booking" }),
+                    settingsDraft: {
+                      salonName: salon.arabicName,
+                      depositPercent: salon.depositPercent,
+                      hours: salon.hours,
+                      branch: salon.district,
+                    },
+                    setSettingsDraft: () => undefined,
+                    addBooking: platform.addBooking,
+                    addEvent: platform.addEvent,
+                    events: platform.events,
+                  }}
+                  compact
+                />
+              </Panel>
+              <WaitlistPanel onAction={(message) => platform.addEvent({ title: "قائمة الانتظار", body: message, type: "booking" })} />
+            </div>
+
+            <PaymentAndInventoryPanel />
+          </div>
+        </section>
+
+        <aside className="grid gap-4 xl:sticky xl:top-20 xl:self-start">
+          <ActiveClientPanel />
+
+          <Panel title="إجراءات سريعة">
+            <div className="grid gap-2 p-4">
+              {[
+                { label: "حجز جديد", icon: Plus, event: "تم فتح حجز جديد من مركز العمليات.", href: "/client" },
+                { label: "متابعة عدم حضور", icon: PhoneCall, event: "تم تجهيز رسالة متابعة عدم حضور.", href: "/dashboard/bookings" },
+                { label: "حملة تسويقية", icon: Send, event: "تم إنشاء مسودة حملة واتساب.", href: "/dashboard/whatsapp" },
+                { label: "عرض التقارير", icon: BarChart3, event: "تم فتح تقارير الأداء.", href: "/dashboard/reports" },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <AppLink
+                    key={item.label}
+                    href={item.href}
+                    className="flex min-h-11 items-center justify-between rounded-lg border border-[#e6ddda] bg-white px-3 text-sm font-semibold transition hover:border-[#d6c7c3]"
+                  >
+                    <span className="flex items-center gap-2"><Icon size={16} />{item.label}</span>
+                    <ArrowLeft size={14} />
+                  </AppLink>
+                );
+              })}
+            </div>
+          </Panel>
+
+          <Panel title="سجل الأحداث">
+            <div className="divide-y divide-[#f0e8e5]">
+              {platform.events.slice(0, 7).map((event) => (
+                <div key={event.id} className="px-4 py-3 text-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-semibold">{event.title}</p>
+                    <span className="font-mono text-xs text-[#7c727c]">{event.time}</span>
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-[#675d68]">{event.body}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel title="حالة الربط الحقيقي">
+            <div className="grid gap-3 p-4">
+              <div className="rounded-lg border border-[#d7e7dc] bg-[#f1faf3] p-3">
+                <p className="font-semibold text-[#17733a]">النسخة المحلية مترابطة</p>
+                <p className="mt-1 text-xs leading-5 text-[#57725d]">الحجوزات والحالات والأحداث تحفظ محليًا بين الصفحات.</p>
+              </div>
+              <div className="rounded-lg border border-[#f0dfb8] bg-[#fff8e7] p-3">
+                <p className="font-semibold text-[#7d5a10]">WhatsApp / Payment Demo</p>
+                <p className="mt-1 text-xs leading-5 text-[#846d3d]">الإرسال والدفع الحقيقي يحتاج مفاتيح Meta وMoyasar/Tap.</p>
+              </div>
+            </div>
+          </Panel>
+        </aside>
       </section>
     </main>
   );
 }
 
 export function ClientExperience() {
+  const platform = useDemoPlatformState();
   const [serviceId, setServiceId] = useState(services[0].id);
   const [staffId, setStaffId] = useState(services[0].staff[0]);
   const [dateIndex, setDateIndex] = useState(0);
@@ -523,8 +858,30 @@ export function ClientExperience() {
       setNotice("رمز التحقق غير صحيح. استخدم 123123 أو ١٢٣١٢٣ للاختبار.");
       return;
     }
+    const bookingId = `B-${String(Date.now()).slice(-5)}`;
+    platform.addBooking({
+      id: bookingId,
+      time: slot,
+      dateLabel: dateOptions[dateIndex],
+      client: "أفنان الدوسري",
+      phone,
+      serviceId: selectedService.id,
+      service: selectedService.name,
+      staffId: selectedStaff.id,
+      staff: selectedStaff.name,
+      status: "مؤكد",
+      payment: `عربون ${money(selectedService.deposit)}`,
+      source: "بوابة العميل",
+      price: selectedService.price,
+      notes: "تم إنشاء الحجز من بوابة العميل التجريبية",
+    });
+    platform.addEvent({
+      title: "دفع عربون",
+      body: `تم تسجيل عربون ${money(selectedService.deposit)} لحجز ${bookingId}.`,
+      type: "payment",
+    });
     setConfirmed(true);
-    setNotice("تم تثبيت الحجز التجريبي وإضافة الموعد لحساب العميل.");
+    setNotice(`تم تثبيت الحجز ${bookingId}. سيظهر الآن في لوحة المدير ومركز العمليات.`);
   }
 
   return (
@@ -827,9 +1184,7 @@ export function ManagerDashboard() {
 }
 
 export function DashboardShell({ page, managerMode = false }: { page: DashboardPage; managerMode?: boolean }) {
-  const [statuses, setStatuses] = useState<Record<string, BookingStatus>>(
-    Object.fromEntries(bookings.map((booking) => [booking.id, booking.status as BookingStatus])),
-  );
+  const platform = useDemoPlatformState();
   const [statusFilter, setStatusFilter] = useState("الكل");
   const [selectedCustomerId, setSelectedCustomerId] = useState(customers[0].id);
   const [selectedServiceId, setSelectedServiceId] = useState(services[0].id);
@@ -845,15 +1200,17 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
 
   function logAction(message: string) {
     setActionLog(message);
+    platform.addEvent({ title: "إجراء مدير", body: message, type: "staff" });
   }
 
   function setBookingStatus(id: string, status: BookingStatus) {
-    setStatuses((current) => ({ ...current, [id]: status }));
+    platform.setBookingStatus(id, status);
     setActionLog(`تم تحديث الحجز ${id} إلى "${status}".`);
   }
 
   const context: DashboardContext = {
-    statuses,
+    bookings: platform.bookings,
+    statuses: platform.statuses,
     setBookingStatus,
     statusFilter,
     setStatusFilter,
@@ -865,6 +1222,9 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
     logAction,
     settingsDraft,
     setSettingsDraft,
+    addBooking: platform.addBooking,
+    addEvent: platform.addEvent,
+    events: platform.events,
   };
 
   return (
@@ -1042,7 +1402,7 @@ function CommandCenterPage({ context }: { context: DashboardContext }) {
                     return (
                       <div key={`${staff.id}-${slot}`} className="border-r border-[#f0e7e4] p-2">
                         <div className={cx("min-h-12 rounded-md px-3 py-2 text-xs font-semibold", booked ? "bg-[#f4d7d5] text-[#713f42]" : "bg-[#f8f5f3] text-[#948894]")}>
-                          {booked ? bookings[(rowIndex + slotIndex) % bookings.length].service : "متاح"}
+                          {booked ? context.bookings[(rowIndex + slotIndex) % context.bookings.length]?.service ?? "حجز" : "متاح"}
                         </div>
                       </div>
                     );
@@ -1107,11 +1467,11 @@ function BookingsPage({ context }: { context: DashboardContext }) {
 }
 
 function BookingTable({ context, compact = false }: { context: DashboardContext; compact?: boolean }) {
-  const visibleBookings = bookings.filter((booking) => context.statusFilter === "الكل" || context.statuses[booking.id] === context.statusFilter);
+  const visibleBookings = context.bookings.filter((booking) => context.statusFilter === "الكل" || context.statuses[booking.id] === context.statusFilter);
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[820px] border-collapse text-sm">
+      <table className="w-full min-w-[920px] border-collapse text-sm">
         <thead>
           <tr className="border-b border-[#eadfdd] bg-[#fbf7f6] text-[#7f7482]">
             {["الوقت", "العميلة", "الخدمة", "الموظفة", "الدفع", "الحالة", compact ? "المصدر" : "إجراءات"].map((head) => (
@@ -1127,9 +1487,14 @@ function BookingTable({ context, compact = false }: { context: DashboardContext;
                 <td className="px-4 py-4 font-semibold">{booking.time}</td>
                 <td className="px-4 py-4">
                   <p className="font-semibold">{booking.client}</p>
+                  <p className="mt-1 font-mono text-[11px] font-semibold text-[#b05f62]" dir="ltr">{booking.id}</p>
                   <p className="text-xs text-[#7f7482]" dir="ltr">{booking.phone}</p>
                 </td>
-                <td className="px-4 py-4">{booking.service}</td>
+                <td className="px-4 py-4">
+                  <p className="font-semibold">{booking.service}</p>
+                  <p className="mt-1 text-xs text-[#7f7482]">{booking.source}</p>
+                  {booking.notes && <p className="mt-1 text-[11px] leading-5 text-[#9a6b5f]">{booking.notes}</p>}
+                </td>
                 <td className="px-4 py-4">{booking.staff}</td>
                 <td className="px-4 py-4">{booking.payment}</td>
                 <td className="px-4 py-4"><StatusPill status={status} /></td>
@@ -1657,6 +2022,7 @@ export function LoginExperience() {
 }
 
 export function RegisterExperience() {
+  const platform = useDemoPlatformState();
   const [created, setCreated] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [selectedPlanSlug, setSelectedPlanSlug] = useState("professional");
@@ -1678,6 +2044,15 @@ export function RegisterExperience() {
 
   function nextStep() {
     setActiveStep((current) => Math.min(current + 1, onboardingSteps.length - 1));
+  }
+
+  function createSalonTrial() {
+    setCreated(true);
+    platform.addEvent({
+      title: "صالون جديد",
+      body: `${form.salonName} على خطة ${selectedPlan.name}: تم تجهيز تجربة محلية وربط أولي.`,
+      type: "tenant",
+    });
   }
 
   return (
@@ -1789,10 +2164,10 @@ export function RegisterExperience() {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                <ActionButton icon={Rocket} variant="dark" onClick={activeStep === onboardingSteps.length - 1 ? () => setCreated(true) : nextStep}>
+                <ActionButton icon={Rocket} variant="dark" onClick={activeStep === onboardingSteps.length - 1 ? createSalonTrial : nextStep}>
                   {activeStep === onboardingSteps.length - 1 ? "إنشاء النسخة التجريبية" : "حفظ والمتابعة"}
                 </ActionButton>
-                <ActionButton icon={CheckCircle2} variant="green" onClick={() => setCreated(true)}>
+                <ActionButton icon={CheckCircle2} variant="green" onClick={createSalonTrial}>
                   إنشاء سريع للتجربة
                 </ActionButton>
               </div>
@@ -1839,6 +2214,7 @@ export function RegisterExperience() {
 }
 
 export function StaffExperience() {
+  const platform = useDemoPlatformState();
   const [checkedIn, setCheckedIn] = useState(false);
   const nextBookings = bookings.filter((booking) => booking.staffId === "noura" || booking.staffId === "sarah").slice(0, 3);
 
@@ -1859,7 +2235,18 @@ export function StaffExperience() {
           <h1 className="mt-4 text-2xl font-semibold">نورة العتيبي</h1>
           <p className="mt-1 text-sm text-[#7f7482]">خبيرة شعر - جدول اليوم</p>
           <div className="mt-5">
-            <ActionButton icon={Clock3} variant={checkedIn ? "green" : "dark"} onClick={() => setCheckedIn((value) => !value)}>
+            <ActionButton
+              icon={Clock3}
+              variant={checkedIn ? "green" : "dark"}
+              onClick={() => {
+                setCheckedIn((value) => !value);
+                platform.addEvent({
+                  title: "بوابة الموظفة",
+                  body: checkedIn ? "نورة العتيبي ألغت تسجيل الحضور التجريبي." : "نورة العتيبي سجلت حضورها لجدول اليوم.",
+                  type: "staff",
+                });
+              }}
+            >
               {checkedIn ? "تم تسجيل الحضور" : "تسجيل الحضور"}
             </ActionButton>
           </div>
@@ -1886,7 +2273,13 @@ export function StaffExperience() {
 }
 
 export function AdminExperience() {
+  const platform = useDemoPlatformState();
   const [actionLog, setActionLog] = useState("جاهز: راقب الاشتراكات والتجارب والربط من لوحة مالك المنصة.");
+
+  function logPlatformAction(message: string) {
+    setActionLog(message);
+    platform.addEvent({ title: "مالك المنصة", body: message, type: "tenant" });
+  }
 
   return (
     <main dir="rtl" className="min-h-screen bg-[#f8f5f3] text-[#211829]">
@@ -1912,7 +2305,7 @@ export function AdminExperience() {
               <UserPlus size={17} />
               إضافة صالون
             </AppLink>
-            <ActionButton icon={ReceiptText} variant="light" onClick={() => setActionLog("تم تجهيز تقرير الاشتراكات الشهري للتصدير.")}>
+            <ActionButton icon={ReceiptText} variant="light" onClick={() => logPlatformAction("تم تجهيز تقرير الاشتراكات الشهري للتصدير.")}>
               تقرير الاشتراكات
             </ActionButton>
           </div>
@@ -1935,7 +2328,7 @@ export function AdminExperience() {
         </div>
 
         <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_380px]">
-          <Panel title="الصالونات المشتركة" action={<ActionButton icon={Building2} variant="outline" onClick={() => setActionLog("تم تطبيق فلتر الصالونات التي تحتاج متابعة.")}>تحتاج متابعة</ActionButton>}>
+          <Panel title="الصالونات المشتركة" action={<ActionButton icon={Building2} variant="outline" onClick={() => logPlatformAction("تم تطبيق فلتر الصالونات التي تحتاج متابعة.")}>تحتاج متابعة</ActionButton>}>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[900px] border-collapse text-sm">
                 <thead>
@@ -1966,7 +2359,7 @@ export function AdminExperience() {
                       <td className="px-4 py-4">
                         <button
                           type="button"
-                          onClick={() => setActionLog(`تم فتح ملف ${tenant.name}. الملاحظة: ${tenant.issues}.`)}
+                          onClick={() => logPlatformAction(`تم فتح ملف ${tenant.name}. الملاحظة: ${tenant.issues}.`)}
                           className="rounded-md border border-[#eadfdd] px-3 py-1.5 text-xs font-semibold"
                         >
                           فتح الملف

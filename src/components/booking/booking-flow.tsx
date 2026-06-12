@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatTime, getLocalizedText } from '@/lib/utils';
 import type { Service, Staff, TimeSlot, AvailableSlot, BookingFlowState } from '@/types';
@@ -248,9 +249,9 @@ function StaffSelection({
               )}
             >
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-bl from-purple-300 to-pink-300 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
+                <div className="relative w-14 h-14 rounded-full bg-gradient-to-bl from-purple-300 to-pink-300 flex items-center justify-center text-white font-bold text-xl overflow-hidden">
                   {member.avatar_url ? (
-                    <img src={member.avatar_url} alt={member.name} className="w-full h-full object-cover" />
+                    <Image src={member.avatar_url} alt={member.name} fill sizes="56px" className="object-cover" />
                   ) : (
                     member.name.charAt(0)
                   )}
