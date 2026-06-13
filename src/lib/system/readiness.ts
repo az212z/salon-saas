@@ -1,0 +1,108 @@
+type RequiredFor = "sales_demo" | "daily_use" | "production";
+
+type ReadinessCheck = {
+  id: string;
+  label: string;
+  requiredFor: RequiredFor;
+  ready: boolean;
+  status: string;
+  detail: string;
+  missing: string[];
+};
+
+const placeholderFragments = [
+  "your-",
+  "example",
+  "dummy",
+  "localhost",
+  "test-key",
+  "changeme",
+  "replace",
+];
+
+function envLooksConfigured(name: string) {
+  const value = process.env[name]?.trim();
+  if (!value) return false;
+  return !placeholderFragments.some((fragment) => value.toLowerCase().includes(fragment));
+}
+
+function missing(names: string[]) {
+  return names.filter((name) => !envLooksConfigured(name));
+}
+
+function checkRequired(id: string, label: string, requiredFor: RequiredFor, names: string[], detail: string): ReadinessCheck {
+  const missingKeys = missing(names);
+  const ready = missingKeys.length === 0;
+
+  return {
+    id,
+    label,
+    requiredFor,
+    ready,
+    status: ready ? "جاهز" : "ينتظر إعداد",
+    detail,
+    missing: missingKeys,
+  };
+}
+
+export function getSystemReadiness() {
+  const checks: ReadinessCheck[] = [
+    {
+      id: "demo",
+      label: "العرض التجريبي",
+      requiredFor: "sales_demo",
+      ready: true,
+      status: "جاهز",
+      detail: "صفحات العرض والعميل والمدير والموظفة تعمل ببيانات demo محلية.",
+      missing: [],
+    },
+    checkRequired(
+      "supabase",
+      "قاعدة البيانات والمصادقة",
+      "daily_use",
+      ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
+      "مطلوبة لأي تشغيل يومي حقيقي حتى تحفظ الحجوزات والعملاء والصلاحيات.",
+    ),
+    checkRequired(
+      "whatsapp",
+      "WhatsApp Business Cloud API",
+      "production",
+      ["WHATSAPP_BUSINESS_TOKEN", "WHATSAPP_PHONE_NUMBER_ID", "WHATSAPP_VERIFY_TOKEN", "WHATSAPP_APP_SECRET"],
+      "مطلوب لإرسال OTP والتذكيرات والحملات من رقم واتساب أعمال معتمد.",
+    ),
+    {
+      id: "payments",
+      label: "بوابة الدفع",
+      requiredFor: "production",
+      ready: envLooksConfigured("MOYASAR_SECRET_KEY") || envLooksConfigured("TAP_SECRET_KEY"),
+      status: envLooksConfigured("MOYASAR_SECRET_KEY") || envLooksConfigured("TAP_SECRET_KEY") ? "جاهز" : "ينتظر إعداد",
+      detail: "مطلوبة للعربون، الاشتراكات، وحماية عدم الحضور في الإنتاج.",
+      missing: envLooksConfigured("MOYASAR_SECRET_KEY") || envLooksConfigured("TAP_SECRET_KEY") ? [] : ["MOYASAR_SECRET_KEY أو TAP_SECRET_KEY"],
+    },
+    checkRequired(
+      "app-url",
+      "رابط التطبيق والدومين",
+      "production",
+      ["NEXT_PUBLIC_APP_URL", "NEXT_PUBLIC_ROOT_DOMAIN"],
+      "مطلوب للروابط، Webhooks، الرسائل، ودومينات الصالونات.",
+    ),
+  ];
+
+  const requiredChecks = checks.filter((item) => item.requiredFor !== "sales_demo");
+  const readyCount = checks.filter((item) => item.ready).length;
+  const productionBlockers = requiredChecks.filter((item) => !item.ready);
+  const score = Math.round((readyCount / checks.length) * 100);
+  const productionReady = productionBlockers.length === 0;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    mode: productionReady ? "production_ready" : "demo_ready",
+    productionReady,
+    score,
+    checks,
+    blockers: productionBlockers.map((item) => item.label),
+    decision: productionReady
+      ? "جاهز لتشغيل صالون حقيقي بعد اختبار Webhooks وحجز مدفوع كامل."
+      : "جاهز للبيع كعرض وتجربة، لكن التشغيل اليومي الحقيقي ينتظر مفاتيح الإنتاج الموضحة.",
+  };
+}

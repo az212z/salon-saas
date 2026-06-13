@@ -682,6 +682,83 @@ export const marketBenchmarks = [
   },
 ];
 
+export const salesReadinessSummary = {
+  score: "84%",
+  decision: "جاهز للبيع كعرض تجريبي احترافي، ويحتاج مفاتيح الإنتاج قبل تشغيل صالون فعلي يوميا.",
+  dailyUse: "قابل لتجربة يوم تشغيل كامل على بيانات demo، وليس بديلا عن Supabase/WhatsApp/Payment في الإنتاج.",
+  nextGate: "ربط Supabase، Meta WhatsApp Business، وبوابة الدفع ثم اختبار حجز مدفوع حقيقي.",
+};
+
+export const launchReadinessItems = [
+  {
+    area: "تجربة البيع",
+    status: "جاهزة",
+    owner: "مالك المنصة",
+    proof: "صفحات العميل، المدير، الصالون، والموظفة موجودة وتعرض رحلة SaaS كاملة.",
+    action: "اعرض النسخة على عميل تجريبي مع حساب علي.",
+  },
+  {
+    area: "التشغيل اليومي",
+    status: "جاهزة للتجربة",
+    owner: "مدير الصالون",
+    proof: "الحجوزات، CRM، الخدمات، الفريق، التقارير، الولاء، والعروض تعمل كواجهة مترابطة.",
+    action: "اختبر يوم تشغيل من حجز جديد حتى متابعة العميل.",
+  },
+  {
+    area: "الربط الحقيقي",
+    status: "ينتظر مفاتيح",
+    owner: "الفريق التقني",
+    proof: "Supabase وWhatsApp وMoyasar/Tap موضحة كحالة ربط وليست مدعاة.",
+    action: "أضف مفاتيح الإنتاج وشغل فحص /api/system/readiness.",
+  },
+  {
+    area: "الاعتمادية",
+    status: "تحتاج اختبار إنتاج",
+    owner: "الفريق التقني",
+    proof: "البناء ينجح، لكن الاستخدام الحقيقي يحتاج seed، RLS، Webhooks، ومراقبة أخطاء.",
+    action: "نفذ سيناريو حجز مدفوع على بيئة staging قبل البيع العام.",
+  },
+];
+
+export const dailyOperationsChecklist = [
+  {
+    title: "فتح اليوم",
+    owner: "الاستقبال",
+    detail: "مراجعة جدول اليوم، تسجيل حضور الموظفات، وتأكيد الحجوزات غير المدفوعة.",
+    ready: true,
+  },
+  {
+    title: "قبل الموعد",
+    owner: "الأتمتة",
+    detail: "إرسال تذكير واتساب أو SMS، ثم تحويل قائمة الانتظار عند أي إلغاء.",
+    ready: true,
+  },
+  {
+    title: "وقت الخدمة",
+    owner: "الموظفة",
+    detail: "فتح ملف العميل، قراءة الملاحظات، وتحديث حالة الوصول أو الإلغاء.",
+    ready: true,
+  },
+  {
+    title: "بعد الزيارة",
+    owner: "CRM",
+    detail: "إرسال شكر، طلب تقييم، وإضافة العميل لمسار إعادة الحجز المناسب.",
+    ready: true,
+  },
+  {
+    title: "نهاية اليوم",
+    owner: "المدير",
+    detail: "مراجعة الإيراد، العربون، الغياب، المخزون، والحملات التي حققت عائدا.",
+    ready: true,
+  },
+  {
+    title: "قبل البيع التجاري",
+    owner: "مالك المنصة",
+    detail: "لا يتم تسليم صالون فعلي إلا بعد مفاتيح Supabase وWhatsApp والدفع واختبار Webhooks.",
+    ready: false,
+  },
+];
+
 export const implementationPhases = [
   { phase: "0", title: "البنية متعددة المستأجرين", status: "مكتملة", progress: 100, detail: "مخطط Supabase، خطط الاشتراك، tenant_id، RLS، الأدوار." },
   { phase: "1", title: "محرك الحجوزات", status: "مكتملة جزئيا", progress: 72, detail: "منع التعارض وقفل الموعد موجودان في migration؛ واجهة demo تعمل." },

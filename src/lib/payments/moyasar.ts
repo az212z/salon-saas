@@ -13,11 +13,21 @@ interface MoyasarConfig {
   publicKey: string;
 }
 
+function valueLooksConfigured(value: string | undefined) {
+  if (!value) return false;
+  const lowered = value.toLowerCase();
+  return !["your-", "dummy", "example", "test-key", "replace"].some((fragment) => lowered.includes(fragment));
+}
+
+export function isMoyasarConfigured() {
+  return valueLooksConfigured(process.env.MOYASAR_SECRET_KEY) && valueLooksConfigured(process.env.MOYASAR_PUBLIC_KEY);
+}
+
 function getConfig(): MoyasarConfig {
   const secretKey = process.env.MOYASAR_SECRET_KEY;
   const publicKey = process.env.MOYASAR_PUBLIC_KEY;
   
-  if (!secretKey || !publicKey) {
+  if (!isMoyasarConfigured() || !secretKey || !publicKey) {
     throw new Error('Moyasar API keys not configured');
   }
   

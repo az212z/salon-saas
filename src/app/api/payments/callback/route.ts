@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyPayment } from '@/lib/payments/moyasar';
+import { isMoyasarConfigured, verifyPayment } from '@/lib/payments/moyasar';
 import { createClient } from '@/lib/supabase/server';
 
 // ============================================================
@@ -12,6 +12,16 @@ export async function POST(request: NextRequest) {
 
     if (!id || !status) {
       return NextResponse.json({ error: 'Invalid callback' }, { status: 400 });
+    }
+
+    if (!isMoyasarConfigured()) {
+      return NextResponse.json(
+        {
+          error: 'بوابة الدفع غير مهيأة. أضف مفاتيح Moyasar أو استخدم Tap قبل معالجة دفعات حقيقية.',
+          mode: 'configuration_required',
+        },
+        { status: 503 },
+      );
     }
 
     // Verify payment with gateway

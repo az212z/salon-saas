@@ -24,6 +24,13 @@ interface WhatsAppMessage {
 // ============================================================
 export async function sendWhatsAppMessage(message: WhatsAppMessage): Promise<{ success: boolean; messageId?: string; error?: string }> {
   try {
+    if (!WHATSAPP_PHONE_NUMBER_ID || !WHATSAPP_BUSINESS_TOKEN) {
+      return {
+        success: false,
+        error: 'WhatsApp Cloud API غير مهيأ. لم يتم إرسال الرسالة من رقم حقيقي.',
+      };
+    }
+
     const url = `${WHATSAPP_API_URL}/${WHATSAPP_PHONE_NUMBER_ID}/messages`;
 
     const payload: any = {

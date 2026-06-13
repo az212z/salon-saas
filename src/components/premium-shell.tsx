@@ -48,6 +48,7 @@ import {
   conversationFeed,
   coupons,
   customers,
+  dailyOperationsChecklist,
   dashboardStats,
   demoOwner,
   implementationPhases,
@@ -55,6 +56,7 @@ import {
   inventoryAlerts,
   loyaltyRows,
   growthLevers,
+  launchReadinessItems,
   marketBenchmarks,
   onboardingSteps,
   operatingMetrics,
@@ -65,6 +67,7 @@ import {
   platformTenants,
   reportMetrics,
   salon,
+  salesReadinessSummary,
   services,
   settingsGroups,
   staffMembers,
@@ -97,6 +100,26 @@ type DemoPlatformState = {
   statuses: Record<string, BookingStatus>;
   events: DemoEvent[];
   settingsDraft: SalonSettingsDraft;
+};
+
+type SystemReadinessCheck = {
+  id: string;
+  label: string;
+  requiredFor: "sales_demo" | "daily_use" | "production";
+  ready: boolean;
+  status: string;
+  detail: string;
+  missing: string[];
+};
+
+type SystemReadinessSnapshot = {
+  generatedAt: string;
+  mode: "demo_ready" | "production_ready";
+  productionReady: boolean;
+  score: number;
+  checks: SystemReadinessCheck[];
+  blockers: string[];
+  decision: string;
 };
 
 type DashboardContext = {
@@ -242,6 +265,28 @@ function useDemoPlatformState() {
   }
 
   return { ...state, addBooking, setBookingStatus, setSettingsDraft, addEvent, resetDemo };
+}
+
+function useSystemReadiness() {
+  const [readiness, setReadiness] = useState<SystemReadinessSnapshot | null>(null);
+  const [error, setError] = useState("");
+
+  async function refresh() {
+    try {
+      setError("");
+      const response = await fetch("/api/system/readiness", { cache: "no-store" });
+      if (!response.ok) throw new Error("readiness request failed");
+      setReadiness((await response.json()) as SystemReadinessSnapshot);
+    } catch {
+      setError("تعذر قراءة فحص الجاهزية من الخادم المحلي.");
+    }
+  }
+
+  useEffect(() => {
+    void refresh();
+  }, []);
+
+  return { readiness, error, refresh };
 }
 
 const moneyFormatter = new Intl.NumberFormat("ar-SA");
@@ -2268,28 +2313,80 @@ function SettingsPage({ context }: { context: DashboardContext }) {
           </div>
         </div>
       </Panel>
-      <Panel title="أقسام الإعداد">
-        <div className="grid gap-3 p-5">
-          <div className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4">
-            <p className="text-sm font-semibold text-[#b9465a]">معاينة التشغيل</p>
-            <h3 className="mt-2 text-lg font-semibold">{draft.salonName}</h3>
-            <p className="mt-1 text-sm leading-6 text-[#6f6871]">{draft.branch} | {draft.hours}</p>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <MiniStat label="نسبة العربون" value={`${draft.depositPercent}%`} />
-              <MiniStat label="الحالة" value={hasUnsavedChanges ? "مسودة" : "محفوظ"} />
-            </div>
-          </div>
-          {settingsGroups.map((group) => (
-            <div key={group.title} className="rounded-lg border border-[#eadfdd] p-4">
-              <p className="font-semibold">{group.title}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {group.items.map((item) => <span key={item} className="rounded-full bg-[#fbf7f6] px-3 py-1 text-xs font-semibold text-[#6f6571]">{item}</span>)}
+      <div className="grid gap-5">
+        <Panel title="أقسام الإعداد">
+          <div className="grid gap-3 p-5">
+            <div className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4">
+              <p className="text-sm font-semibold text-[#b9465a]">معاينة التشغيل</p>
+              <h3 className="mt-2 text-lg font-semibold">{draft.salonName}</h3>
+              <p className="mt-1 text-sm leading-6 text-[#6f6871]">{draft.branch} | {draft.hours}</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <MiniStat label="نسبة العربون" value={`${draft.depositPercent}%`} />
+                <MiniStat label="الحالة" value={hasUnsavedChanges ? "مسودة" : "محفوظ"} />
               </div>
             </div>
-          ))}
-        </div>
-      </Panel>
+            {settingsGroups.map((group) => (
+              <div key={group.title} className="rounded-lg border border-[#eadfdd] p-4">
+                <p className="font-semibold">{group.title}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {group.items.map((item) => <span key={item} className="rounded-full bg-[#fbf7f6] px-3 py-1 text-xs font-semibold text-[#6f6571]">{item}</span>)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <DailyOperationsChecklistPanel context={context} />
+      </div>
     </div>
+  );
+}
+
+function DailyOperationsChecklistPanel({ context }: { context: DashboardContext }) {
+  const { readiness, error, refresh } = useSystemReadiness();
+  const modeLabel = readiness?.productionReady ? "Production" : "Demo Ready";
+
+  return (
+    <Panel title="جاهزية التشغيل اليومي" action={<StatusPill status={modeLabel} />}>
+      <div className="grid gap-3 p-5">
+        <div className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4">
+          <p className="text-sm font-semibold text-[#b9465a]">قرار التشغيل</p>
+          <p className="mt-2 text-sm leading-6 text-[#5f5861]">
+            {readiness?.decision ?? salesReadinessSummary.dailyUse}
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <MiniStat label="فحص البيئة" value={readiness ? `${readiness.score}%` : "يقرأ..."} />
+            <MiniStat label="الموانع" value={readiness ? String(readiness.blockers.length) : "-"} />
+          </div>
+          {error && <p className="mt-2 text-xs font-semibold text-[#b2384a]">{error}</p>}
+          <button
+            type="button"
+            onClick={() => {
+              void refresh();
+              context.logAction("تم تحديث فحص جاهزية التشغيل اليومي.");
+            }}
+            className="saloni-button mt-3 rounded-lg border border-[#eadfdd] bg-white px-3 py-2 text-xs font-semibold text-[#211d24]"
+          >
+            تحديث الفحص
+          </button>
+        </div>
+
+        {dailyOperationsChecklist.map((item) => (
+          <button
+            key={item.title}
+            type="button"
+            onClick={() => context.logAction(`تمت مراجعة خطوة ${item.title}: ${item.detail}`)}
+            className="saloni-button rounded-xl border border-[#eadfdd] bg-white p-4 text-right"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-semibold">{item.title}</p>
+              <StatusPill status={item.ready ? "جاهز" : "ينتظر إنتاج"} />
+            </div>
+            <p className="mt-1 text-xs font-semibold text-[#b9465a]">{item.owner}</p>
+            <p className="mt-2 text-sm leading-6 text-[#6f6571]">{item.detail}</p>
+          </button>
+        ))}
+      </div>
+    </Panel>
   );
 }
 
@@ -2697,6 +2794,8 @@ export function AdminExperience() {
           ))}
         </div>
 
+        <ProductionReadinessPanel onAction={logPlatformAction} />
+
         <MarketBenchmarkPanel onAction={logPlatformAction} />
 
         <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_380px]">
@@ -2804,6 +2903,93 @@ export function AdminExperience() {
         </div>
       </section>
     </main>
+  );
+}
+
+function ProductionReadinessPanel({ onAction }: { onAction: (message: string) => void }) {
+  const { readiness, error, refresh } = useSystemReadiness();
+  const score = readiness?.score ?? Number(salesReadinessSummary.score.replace("%", ""));
+  const blockers = readiness?.blockers ?? ["Supabase", "WhatsApp", "Payment"];
+  const checks = readiness?.checks ?? [];
+
+  return (
+    <Panel
+      title="جاهزية البيع والاستخدام اليومي"
+      action={<StatusPill status={readiness?.productionReady ? "جاهز إنتاج" : "Demo Ready"} />}
+      className="mt-5"
+    >
+      <div className="grid gap-5 p-5 xl:grid-cols-[340px_1fr]">
+        <div className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-5">
+          <p className="text-sm font-semibold text-[#b9465a]">قرار الإطلاق</p>
+          <p className="mt-3 text-4xl font-semibold text-[#211d24]">{score}%</p>
+          <p className="mt-3 text-sm leading-6 text-[#5f5861]">
+            {readiness?.decision ?? salesReadinessSummary.decision}
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <MiniStat label="موانع الإنتاج" value={String(blockers.length)} />
+            <MiniStat label="وضع النظام" value={readiness?.mode === "production_ready" ? "Production" : "Demo"} />
+          </div>
+          {blockers.length > 0 && (
+            <div className="mt-4 rounded-lg border border-[#eadbc5] bg-[#fff9ef] p-3">
+              <p className="text-xs font-semibold text-[#7d5a10]">لا تسلّم كتشغيل حي قبل إغلاق:</p>
+              <p className="mt-2 text-xs leading-5 text-[#846d3d]">{blockers.join("، ")}</p>
+            </div>
+          )}
+          {error && <p className="mt-3 text-xs font-semibold text-[#b2384a]">{error}</p>}
+          <button
+            type="button"
+            onClick={() => {
+              void refresh();
+              onAction("تم تحديث فحص جاهزية البيع والاستخدام اليومي من API النظام.");
+            }}
+            className="saloni-button mt-4 w-full rounded-lg border border-[#eadfdd] bg-white px-3 py-2 text-xs font-semibold text-[#211d24]"
+          >
+            فحص الجاهزية الآن
+          </button>
+        </div>
+
+        <div className="grid gap-4">
+          {checks.length > 0 && (
+            <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
+              {checks.map((check) => (
+                <button
+                  key={check.id}
+                  type="button"
+                  onClick={() => onAction(`تمت مراجعة ${check.label}: ${check.ready ? "جاهز" : `ينقص ${check.missing.join("، ")}`}.`)}
+                  className="saloni-button rounded-xl border border-[#e8e1dc] bg-white p-4 text-right"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold">{check.label}</p>
+                    <StatusPill status={check.status} />
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-[#6f6571]">{check.detail}</p>
+                  {check.missing.length > 0 && <p className="mt-2 break-words text-left text-[11px] font-semibold text-[#b2384a]" dir="ltr">{check.missing.join(", ")}</p>}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="grid gap-3 md:grid-cols-2">
+            {launchReadinessItems.map((item) => (
+              <button
+                key={item.area}
+                type="button"
+                onClick={() => onAction(`خطوة جاهزية ${item.area}: ${item.action}`)}
+                className="saloni-button rounded-xl border border-[#e8e1dc] bg-white p-4 text-right"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="font-semibold">{item.area}</h3>
+                  <StatusPill status={item.status} />
+                </div>
+                <p className="mt-1 text-xs font-semibold text-[#b9465a]">{item.owner}</p>
+                <p className="mt-3 text-sm leading-6 text-[#5f5861]">{item.proof}</p>
+                <p className="mt-3 rounded-lg bg-[#fbf8f6] p-3 text-xs leading-5 text-[#6f6571]">{item.action}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Panel>
   );
 }
 
