@@ -82,10 +82,17 @@ type DemoEvent = {
   body: string;
   type: "booking" | "payment" | "whatsapp" | "tenant" | "staff";
 };
+type SalonSettingsDraft = {
+  salonName: string;
+  depositPercent: number;
+  hours: string;
+  branch: string;
+};
 type DemoPlatformState = {
   bookings: DemoBooking[];
   statuses: Record<string, BookingStatus>;
   events: DemoEvent[];
+  settingsDraft: SalonSettingsDraft;
 };
 
 type DashboardContext = {
@@ -100,19 +107,18 @@ type DashboardContext = {
   setSelectedServiceId: (id: string) => void;
   actionLog: string;
   logAction: (message: string) => void;
-  settingsDraft: {
-    salonName: string;
-    depositPercent: number;
-    hours: string;
-    branch: string;
-  };
-  setSettingsDraft: (draft: DashboardContext["settingsDraft"]) => void;
+  settingsDraft: SalonSettingsDraft;
+  setSettingsDraft: (draft: SalonSettingsDraft) => void;
   addBooking: (booking: DemoBooking) => void;
   addEvent: (event: Omit<DemoEvent, "id" | "time">) => void;
   events: DemoEvent[];
 };
 
 const DEMO_STATE_KEY = "saloni-pro-demo-state-v4";
+
+function createEventId() {
+  return `EV-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
 
 function createInitialDemoState(): DemoPlatformState {
   return {
@@ -123,6 +129,26 @@ function createInitialDemoState(): DemoPlatformState {
       { id: "EV-2", time: "11:10", title: "رسالة واتساب", body: "لمى العتيبي تحتاج رابط دفع جديد.", type: "whatsapp" },
       { id: "EV-3", time: "10:58", title: "تنبيه مخزون", body: "شامبو بوتانيك وصل حد الطلب.", type: "staff" },
     ],
+    settingsDraft: {
+      salonName: salon.arabicName,
+      depositPercent: salon.depositPercent,
+      hours: salon.hours,
+      branch: salon.district,
+    },
+  };
+}
+
+function sanitizeDemoState(parsed: DemoPlatformState): DemoPlatformState {
+  const seen = new Set<string>();
+  return {
+    bookings: parsed.bookings,
+    statuses: parsed.statuses,
+    settingsDraft: parsed.settingsDraft ?? createInitialDemoState().settingsDraft,
+    events: parsed.events.map((event, index) => {
+      const id = event.id && !seen.has(event.id) ? event.id : `${createEventId()}-${index}`;
+      seen.add(id);
+      return { ...event, id };
+    }),
   };
 }
 
@@ -139,7 +165,7 @@ function useDemoPlatformState() {
       if (stored) {
         const parsed = JSON.parse(stored) as DemoPlatformState;
         if (Array.isArray(parsed.bookings) && parsed.statuses && Array.isArray(parsed.events)) {
-          setState(parsed);
+          setState(sanitizeDemoState(parsed));
         }
       }
     } catch {
@@ -158,7 +184,7 @@ function useDemoPlatformState() {
   function addEvent(event: Omit<DemoEvent, "id" | "time">) {
     setState((current) => ({
       ...current,
-      events: [{ ...event, id: `EV-${Date.now()}`, time: eventTime() }, ...current.events].slice(0, 12),
+      events: [{ ...event, id: createEventId(), time: eventTime() }, ...current.events].slice(0, 12),
     }));
   }
 
@@ -169,7 +195,7 @@ function useDemoPlatformState() {
       statuses: { ...current.statuses, [booking.id]: booking.status as BookingStatus },
       events: [
         {
-          id: `EV-${Date.now()}`,
+          id: createEventId(),
           time: eventTime(),
           title: "حجز جديد",
           body: `${booking.client} - ${booking.service} مع ${booking.staff}`,
@@ -186,7 +212,7 @@ function useDemoPlatformState() {
       statuses: { ...current.statuses, [id]: status },
       events: [
         {
-          id: `EV-${Date.now()}`,
+          id: createEventId(),
           time: eventTime(),
           title: "تحديث حالة الحجز",
           body: `${current.bookings.find((item) => item.id === id)?.client ?? id}: ${status}`,
@@ -195,6 +221,10 @@ function useDemoPlatformState() {
         ...current.events,
       ].slice(0, 12),
     }));
+  }
+
+  function setSettingsDraft(settingsDraft: SalonSettingsDraft) {
+    setState((current) => ({ ...current, settingsDraft }));
   }
 
   function resetDemo() {
@@ -207,7 +237,7 @@ function useDemoPlatformState() {
     }
   }
 
-  return { ...state, addBooking, setBookingStatus, addEvent, resetDemo };
+  return { ...state, addBooking, setBookingStatus, setSettingsDraft, addEvent, resetDemo };
 }
 
 const moneyFormatter = new Intl.NumberFormat("ar-SA");
@@ -1191,12 +1221,6 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
   const [selectedCustomerId, setSelectedCustomerId] = useState(customers[0].id);
   const [selectedServiceId, setSelectedServiceId] = useState(services[0].id);
   const [actionLog, setActionLog] = useState("جاهز: كل العمليات هنا تعمل محليا للتجربة.");
-  const [settingsDraft, setSettingsDraft] = useState({
-    salonName: salon.arabicName,
-    depositPercent: salon.depositPercent,
-    hours: salon.hours,
-    branch: salon.district,
-  });
 
   const meta = pageMeta[page] ?? pageMeta.dashboard;
 
@@ -1222,8 +1246,8 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
     setSelectedServiceId,
     actionLog,
     logAction,
-    settingsDraft,
-    setSettingsDraft,
+    settingsDraft: platform.settingsDraft,
+    setSettingsDraft: platform.setSettingsDraft,
     addBooking: platform.addBooking,
     addEvent: platform.addEvent,
     events: platform.events,
@@ -1282,10 +1306,7 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
                 <BrandMark compact />
                 <strong>Saloni Pro</strong>
               </div>
-              <div className="hidden min-w-[280px] items-center gap-2 rounded-xl border border-[#e8e1dc] bg-white/88 px-3 py-2 text-sm text-[#6f6871] shadow-[0_14px_34px_rgba(37,32,41,0.035)] lg:flex">
-                <Search size={16} />
-                <span>بحث سريع عن حجز، عميلة، خدمة...</span>
-              </div>
+              <CommandSearch context={context} />
               <div className="flex items-center gap-2">
                 <AppLink href="/client" className="saloni-button rounded-xl border border-[#e8e1dc] bg-white px-3 py-2 text-sm font-semibold text-[#211d24]">
                   تجربة العميل
@@ -1334,6 +1355,8 @@ export function DashboardShell({ page, managerMode = false }: { page: DashboardP
             <div className="mb-5 rounded-xl border border-[#e8e1dc] bg-white/82 px-4 py-3 text-sm text-[#5f5861] shadow-[0_14px_34px_rgba(37,32,41,0.035)]">
               <span className="font-semibold text-[#211d24]">آخر إجراء:</span> {actionLog}
             </div>
+
+            <OperationsReadinessStrip context={context} />
 
             {renderDashboardPage(page, context)}
           </div>
@@ -1464,9 +1487,12 @@ function BookingsPage({ context }: { context: DashboardContext }) {
           </button>
         ))}
       </div>
-      <Panel title="إدارة الحجوزات">
-        <BookingTable context={context} />
-      </Panel>
+      <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
+        <Panel title="إدارة الحجوزات">
+          <BookingTable context={context} />
+        </Panel>
+        <ClientFocusPanel context={context} />
+      </div>
     </div>
   );
 }
@@ -1487,11 +1513,25 @@ function BookingTable({ context, compact = false }: { context: DashboardContext;
         <tbody>
           {visibleBookings.map((booking) => {
             const status = context.statuses[booking.id];
+            const linkedCustomer = customers.find((customer) => customer.phone === booking.phone || customer.name === booking.client);
             return (
               <tr key={booking.id} className="border-b border-[#f0eae6]">
                 <td className="px-4 py-4 font-semibold">{booking.time}</td>
                 <td className="px-4 py-4">
-                  <p className="font-semibold">{booking.client}</p>
+                  {compact || !linkedCustomer ? (
+                    <p className="font-semibold">{booking.client}</p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        context.setSelectedCustomerId(linkedCustomer.id);
+                        context.logAction(`تم فتح ملف ${linkedCustomer.name} من جدول الحجوزات.`);
+                      }}
+                      className="text-right font-semibold text-[#211d24] underline-offset-4 hover:text-[#b9465a] hover:underline"
+                    >
+                      {booking.client}
+                    </button>
+                  )}
                   <p className="mt-1 font-mono text-[11px] font-semibold text-[#b9465a]" dir="ltr">{booking.id}</p>
                   <p className="text-xs text-[#6f6871]" dir="ltr">{booking.phone}</p>
                 </td>
@@ -1519,6 +1559,205 @@ function BookingTable({ context, compact = false }: { context: DashboardContext;
           })}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function ClientFocusPanel({ context }: { context: DashboardContext }) {
+  const selectedCustomer = customers.find((customer) => customer.id === context.selectedCustomerId) ?? customers[0];
+  const customerBookings = context.bookings.filter((booking) => booking.phone === selectedCustomer.phone || booking.client === selectedCustomer.name);
+  const nextBooking = customerBookings[0];
+
+  return (
+    <Panel title="ملف العميل النشط">
+      <div className="grid gap-4 p-5">
+        <div className="flex items-center gap-3">
+          <Avatar initials={selectedCustomer.name.slice(0, 1)} />
+          <div className="min-w-0">
+            <h2 className="truncate text-lg font-semibold">{selectedCustomer.name}</h2>
+            <p className="mt-1 text-sm text-[#6f6871]" dir="ltr">{selectedCustomer.phone}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <MiniStat label="المستوى" value={selectedCustomer.tier} />
+          <MiniStat label="الزيارات" value={String(selectedCustomer.visits)} />
+          <MiniStat label="النقاط" value={String(selectedCustomer.points)} />
+          <MiniStat label="الإنفاق" value={selectedCustomer.spend} />
+        </div>
+
+        <div className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4">
+          <p className="text-sm font-semibold text-[#b9465a]">الإجراء التالي</p>
+          <p className="mt-2 text-sm leading-6 text-[#5f5861]">{selectedCustomer.nextAction}</p>
+          {nextBooking && (
+            <div className="mt-3 rounded-lg border border-[#eee8e4] bg-white p-3 text-sm">
+              <p className="font-semibold">{nextBooking.service}</p>
+              <p className="mt-1 text-xs text-[#6f6871]">{nextBooking.dateLabel} - {nextBooking.time} | {context.statuses[nextBooking.id]}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {selectedCustomer.tags.map((tag) => (
+            <span key={tag} className="rounded-lg bg-[#fff3f5] px-3 py-1 text-xs font-semibold text-[#8d2f42]">{tag}</span>
+          ))}
+        </div>
+
+        <div className="grid gap-2">
+          <ActionButton icon={MessageCircle} variant="green" onClick={() => context.logAction(`تم تجهيز رسالة متابعة إلى ${selectedCustomer.name}.`)}>
+            رسالة متابعة
+          </ActionButton>
+          <ActionButton icon={UserRound} variant="outline" onClick={() => context.logAction(`تم فتح سجل زيارات ${selectedCustomer.name}.`)}>
+            سجل الزيارات
+          </ActionButton>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
+function CommandSearch({ context }: { context: DashboardContext }) {
+  const [query, setQuery] = useState("");
+  const normalizedQuery = normalizeDigits(query).trim().toLowerCase();
+  const hasQuery = normalizedQuery.length > 1;
+  const bookingResults = hasQuery
+    ? context.bookings
+        .filter((booking) => `${booking.id} ${booking.client} ${booking.phone} ${booking.service} ${booking.staff}`.toLowerCase().includes(normalizedQuery))
+        .slice(0, 3)
+        .map((booking) => ({
+          id: `booking-${booking.id}`,
+          label: `${booking.client} - ${booking.time}`,
+          detail: `${booking.service} | ${context.statuses[booking.id]}`,
+          href: "/dashboard/bookings",
+          action: () => {
+            context.setStatusFilter("الكل");
+            context.logAction(`تم فتح نتيجة البحث للحجز ${booking.id}.`);
+          },
+        }))
+    : [];
+  const customerResults = hasQuery
+    ? customers
+        .filter((customer) => `${customer.id} ${customer.name} ${customer.phone} ${customer.tags.join(" ")}`.toLowerCase().includes(normalizedQuery))
+        .slice(0, 2)
+        .map((customer) => ({
+          id: `customer-${customer.id}`,
+          label: customer.name,
+          detail: `${customer.tier} | ${customer.nextAction}`,
+          href: "/dashboard/customers",
+          action: () => {
+            context.setSelectedCustomerId(customer.id);
+            context.logAction(`تم فتح ملف العميل ${customer.name} من البحث.`);
+          },
+        }))
+    : [];
+  const serviceResults = hasQuery
+    ? services
+        .filter((service) => `${service.id} ${service.name} ${service.category} ${service.specialist}`.toLowerCase().includes(normalizedQuery))
+        .slice(0, 2)
+        .map((service) => ({
+          id: `service-${service.id}`,
+          label: service.name,
+          detail: `${money(service.price)} | عربون ${money(service.deposit)}`,
+          href: "/dashboard/services",
+          action: () => {
+            context.setSelectedServiceId(service.id);
+            context.logAction(`تم فتح إعدادات خدمة ${service.name} من البحث.`);
+          },
+        }))
+    : [];
+  const results = [...bookingResults, ...customerResults, ...serviceResults].slice(0, 5);
+
+  return (
+    <div className="relative hidden min-w-[360px] max-w-[520px] flex-1 lg:block">
+      <div className="flex h-11 items-center gap-2 rounded-xl border border-[#e8e1dc] bg-white/90 px-3 text-sm text-[#6f6871] shadow-[0_14px_34px_rgba(37,32,41,0.035)]">
+        <Search size={16} />
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="بحث عن حجز، عميلة، خدمة..."
+          className="h-full min-w-0 flex-1 bg-transparent text-[#211d24] outline-none placeholder:text-[#8f858d]"
+        />
+        {query && (
+          <button type="button" onClick={() => setQuery("")} className="rounded-lg px-2 py-1 text-xs font-semibold text-[#8f3547] hover:bg-[#fff3f5]">
+            مسح
+          </button>
+        )}
+      </div>
+      {hasQuery && (
+        <div className="absolute left-0 right-0 top-[52px] z-40 overflow-hidden rounded-xl border border-[#e8e1dc] bg-white shadow-[0_24px_70px_rgba(37,32,41,0.13)]">
+          {results.length ? (
+            results.map((result) => (
+              <Link
+                key={result.id}
+                href={result.href}
+                prefetch={false}
+                onClick={() => {
+                  result.action();
+                  setQuery("");
+                }}
+                className="block border-b border-[#f0eae6] px-4 py-3 text-right last:border-b-0 hover:bg-[#fbf8f6]"
+              >
+                <span className="block text-sm font-semibold text-[#211d24]">{result.label}</span>
+                <span className="mt-1 block text-xs leading-5 text-[#6f6871]">{result.detail}</span>
+              </Link>
+            ))
+          ) : (
+            <div className="px-4 py-4 text-sm text-[#6f6871]">لا توجد نتيجة مطابقة. جرّب اسم عميلة أو رقم حجز.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OperationsReadinessStrip({ context }: { context: DashboardContext }) {
+  const readinessItems = [
+    {
+      title: "الحجوزات",
+      detail: `${context.bookings.length} حجوزات مرتبطة بالحالات`,
+      status: "جاهز",
+      tone: "green",
+      action: "تمت مراجعة حالة محرك الحجوزات المحلي.",
+    },
+    {
+      title: "الإعدادات",
+      detail: `${context.settingsDraft.salonName} | عربون ${context.settingsDraft.depositPercent}%`,
+      status: "محلي",
+      tone: "rose",
+      action: "تم فتح ملخص إعدادات الصالون الحالية.",
+    },
+    {
+      title: "واتساب",
+      detail: "OTP وحملات تعمل كتجربة فقط",
+      status: "Demo",
+      tone: "amber",
+      action: "واتساب يعمل كتجربة. الإرسال الحقيقي يحتاج مفاتيح Meta.",
+    },
+    {
+      title: "الدفع",
+      detail: "روابط العربون جاهزة للمحاكاة",
+      status: "Pending",
+      tone: "amber",
+      action: "الدفع الحقيقي ينتظر مفاتيح Moyasar أو Tap.",
+    },
+  ];
+
+  return (
+    <div className="mb-5 grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
+      {readinessItems.map((item) => (
+        <button
+          key={item.title}
+          type="button"
+          onClick={() => context.logAction(item.action)}
+          className="saloni-button rounded-xl border border-[#e8e1dc] bg-white/82 p-4 text-right shadow-[0_14px_34px_rgba(37,32,41,0.035)]"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm font-semibold text-[#211d24]">{item.title}</span>
+            <StatusPill status={item.status} />
+          </div>
+          <p className="mt-2 text-xs leading-5 text-[#6f6871]">{item.detail}</p>
+        </button>
+      ))}
     </div>
   );
 }
@@ -1866,54 +2105,90 @@ function WhatsappPage({ context }: { context: DashboardContext }) {
 }
 
 function SettingsPage({ context }: { context: DashboardContext }) {
-  const draft = context.settingsDraft;
+  const savedDraft = context.settingsDraft;
+  const [draft, setDraft] = useState(savedDraft);
+  const hasUnsavedChanges = JSON.stringify(draft) !== JSON.stringify(savedDraft);
+
+  useEffect(() => {
+    setDraft(context.settingsDraft);
+  }, [context.settingsDraft]);
+
+  function saveSettings() {
+    context.setSettingsDraft(draft);
+    context.logAction(`تم حفظ إعدادات ${draft.salonName}: الفرع ${draft.branch}، العربون ${draft.depositPercent}%.`);
+  }
+
+  function restoreSettings() {
+    setDraft(savedDraft);
+    context.logAction("تم استرجاع آخر نسخة محفوظة من إعدادات الصالون.");
+  }
 
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
-      <Panel title="إعدادات الصالون">
+      <Panel title="إعدادات الصالون" action={<StatusPill status={hasUnsavedChanges ? "غير محفوظ" : "محفوظ"} />}>
         <div className="grid gap-4 p-5 md:grid-cols-2">
+          <div className={cx("md:col-span-2 rounded-xl border p-4 text-sm leading-6", hasUnsavedChanges ? "border-[#eadbc5] bg-[#fff9ef] text-[#7d5a10]" : "border-[#d7e7dc] bg-[#f1faf3] text-[#17733a]")}>
+            {hasUnsavedChanges ? "هناك تغييرات غير محفوظة. احفظها أو استرجع آخر نسخة محفوظة قبل مغادرة الصفحة." : "الإعدادات الحالية محفوظة محليا للتجربة، وتظهر مباشرة في شريط جاهزية النظام."}
+          </div>
           <label className="grid gap-2 text-sm font-semibold">
             اسم الصالون
             <input
               value={draft.salonName}
-              onChange={(event) => context.setSettingsDraft({ ...draft, salonName: event.target.value })}
-              className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 outline-none focus:border-[#d88782]"
+              onChange={(event) => setDraft({ ...draft, salonName: event.target.value })}
+              className="h-11 rounded-xl border border-[#e8e1dc] bg-white px-3 outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15"
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold">
             الفرع
             <input
               value={draft.branch}
-              onChange={(event) => context.setSettingsDraft({ ...draft, branch: event.target.value })}
-              className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 outline-none focus:border-[#d88782]"
+              onChange={(event) => setDraft({ ...draft, branch: event.target.value })}
+              className="h-11 rounded-xl border border-[#e8e1dc] bg-white px-3 outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15"
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold">
             ساعات العمل
             <input
               value={draft.hours}
-              onChange={(event) => context.setSettingsDraft({ ...draft, hours: event.target.value })}
-              className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 outline-none focus:border-[#d88782]"
+              onChange={(event) => setDraft({ ...draft, hours: event.target.value })}
+              className="h-11 rounded-xl border border-[#e8e1dc] bg-white px-3 outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15"
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold">
             نسبة العربون
             <input
               type="number"
+              min={0}
+              max={100}
               value={draft.depositPercent}
-              onChange={(event) => context.setSettingsDraft({ ...draft, depositPercent: Number(event.target.value) })}
-              className="h-11 rounded-lg border border-[#eadfdd] bg-white px-3 outline-none focus:border-[#d88782]"
+              onChange={(event) => {
+                const value = Number(event.target.value || 0);
+                setDraft({ ...draft, depositPercent: Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0)) });
+              }}
+              className="h-11 rounded-xl border border-[#e8e1dc] bg-white px-3 outline-none transition focus:border-[#c44f64] focus:ring-2 focus:ring-[#c44f64]/15"
             />
           </label>
-          <div className="md:col-span-2">
-            <ActionButton icon={CheckCircle2} variant="dark" onClick={() => context.logAction("تم حفظ إعدادات الصالون محليا للتجربة.")}>
+          <div className="flex flex-wrap gap-2 md:col-span-2">
+            <ActionButton icon={CheckCircle2} variant="dark" onClick={saveSettings} disabled={!hasUnsavedChanges}>
               حفظ الإعدادات
+            </ActionButton>
+            <ActionButton icon={ArrowLeft} variant="outline" onClick={restoreSettings} disabled={!hasUnsavedChanges}>
+              استرجاع آخر حفظ
             </ActionButton>
           </div>
         </div>
       </Panel>
       <Panel title="أقسام الإعداد">
         <div className="grid gap-3 p-5">
+          <div className="rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4">
+            <p className="text-sm font-semibold text-[#b9465a]">معاينة التشغيل</p>
+            <h3 className="mt-2 text-lg font-semibold">{draft.salonName}</h3>
+            <p className="mt-1 text-sm leading-6 text-[#6f6871]">{draft.branch} | {draft.hours}</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <MiniStat label="نسبة العربون" value={`${draft.depositPercent}%`} />
+              <MiniStat label="الحالة" value={hasUnsavedChanges ? "مسودة" : "محفوظ"} />
+            </div>
+          </div>
           {settingsGroups.map((group) => (
             <div key={group.title} className="rounded-lg border border-[#eadfdd] p-4">
               <p className="font-semibold">{group.title}</p>
