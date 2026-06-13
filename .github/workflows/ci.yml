@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          WHATSAPP_ENABLED: "false"
+          NEXT_PUBLIC_APP_URL: https://salon-saas-platform.vercel.app
+          NEXT_PUBLIC_ROOT_DOMAIN: salon-saas-platform.vercel.app
+          NEXT_PUBLIC_APP_NAME: "سالوني برو"
+          NEXT_PUBLIC_DEFAULT_LOCALE: ar
+          NEXT_PUBLIC_DEFAULT_CURRENCY: SAR
+          NEXT_PUBLIC_DEMO_OWNER_EMAIL: ali212@icloud.com
+          NEXT_PUBLIC_DEMO_OWNER_PASSWORD: "123123"
+          NEXT_PUBLIC_DEMO_OTP: "123123"
+        run: npm run build
