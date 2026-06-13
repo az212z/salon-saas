@@ -12,7 +12,8 @@
 - جاهز أونلاين كعرض SaaS وتجربة مبيعات.
 - يعمل كواجهة Demo للعميل، المدير، الموظفة، ومالك المنصة.
 - واتساب مستثنى من النشر الحالي ومضبوط كمعطل عبر `WHATSAPP_ENABLED=false`.
-- ليس جاهزا كتسليم إنتاج يومي حقيقي حتى يتم ربط مفاتيح Supabase والدفع والدومين.
+- الدفع مربوط كمسار Moyasar Form + callback للتحقق، لكنه ينتظر مفاتيح `MOYASAR_PUBLIC_KEY` و`MOYASAR_SECRET_KEY`.
+- ليس جاهزا كتسليم إنتاج يومي حقيقي حتى يتم ربط مفاتيح Supabase وMoyasar والدومين.
 - راجع `docs/PRODUCTION_READINESS.md` قبل تسليم أي صالون فعلي.
 
 ## 🏗️ البنية
@@ -75,7 +76,7 @@ salon-saas-platform/
 │   │   ├── bookings/                # Booking engine ⭐
 │   │   │   └── engine.ts            # Core booking logic
 │   │   ├── whatsapp/                # WhatsApp integration
-│   │   ├── payments/                # Payment gateway (Moyasar/Tap)
+│   │   ├── payments/                # Payment gateway (Moyasar)
 │   │   ├── crm/                     # CRM utilities
 │   │   ├── loyalty/                 # Loyalty & gifts engine
 │   │   └── utils.ts                 # Shared utilities
@@ -133,7 +134,7 @@ salon-saas-platform/
 - **Tailwind CSS** + **shadcn/ui** (RTL-ready)
 - **Supabase** (PostgreSQL + Auth + Realtime + Storage + RLS)
 - **WhatsApp Business Cloud API** (رسائل تلقائية + حملات)
-- **Moyasar / Tap Payments** (مدى + Apple Pay)
+- **Moyasar Payments** (mada عبر بطاقات Moyasar، وApple Pay عند إضافة إعدادات merchant validation)
 - **Vercel** (Subdomains ديناميكية لكل صالون)
 
 ## 💡 مميزات إضافية مقترحة

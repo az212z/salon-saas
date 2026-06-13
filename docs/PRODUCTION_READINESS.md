@@ -7,7 +7,7 @@
 - جاهز للبيع كعرض تجريبي احترافي ومنظم.
 - جاهز لاختبار يوم تشغيل كامل ببيانات demo.
 - واتساب مستثنى من النشر الحالي ومضبوط كمعطل، وليس عائقا في فحص الجاهزية.
-- غير جاهز كتسليم إنتاج حي حتى يتم ربط مفاتيح Supabase وMoyasar أو Tap والدومين.
+- غير جاهز كتسليم إنتاج حي حتى يتم ربط مفاتيح Supabase وMoyasar والدومين.
 
 ## ما يعمل الآن
 
@@ -21,7 +21,8 @@
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `MOYASAR_SECRET_KEY` و`MOYASAR_PUBLIC_KEY` أو `TAP_SECRET_KEY`
+- `MOYASAR_SECRET_KEY`
+- `MOYASAR_PUBLIC_KEY`
 - `NEXT_PUBLIC_APP_URL`
 - `NEXT_PUBLIC_ROOT_DOMAIN`
 
@@ -29,6 +30,13 @@
 
 - النشر الحالي يعمل بدون واتساب: `WHATSAPP_ENABLED=false`.
 - عند الحاجة لتفعيله لاحقا: اجعل `WHATSAPP_ENABLED=true` ثم أضف `WHATSAPP_BUSINESS_TOKEN` و`WHATSAPP_PHONE_NUMBER_ID` و`WHATSAPP_VERIFY_TOKEN` و`WHATSAPP_APP_SECRET` وقوالب Meta المعتمدة.
+
+## الدفع
+
+- مسار Moyasar موجود الآن: صفحة `/pay/booking/[bookingId]` تعرض نموذج Moyasar الرسمي، و`/api/payments/callback` يتحقق server-side من الحالة والمبلغ والعملة قبل تأكيد الحجز.
+- mada تعمل عبر طريقة `creditcard` مع `supported_networks` التي تشمل `mada`.
+- Apple Pay لا تفعل إلا بعد إعداد Apple merchant validation ثم إضافة `applepay` إلى `MOYASAR_PAYMENT_METHODS`.
+- Tap غير منفذ حاليا ولا يدخل في قرار الجاهزية.
 
 ## اختبار القبول قبل تسليم عميل فعلي
 

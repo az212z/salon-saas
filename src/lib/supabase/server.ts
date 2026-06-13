@@ -74,7 +74,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const url = request.nextUrl.clone();
-  if (url.pathname.startsWith("/admin") && !user) {
+  const protectedPrefixes = ["/admin", "/dashboard", "/manager", "/staff"];
+  const isProtectedRoute = protectedPrefixes.some((prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`));
+
+  if (isProtectedRoute && !user) {
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }

@@ -489,6 +489,8 @@ function BookingConfirmation({
   time,
   totalPrice,
   totalDuration,
+  paymentType,
+  onPaymentTypeChange,
   onConfirm,
   onBack,
   isSubmitting,
@@ -499,6 +501,8 @@ function BookingConfirmation({
   time: string;
   totalPrice: number;
   totalDuration: number;
+  paymentType: string;
+  onPaymentTypeChange: (value: string) => void;
   onConfirm: () => void;
   onBack: () => void;
   isSubmitting: boolean;
@@ -566,7 +570,14 @@ function BookingConfirmation({
               key={option.value}
               className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-gray-100 hover:border-primary/30 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5"
             >
-              <input type="radio" name="payment" value={option.value} className="sr-only" defaultChecked={option.value === 'in_salon'} />
+              <input
+                type="radio"
+                name="payment"
+                value={option.value}
+                className="sr-only"
+                checked={paymentType === option.value}
+                onChange={() => onPaymentTypeChange(option.value)}
+              />
               <span className="text-2xl">{option.icon}</span>
               <span className="text-sm font-medium">{option.label}</span>
             </label>
@@ -620,34 +631,49 @@ export default function BookingFlow() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingOutcome, setBookingOutcome] = useState<{ type: 'confirmed' | 'payment_required'; payUrl?: string } | null>(null);
 
   const totalPrice = flow.selectedServices.reduce((sum, s) => sum + s.price, 0);
   const totalDuration = flow.selectedServices.reduce((sum, s) => sum + s.duration_minutes, 0);
 
   const handleConfirm = async () => {
     setIsSubmitting(true);
-    // API call to create booking
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulated
+    await new Promise(resolve => setTimeout(resolve, 900));
+    const needsPayment = flow.paymentType === 'deposit' || flow.paymentType === 'full';
+    const amount = flow.paymentType === 'full' ? totalPrice : Math.max(1, Math.round(totalPrice * 0.3));
+    const bookingId = `B-DEMO-${Date.now()}`;
     setIsSubmitting(false);
-    setBookingSuccess(true);
+    setBookingOutcome(
+      needsPayment
+        ? {
+            type: 'payment_required',
+            payUrl: `/pay/booking/${bookingId}?tenant_id=demo-tenant&customer_id=demo-customer&amount=${amount}&payment_type=${flow.paymentType === 'full' ? 'booking' : 'deposit'}&description=${encodeURIComponent(`عربون حجز ${bookingId}`)}`,
+          }
+        : { type: 'confirmed' },
+    );
   };
 
-  if (bookingSuccess) {
+  if (bookingOutcome) {
     return (
       <div className="max-w-lg mx-auto text-center py-16 px-4">
-        <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-3xl font-extrabold text-gray-800 mb-4">تم الحجز بنجاح!</h2>
+        <div className="text-6xl mb-4">{bookingOutcome.type === 'payment_required' ? '💳' : '🎉'}</div>
+        <h2 className="text-3xl font-extrabold text-gray-800 mb-4">
+          {bookingOutcome.type === 'payment_required' ? 'الدفع مطلوب لتأكيد الحجز' : 'تم الحجز بنجاح!'}
+        </h2>
         <p className="text-gray-500 mb-2">
-          تم حفظ تأكيد الحجز في تجربة النظام
+          {bookingOutcome.type === 'payment_required'
+            ? 'افتحي صفحة Moyasar لإكمال العربون. إذا لم تكن مفاتيح الدفع مضافة ستظهر رسالة إعداد واضحة.'
+            : 'تم حفظ تأكيد الحجز في تجربة النظام'}
         </p>
         <p className="text-gray-500 mb-8">
           رقم الحجز: <span className="font-bold text-primary">BK-20250611-0001</span>
         </p>
         <div className="space-y-3">
-          <button className="w-full bg-gradient-to-l from-primary to-purple-500 text-white py-3 rounded-xl font-bold hover:shadow-lg transition-all">
-            حجز موعد آخر
-          </button>
+          {bookingOutcome.payUrl && (
+            <a href={bookingOutcome.payUrl} className="block w-full bg-gradient-to-l from-primary to-purple-500 text-white py-3 rounded-xl font-bold hover:shadow-lg transition-all">
+              الانتقال للدفع
+            </a>
+          )}
           <button className="w-full border-2 border-gray-200 text-gray-600 py-3 rounded-xl font-medium hover:bg-gray-50 transition-all">
             عرض حجوزاتي
           </button>
@@ -707,6 +733,8 @@ export default function BookingFlow() {
           time={flow.selectedTime}
           totalPrice={totalPrice}
           totalDuration={totalDuration}
+          paymentType={String(flow.paymentType ?? 'in_salon')}
+          onPaymentTypeChange={(paymentType) => setFlow(prev => ({ ...prev, paymentType }))}
           onConfirm={handleConfirm}
           onBack={() => setFlow(prev => ({ ...prev, step: 'datetime' }))}
           isSubmitting={isSubmitting}

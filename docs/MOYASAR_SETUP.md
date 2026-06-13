@@ -1,4 +1,4 @@
-# 💳 دليل تفعيل Moyasar للمدفوعات — سالوني
+# دليل تفعيل Moyasar للمدفوعات — سالوني
 
 ## الخطوة 1: إنشاء حساب Moyasar
 
@@ -21,22 +21,23 @@ MOYASAR_SECRET_KEY  = sk_test_xxxxx (للسيرفر فقط!)
 
 من Dashboard → Settings → Payment Methods:
 - ✅ بطاقات الائتمان (Visa/Mastercard)
-- ✅ مدى (Mada)
-- ✅ Apple Pay
-- ✅ STC Pay (اختياري)
+- ✅ مدى (mada) عبر نموذج البطاقات
+- Apple Pay لا تفعل إلا بعد إعداد Apple merchant validation
+- STC Pay اختياري لاحقا إذا كان مفعل في حساب Moyasar
 
 ## الخطوة 4: إضافة المتغيرات في .env
 
 ```env
 MOYASAR_PUBLIC_KEY=pk_test_xxxxxxxxxxxxx
 MOYASAR_SECRET_KEY=sk_test_xxxxxxxxxxxxx
+MOYASAR_PAYMENT_METHODS=creditcard
 ```
 
-## الخطوة 5: إعداد Webhook
+## الخطوة 5: إعداد callback
 
-1. من Dashboard → Webhooks
-2. أضف URL: `https://saloni.sa/api/payments/callback`
-3. اختر الأحداث: `payment.paid`, `payment.failed`, `payment.refunded`
+1. اجعل callback في نموذج Moyasar هو: `https://salon-saas-platform.vercel.app/api/payments/callback`
+2. بعد الرجوع من Moyasar، الخادم يجلب الدفع بالـ `id` ويتحقق من `status` و`amount` و`currency`.
+3. لا يعتبر الحجز مؤكدا من مجرد رجوع المتصفح.
 
 ## 💰 التسعير
 
@@ -44,8 +45,8 @@ MOYASAR_SECRET_KEY=sk_test_xxxxxxxxxxxxx
 |---------|--------|
 | بطاقات ائتمان | 2.5% + 0.50 SAR |
 | مدى | 1.0% + 0.25 SAR |
-| Apple Pay | 2.5% + 0.50 SAR |
-| STC Pay | 1.5% + 0.25 SAR |
+| Apple Pay | حسب حساب Moyasar وإعداد Apple merchant |
+| STC Pay | حسب التفعيل في Moyasar |
 
 ## 🧪 اختبار
 

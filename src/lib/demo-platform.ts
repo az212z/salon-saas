@@ -241,7 +241,7 @@ export const automationPlaybooks = [
     id: "deposit-guard",
     title: "العربون الذكي",
     trigger: "الخدمة فوق 250 ر.س أو وقت ذروة",
-    channel: "Moyasar / Tap",
+    channel: "Moyasar",
     audience: "حجوزات عالية الطلب",
     result: "حماية الدخل قبل تثبيت الموعد",
     status: "Pending",
@@ -640,7 +640,7 @@ export const integrationChecks = [
   { name: "Supabase PostgreSQL + Auth + RLS", status: "جاهز بالبنية", value: 100, note: "tenant_id وRLS في المخطط" },
   { name: "Vercel Wildcard Subdomains", status: "جاهز للنشر", value: 92, note: "يتطلب ربط الدومين النهائي" },
   { name: "WhatsApp Business Cloud API", status: "معطل بطلبك", value: 100, note: "خارج نطاق النشر الحالي" },
-  { name: "Moyasar / Tap Payments", status: "ينتظر مفاتيح الدفع", value: 58, note: "موجود في الكود كتكامل قابل للتهيئة" },
+  { name: "Moyasar Payment Form", status: "ينتظر مفاتيح الدفع", value: 72, note: "نموذج الدفع والـ callback موجودان" },
   { name: "PWA + Mobile RTL", status: "جاهز", value: 88, note: "manifest وواجهة متجاوبة" },
 ];
 
@@ -708,7 +708,7 @@ export const launchReadinessItems = [
     area: "الربط الحقيقي",
     status: "ينتظر مفاتيح",
     owner: "الفريق التقني",
-    proof: "Supabase وMoyasar/Tap موضحة كحالة ربط وليست مدعاة، وواتساب مستثنى بوضوح.",
+    proof: "Supabase وMoyasar موضحة كحالة ربط وليست مدعاة، وواتساب مستثنى بوضوح.",
     action: "أضف مفاتيح الإنتاج وشغل فحص /api/system/readiness.",
   },
   {
@@ -788,8 +788,8 @@ export const onboardingSteps = [
   },
   {
     title: "الدفع والعربون",
-    description: "Moyasar أو Tap، طرق الدفع، العربون، وسياسة الإلغاء.",
-    fields: ["مدى", "Apple Pay", "دفع كامل", "عربون", "في الصالون"],
+    description: "Moyasar، طرق الدفع، العربون، وسياسة الإلغاء.",
+    fields: ["مدى", "Apple Pay بعد merchant validation", "دفع كامل", "عربون", "في الصالون"],
   },
   {
     title: "واتساب والإشعارات",

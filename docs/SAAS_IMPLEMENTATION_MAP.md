@@ -11,7 +11,7 @@ The product is a multi-tenant SaaS platform for salons and spas with four surfac
 - Client portal: `/client` and `/[slug]`
 - Staff portal: `/staff`
 
-The app is Arabic-first, RTL, mobile responsive, and built with Next.js App Router, React, Tailwind, Supabase-oriented data structures, optional WhatsApp Cloud API placeholders, and Moyasar payment helpers.
+The app is Arabic-first, RTL, mobile responsive, and built with Next.js App Router, React, Tailwind, Supabase-oriented data structures, optional WhatsApp Cloud API placeholders, and a Moyasar payment form/callback path.
 
 ## Database And Tenancy
 
@@ -53,7 +53,7 @@ It includes:
 These are intentionally not claimed as live until real credentials are present:
 
 - WhatsApp is disabled for the current live deployment with `WHATSAPP_ENABLED=false`. Enabling it later requires a Meta WhatsApp Cloud API token, phone number ID, verify token, app secret, and approved templates.
-- Moyasar/Tap payments require production/test keys and webhook secrets.
+- Moyasar payments require `MOYASAR_PUBLIC_KEY` and `MOYASAR_SECRET_KEY`; Tap is not implemented in the current production path.
 - Supabase production auth/RLS requires a real project and seed data.
 - Custom domains and wildcard subdomains require final DNS/Vercel domain configuration.
 

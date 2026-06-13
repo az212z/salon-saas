@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createBooking, getAvailableSlots, getAvailableSlotsForAnyStaff, updateBookingStatus } from '@/lib/bookings/engine';
+import { createBookingPaymentFormConfig, getAppUrl, isMoyasarConfigured } from '@/lib/payments/moyasar';
 
 // ============================================================
 // GET /api/bookings — List bookings with filters
@@ -74,10 +75,23 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { tenant_id, customer_id, staff_id, booking_date, start_time, items, payment_type, notes, coupon_code, gift_card_code, points_to_redeem } = body;
+    const selectedPaymentType = payment_type || 'in_salon';
+    const paymentRequired = selectedPaymentType === 'deposit' || selectedPaymentType === 'full';
 
     // Validation
     if (!tenant_id || !customer_id || !booking_date || !start_time || !items?.length) {
       return NextResponse.json({ error: 'بيانات ناقصة' }, { status: 400 });
+    }
+
+    if (paymentRequired && !isMoyasarConfigured()) {
+      return NextResponse.json(
+        {
+          error: 'العربون أو الدفع الكامل يحتاج مفاتيح Moyasar قبل إنشاء حجز قابل للاعتماد.',
+          code: 'PAYMENT_PROVIDER_NOT_CONFIGURED',
+          required_env: ['MOYASAR_PUBLIC_KEY', 'MOYASAR_SECRET_KEY'],
+        },
+        { status: 503 },
+      );
     }
 
     const result = await createBooking({
@@ -87,7 +101,7 @@ export async function POST(request: NextRequest) {
       booking_date,
       start_time,
       items,
-      payment_type: payment_type || 'in_salon',
+      payment_type: selectedPaymentType,
       notes,
       coupon_code,
       gift_card_code,
@@ -98,7 +112,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
-    return NextResponse.json({ booking: result.booking }, { status: 201 });
+    const booking = result.booking ?? {};
+    const paymentAmountSar = selectedPaymentType === 'full'
+      ? Number(booking.total_amount ?? 0)
+      : Number(booking.deposit_amount ?? 0);
+    const payment = paymentRequired
+      ? {
+          provider: 'moyasar',
+          status: 'requires_payment',
+          amount_sar: paymentAmountSar,
+          pay_url: `${getAppUrl()}/pay/booking/${booking.id}?${new URLSearchParams({
+            tenant_id,
+            customer_id,
+            amount: String(paymentAmountSar),
+            payment_type: selectedPaymentType === 'full' ? 'booking' : 'deposit',
+            description: `عربون حجز ${booking.id}`,
+          }).toString()}`,
+          form_config: createBookingPaymentFormConfig({
+            tenantId: tenant_id,
+            bookingId: String(booking.id),
+            amountSar: paymentAmountSar,
+            customerId: customer_id,
+            paymentType: selectedPaymentType === 'full' ? 'booking' : 'deposit',
+            description: `عربون حجز ${booking.id}`,
+          }),
+        }
+      : null;
+
+    return NextResponse.json({ booking, payment }, { status: 201 });
   } catch (error) {
     console.error('Booking POST error:', error);
     return NextResponse.json({ error: 'خطأ في إنشاء الحجز' }, { status: 500 });

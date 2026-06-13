@@ -73,7 +73,9 @@ export async function createBooking(input: CreateBookingInput): Promise<
   const selectedServices = input.items.map((item) => services.find((service) => service.id === item.service_id) ?? services[0]);
   const totalAmount = selectedServices.reduce((sum, service) => sum + service.price, 0);
   const totalDuration = selectedServices.reduce((sum, service) => sum + service.durationMinutes, 0);
+  const depositAmount = selectedServices.reduce((sum, service) => sum + service.deposit, 0);
   const assignedStaff = staffMembers.find((staff) => staff.id === input.staff_id) ?? staffMembers[0];
+  const paymentRequired = input.payment_type === "deposit" || input.payment_type === "full";
 
   return {
     success: true,
@@ -87,8 +89,10 @@ export async function createBooking(input: CreateBookingInput): Promise<
       start_time: input.start_time,
       total_amount: totalAmount,
       total_duration: totalDuration,
+      deposit_amount: depositAmount,
       payment_type: input.payment_type,
-      status: "confirmed",
+      payment_status: paymentRequired ? "unpaid" : "paid_in_salon",
+      status: paymentRequired ? "pending_payment" : "confirmed",
       notes: input.notes ?? null,
       items: selectedServices,
     },

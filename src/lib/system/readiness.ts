@@ -76,6 +76,7 @@ function checkWhatsApp(): ReadinessCheck {
 }
 
 export function getSystemReadiness() {
+  const moyasarReady = envLooksConfigured("MOYASAR_SECRET_KEY") && envLooksConfigured("MOYASAR_PUBLIC_KEY");
   const checks: ReadinessCheck[] = [
     {
       id: "demo",
@@ -96,12 +97,12 @@ export function getSystemReadiness() {
     checkWhatsApp(),
     {
       id: "payments",
-      label: "بوابة الدفع",
+      label: "بوابة الدفع Moyasar",
       requiredFor: "production",
-      ready: envLooksConfigured("MOYASAR_SECRET_KEY") || envLooksConfigured("TAP_SECRET_KEY"),
-      status: envLooksConfigured("MOYASAR_SECRET_KEY") || envLooksConfigured("TAP_SECRET_KEY") ? "جاهز" : "ينتظر إعداد",
-      detail: "مطلوبة للعربون، الاشتراكات، وحماية عدم الحضور في الإنتاج.",
-      missing: envLooksConfigured("MOYASAR_SECRET_KEY") || envLooksConfigured("TAP_SECRET_KEY") ? [] : ["MOYASAR_SECRET_KEY أو TAP_SECRET_KEY"],
+      ready: moyasarReady,
+      status: moyasarReady ? "جاهز" : "ينتظر إعداد",
+      detail: "مطلوبة للعربون وحماية عدم الحضور. Tap غير منفذ حاليا؛ المسار الإنتاجي الحالي هو Moyasar.",
+      missing: moyasarReady ? [] : missing(["MOYASAR_SECRET_KEY", "MOYASAR_PUBLIC_KEY"]),
     },
     checkRequired(
       "app-url",

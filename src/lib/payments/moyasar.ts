@@ -1,12 +1,11 @@
 // ============================================================
 // Moyasar Payment Gateway — التكامل الكامل 💳
-// Saudi payment gateway: Credit Card, Mada, Apple Pay, STC Pay
+// Saudi payment gateway: credit cards with mada network support, plus optional Apple Pay/STC Pay when enabled in Moyasar.
 // ============================================================
 
 import { createClient } from '@/lib/supabase/server';
 
 const MOYASAR_API_URL = 'https://api.moyasar.com/v1';
-const MOYASAR_PUBLIC_URL = 'https://checkout.moyasar.com';
 
 interface MoyasarConfig {
   secretKey: string;
@@ -23,6 +22,10 @@ export function isMoyasarConfigured() {
   return valueLooksConfigured(process.env.MOYASAR_SECRET_KEY) && valueLooksConfigured(process.env.MOYASAR_PUBLIC_KEY);
 }
 
+export function getAppUrl() {
+  return process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'http://localhost:3100';
+}
+
 function getConfig(): MoyasarConfig {
   const secretKey = process.env.MOYASAR_SECRET_KEY;
   const publicKey = process.env.MOYASAR_PUBLIC_KEY;
@@ -32,6 +35,76 @@ function getConfig(): MoyasarConfig {
   }
   
   return { secretKey, publicKey };
+}
+
+export type MoyasarFormConfig = {
+  amount: number;
+  currency: 'SAR';
+  description: string;
+  publishable_api_key: string;
+  callback_url: string;
+  methods: string[];
+  supported_networks: string[];
+  language: 'ar';
+  fixed_width: boolean;
+  metadata: Record<string, string>;
+  apple_pay?: {
+    country: 'SA';
+    label: string;
+    validate_merchant_url?: string;
+  };
+};
+
+function enabledMethods() {
+  const configured = process.env.MOYASAR_PAYMENT_METHODS?.split(',').map((item) => item.trim()).filter(Boolean);
+  if (configured?.length) return configured;
+  return ['creditcard'];
+}
+
+export function createBookingPaymentFormConfig(params: {
+  tenantId: string;
+  bookingId: string;
+  amountSar: number;
+  description: string;
+  customerId?: string;
+  customerName?: string;
+  paymentType: 'booking' | 'deposit' | 'subscription';
+}): MoyasarFormConfig {
+  const config = getConfig();
+  const amount = sarToHalalas(params.amountSar);
+  const methods = enabledMethods();
+  const metadata: Record<string, string> = {
+    tenant_id: params.tenantId,
+    booking_id: params.bookingId,
+    payment_type: params.paymentType,
+    expected_amount_halalas: String(amount),
+  };
+
+  if (params.customerId) metadata.customer_id = params.customerId;
+  if (params.customerName) metadata.customer_name = params.customerName;
+
+  const formConfig: MoyasarFormConfig = {
+    amount,
+    currency: 'SAR',
+    description: params.description,
+    publishable_api_key: config.publicKey,
+    callback_url: `${getAppUrl()}/api/payments/callback`,
+    methods,
+    supported_networks: ['mada', 'visa', 'mastercard', 'amex', 'unionpay'],
+    language: 'ar',
+    fixed_width: false,
+    metadata,
+  };
+
+  if (methods.includes('applepay')) {
+    formConfig.apple_pay = {
+      country: 'SA',
+      label: process.env.MOYASAR_APPLE_PAY_LABEL || process.env.NEXT_PUBLIC_APP_NAME || 'Saloni Pro',
+      validate_merchant_url: process.env.MOYASAR_APPLE_PAY_VALIDATE_URL,
+    };
+  }
+
+  return formConfig;
 }
 
 // ==========================================
@@ -90,7 +163,7 @@ export async function createPayment(
       return { id: '', status: 'failed', error: data.message || 'Validation error' };
     }
     
-    // For creditcard/mada, return the checkout URL
+    // For 3-D Secure cards, Moyasar returns a transaction URL when redirection is required.
     if (data.source?.type === 'creditcard' || data.source?.type === 'mada') {
       return {
         id: data.id,
@@ -117,6 +190,7 @@ export async function verifyPayment(paymentId: string): Promise<{
   id: string;
   status: string;
   amount: number;
+  currency: string;
   fee: number;
   refunded: number;
   source: any;
@@ -220,44 +294,6 @@ export async function handlePaymentCallback(
     console.error('Payment callback error:', error);
     return { success: false };
   }
-}
-
-// ==========================================
-// إنشاء رابط دفع (Checkout URL)
-// ==========================================
-
-export function createCheckoutUrl(params: {
-  amount: number;
-  description: string;
-  callbackUrl: string;
-  metadata: Record<string, string>;
-  methods?: string[];
-}): string {
-  const config = getConfig();
-  
-  const queryParams = new URLSearchParams({
-    key: config.publicKey,
-    amount: params.amount.toString(),
-    currency: 'SAR',
-    description: params.description,
-    callback_url: params.callbackUrl,
-    'metadata[tenant_id]': params.metadata.tenant_id,
-    'metadata[payment_type]': params.metadata.payment_type,
-    'publishable_key': config.publicKey,
-  });
-  
-  if (params.methods?.length) {
-    params.methods.forEach((method, i) => {
-      queryParams.append(`methods[${i}]`, method);
-    });
-  } else {
-    // Default: creditcard + mada + applepay
-    queryParams.append('methods[0]', 'creditcard');
-    queryParams.append('methods[1]', 'mada');
-    queryParams.append('methods[2]', 'applepay');
-  }
-  
-  return `${MOYASAR_PUBLIC_URL}?${queryParams.toString()}`;
 }
 
 // ==========================================

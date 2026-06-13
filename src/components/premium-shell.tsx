@@ -887,7 +887,7 @@ export function PublicHome() {
               </div>
               <div className="rounded-lg border border-[#f0dfb8] bg-[#fff8e7] p-3">
                 <p className="font-semibold text-[#7d5a10]">WhatsApp / Payment Demo</p>
-                <p className="mt-1 text-xs leading-5 text-[#846d3d]">الإرسال والدفع الحقيقي يحتاج مفاتيح Meta وMoyasar/Tap.</p>
+                <p className="mt-1 text-xs leading-5 text-[#846d3d]">الدفع الحقيقي يحتاج مفاتيح Moyasar، وواتساب معطل في النشر الحالي.</p>
               </div>
             </div>
           </Panel>
@@ -2658,7 +2658,7 @@ export function RegisterExperience() {
                     created ? "تم تجهيز Tenant + Trial" : "بانتظار إنشاء Tenant",
                     "RLS يعتمد tenant_id",
                     "WhatsApp يحتاج مفاتيح Meta",
-                    "Moyasar/Tap يحتاج مفاتيح إنتاج",
+                    "Moyasar يحتاج مفاتيح إنتاج",
                   ].map((item, index) => (
                     <div key={item} className="flex items-center justify-between rounded-xl border border-[#e8e1dc] bg-white p-3 text-sm">
                       <span className="font-semibold">{item}</span>
