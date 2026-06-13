@@ -1,5 +1,19 @@
 # Salon SaaS Platform — منصة SaaS لحجوزات الصالونات والسبا
 
+## روابط النشر
+
+- التطبيق الكامل على Vercel: https://salon-saas-platform.vercel.app
+- صفحة العرض على GitHub Pages: https://az212z.github.io/salon-saas/
+- الكود الكامل على GitHub: https://github.com/az212z/salon-saas
+- فحص جاهزية التشغيل: https://salon-saas-platform.vercel.app/api/system/readiness
+
+## حالة التشغيل الحالية
+
+- جاهز أونلاين كعرض SaaS وتجربة مبيعات.
+- يعمل كواجهة Demo للعميل، المدير، الموظفة، ومالك المنصة.
+- ليس جاهزا كتسليم إنتاج يومي حقيقي حتى يتم ربط مفاتيح Supabase وWhatsApp Business والدفع والدومين.
+- راجع `docs/PRODUCTION_READINESS.md` قبل تسليم أي صالون فعلي.
+
 ## 🏗️ البنية
 
 ```
