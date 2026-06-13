@@ -19,6 +19,7 @@ import {
   Gauge,
   Gem,
   Gift,
+  LifeBuoy,
   LayoutDashboard,
   LogIn,
   MessageCircle,
@@ -40,6 +41,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import {
+  automationPlaybooks,
   bookings,
   calendarPlan,
   campaigns,
@@ -52,6 +54,8 @@ import {
   integrationChecks,
   inventoryAlerts,
   loyaltyRows,
+  growthLevers,
+  marketBenchmarks,
   onboardingSteps,
   operatingMetrics,
   operationAlerts,
@@ -1408,6 +1412,8 @@ function CommandCenterPage({ context }: { context: DashboardContext }) {
         ))}
       </div>
 
+      <GrowthOperationsPanel context={context} />
+
       <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
         <Panel title="جدول اليوم">
           <div className="overflow-x-auto p-5">
@@ -1762,6 +1768,69 @@ function OperationsReadinessStrip({ context }: { context: DashboardContext }) {
   );
 }
 
+function GrowthOperationsPanel({ context }: { context: DashboardContext }) {
+  return (
+    <Panel
+      title="طبقة النمو والأتمتة"
+      action={<StatusPill status="مستوحاة من السوق" />}
+    >
+      <div className="grid gap-5 p-5">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {growthLevers.map((lever) => (
+            <button
+              key={lever.label}
+              type="button"
+              aria-label={`فتح مؤشر ${lever.label}`}
+              onClick={() => context.logAction(`تم فتح مؤشر ${lever.label}: ${lever.detail}.`)}
+              className="saloni-button rounded-xl border border-[#e8e1dc] bg-[#fbf8f6] p-4 text-right"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold text-[#746b73]">{lever.label}</p>
+                <span className="rounded-lg bg-white px-2 py-1 text-[11px] font-semibold text-[#b9465a]">{lever.trend}</span>
+              </div>
+              <p className="mt-3 font-mono text-2xl font-semibold text-[#211d24]">
+                {lever.value} <span className="text-xs font-semibold text-[#6f6571]">{lever.unit}</span>
+              </p>
+              <p className="mt-2 text-xs leading-5 text-[#6f6871]">{lever.detail}</p>
+            </button>
+          ))}
+        </div>
+
+        <div className="grid gap-3 lg:grid-cols-5">
+          {automationPlaybooks.map((playbook, index) => {
+            const Icon = [Clock3, ShieldCheck, CalendarCheck, UsersRound, Send][index] ?? Sparkles;
+            return (
+              <div key={playbook.id} className="flex min-h-[220px] flex-col rounded-xl border border-[#e8e1dc] bg-white p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#211d24] text-[#f4c9d0]">
+                    <Icon size={18} />
+                  </span>
+                  <StatusPill status={playbook.status} />
+                </div>
+                <h3 className="mt-4 text-base font-semibold text-[#211d24]">{playbook.title}</h3>
+                <p className="mt-2 text-xs leading-5 text-[#6f6871]">{playbook.trigger}</p>
+                <div className="mt-3 grid gap-2 text-xs">
+                  <MiniStat label="القناة" value={playbook.channel} />
+                  <MiniStat label="الشريحة" value={playbook.audience} />
+                </div>
+                <p className="mt-3 text-xs leading-5 text-[#8d4652]">{playbook.result}</p>
+                <button
+                  type="button"
+                  aria-label={`تشغيل ${playbook.title}`}
+                  onClick={() => context.logAction(`${playbook.action}: ${playbook.result}.`)}
+                  className="saloni-button mt-auto rounded-lg border border-[#eadfdd] bg-[#fbf8f6] px-3 py-2 text-xs font-semibold text-[#211d24] hover:bg-white"
+                >
+                  تشغيل
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function CalendarPage({ context }: { context: DashboardContext }) {
   return (
     <div className="grid gap-5">
@@ -2096,6 +2165,27 @@ function WhatsappPage({ context }: { context: DashboardContext }) {
                 <MiniStat label="ردود" value={String(campaign.replies)} />
                 <MiniStat label="الأثر" value={campaign.revenue} />
               </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel title="أتمتة الرسائل">
+          <div className="grid gap-3 p-5 md:grid-cols-2">
+            {automationPlaybooks.filter((playbook) => playbook.channel.includes("WhatsApp") || playbook.channel.includes("واتساب")).map((playbook) => (
+              <button
+                key={playbook.id}
+                type="button"
+                aria-label={`فتح أتمتة ${playbook.title}`}
+                onClick={() => context.logAction(`${playbook.action}: ${playbook.trigger}.`)}
+                className="saloni-button rounded-xl border border-[#eadfdd] bg-white p-4 text-right"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-semibold">{playbook.title}</p>
+                  <StatusPill status={playbook.status} />
+                </div>
+                <p className="mt-2 text-sm leading-6 text-[#6f6571]">{playbook.result}</p>
+                <p className="mt-3 text-xs font-semibold text-[#b9465a]">{playbook.audience}</p>
+              </button>
             ))}
           </div>
         </Panel>
@@ -2607,6 +2697,8 @@ export function AdminExperience() {
           ))}
         </div>
 
+        <MarketBenchmarkPanel onAction={logPlatformAction} />
+
         <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_380px]">
           <Panel title="الصالونات المشتركة" action={<ActionButton icon={Building2} variant="outline" onClick={() => logPlatformAction("تم تطبيق فلتر الصالونات التي تحتاج متابعة.")}>تحتاج متابعة</ActionButton>}>
             <div className="overflow-x-auto">
@@ -2712,5 +2804,41 @@ export function AdminExperience() {
         </div>
       </section>
     </main>
+  );
+}
+
+function MarketBenchmarkPanel({ onAction }: { onAction: (message: string) => void }) {
+  return (
+    <Panel
+      title="معايير المنافسين التي طبقناها"
+      action={<StatusPill status="بحث سوق" />}
+      className="mt-5"
+    >
+      <div className="grid gap-3 p-5 lg:grid-cols-5">
+        {marketBenchmarks.map((benchmark) => (
+          <button
+            key={benchmark.vendor}
+            type="button"
+            aria-label={`تثبيت معيار ${benchmark.vendor}`}
+            onClick={() => onAction(`تم تثبيت معيار ${benchmark.vendor}: ${benchmark.applied}.`)}
+            className="saloni-button flex min-h-[220px] flex-col rounded-xl border border-[#e8e1dc] bg-white p-4 text-right"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fbf0f2] text-[#b9465a]">
+                <LifeBuoy size={18} />
+              </span>
+              <StatusPill status={benchmark.status} />
+            </div>
+            <h3 className="mt-4 text-base font-semibold text-[#211d24]">{benchmark.vendor}</h3>
+            <p className="mt-2 text-xs leading-5 text-[#6f6571]">{benchmark.lesson}</p>
+            <div className="mt-3 rounded-lg border border-[#eee8e4] bg-[#fbf8f6] p-3">
+              <p className="text-xs font-semibold text-[#b9465a]">التطبيق داخل Saloni Pro</p>
+              <p className="mt-2 text-xs leading-5 text-[#5f5861]">{benchmark.applied}</p>
+            </div>
+            <p className="mt-auto pt-3 text-[11px] font-semibold text-[#7f7482]">{benchmark.surface}</p>
+          </button>
+        ))}
+      </div>
+    </Panel>
   );
 }

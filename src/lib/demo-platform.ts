@@ -195,6 +195,90 @@ export const paymentQueue = [
   { label: "متأخر", value: 16, amount: "2,950 ر.س", tone: "bg-[#bf5b5b]" },
 ];
 
+export const growthLevers = [
+  {
+    label: "حجز ذاتي 24/7",
+    value: "8",
+    unit: "حجوزات",
+    detail: "دخلت اليوم من رابط الحجز بدون اتصال",
+    trend: "+22%",
+  },
+  {
+    label: "حماية عدم الحضور",
+    value: "30%",
+    unit: "عربون",
+    detail: "تطبق تلقائيا على الخدمات عالية الطلب",
+    trend: "-3.8% إلغاء",
+  },
+  {
+    label: "إعادة الحجز",
+    value: "41%",
+    unit: "عودة",
+    detail: "عملاء عادوا خلال 45 يوم",
+    trend: "+6%",
+  },
+  {
+    label: "تعبئة الفجوات",
+    value: "3",
+    unit: "خانات",
+    detail: "قابلة للتحويل من قائمة الانتظار",
+    trend: "اليوم",
+  },
+];
+
+export const automationPlaybooks = [
+  {
+    id: "appointment-reminder",
+    title: "تذكير الموعد",
+    trigger: "قبل الموعد بـ24 ساعة ثم قبل ساعتين",
+    channel: "WhatsApp / SMS",
+    audience: "كل حجز مؤكد",
+    result: "تقليل الغياب وفتح إعادة الجدولة",
+    status: "Demo",
+    action: "تشغيل تذكير الموعد التجريبي",
+  },
+  {
+    id: "deposit-guard",
+    title: "العربون الذكي",
+    trigger: "الخدمة فوق 250 ر.س أو وقت ذروة",
+    channel: "Moyasar / Tap",
+    audience: "حجوزات عالية الطلب",
+    result: "حماية الدخل قبل تثبيت الموعد",
+    status: "Pending",
+    action: "تجهيز رابط عربون تجريبي",
+  },
+  {
+    id: "waitlist-fill",
+    title: "تحويل الانتظار",
+    trigger: "إلغاء أو فجوة أكثر من 45 دقيقة",
+    channel: "واتساب سريع",
+    audience: "العميلات المطابقات للخدمة والوقت",
+    result: "تعبئة الخانة بدل تركها فارغة",
+    status: "جاهز",
+    action: "تحويل أول عميلة مناسبة من الانتظار",
+  },
+  {
+    id: "rebooking",
+    title: "إعادة الحجز بعد الزيارة",
+    trigger: "بعد إغلاق الموعد بـ48 ساعة",
+    channel: "WhatsApp + عرض ولاء",
+    audience: "عميلات الصبغة والبشرة والأظافر",
+    result: "زيادة الزيارات المتكررة بدون حملات عشوائية",
+    status: "Demo",
+    action: "تجهيز رسالة إعادة حجز",
+  },
+  {
+    id: "inactive-client",
+    title: "استرجاع العميلات",
+    trigger: "لا توجد زيارة خلال 30 يوم",
+    channel: "حملة مجزأة",
+    audience: "عميلات خاملة حسب الخدمة السابقة",
+    result: "عرض مناسب بدل خصم عام للجميع",
+    status: "جاهز",
+    action: "إنشاء حملة استرجاع مجزأة",
+  },
+];
+
 export const conversationFeed = [
   { time: "11:42", name: "نورة السبيعي", body: "هل يوجد وقت مساء اليوم؟", status: "جديد" },
   { time: "11:10", name: "لمى العتيبي", body: "مشكلة في الدفع", status: "دفع" },
@@ -558,6 +642,44 @@ export const integrationChecks = [
   { name: "WhatsApp Business Cloud API", status: "ينتظر مفاتيح Meta", value: 54, note: "OTP والحملات تعمل Demo" },
   { name: "Moyasar / Tap Payments", status: "ينتظر مفاتيح الدفع", value: 58, note: "موجود في الكود كتكامل قابل للتهيئة" },
   { name: "PWA + Mobile RTL", status: "جاهز", value: 88, note: "manifest وواجهة متجاوبة" },
+];
+
+export const marketBenchmarks = [
+  {
+    vendor: "Fresha",
+    lesson: "حجز ذاتي، سوق اكتشاف، دفعات مسبقة، شرائح تسويقية، ولاء",
+    applied: "ربطنا رابط الحجز مع العربون والشرائح وقائمة النمو",
+    surface: "لوحة الصالون + بوابة العميل",
+    status: "مطبق كواجهة",
+  },
+  {
+    vendor: "GlossGenius",
+    lesson: "تجربة حجز سهلة، POS، إدارة عملاء، تذكيرات وتسويق نصي",
+    applied: "أضفنا CRM عملي وإجراءات إعادة الحجز ورسائل المتابعة",
+    surface: "العملاء + واتساب + الحجوزات",
+    status: "مطبق كواجهة",
+  },
+  {
+    vendor: "Square Appointments",
+    lesson: "تقويم موحد، دفع متصل، سياسات عدم حضور، قائمة انتظار",
+    applied: "أضفنا حماية العربون وتعبئة الفجوات من الانتظار",
+    surface: "الحجوزات + التقويم",
+    status: "مطبق كواجهة",
+  },
+  {
+    vendor: "Vagaro",
+    lesson: "منصة شاملة من مستقل إلى فروع متعددة مع موقع وتقارير",
+    applied: "قوينا لوحة مالك المنصة والخطط والجاهزية متعددة الصالونات",
+    surface: "صفحة المدير",
+    status: "مطبق كواجهة",
+  },
+  {
+    vendor: "Boulevard / Mangomint / Zenoti",
+    lesson: "تجربة عميل ممتازة، نماذج، POS، أتمتة، إدارة فروع وتقارير",
+    applied: "أضفنا مسارات أتمتة وتشغيل يومي مع حالة ربط صريحة",
+    surface: "الأتمتة + صحة الربط",
+    status: "قيد الربط الحقيقي",
+  },
 ];
 
 export const implementationPhases = [
