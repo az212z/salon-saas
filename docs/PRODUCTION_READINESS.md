@@ -6,7 +6,8 @@
 
 - جاهز للبيع كعرض تجريبي احترافي ومنظم.
 - جاهز لاختبار يوم تشغيل كامل ببيانات demo.
-- غير جاهز كتسليم إنتاج حي حتى يتم ربط مفاتيح Supabase وWhatsApp Business وMoyasar أو Tap.
+- واتساب مستثنى من النشر الحالي ومضبوط كمعطل، وليس عائقا في فحص الجاهزية.
+- غير جاهز كتسليم إنتاج حي حتى يتم ربط مفاتيح Supabase وMoyasar أو Tap والدومين.
 
 ## ما يعمل الآن
 
@@ -20,13 +21,14 @@
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `WHATSAPP_BUSINESS_TOKEN`
-- `WHATSAPP_PHONE_NUMBER_ID`
-- `WHATSAPP_VERIFY_TOKEN`
-- `WHATSAPP_APP_SECRET`
 - `MOYASAR_SECRET_KEY` و`MOYASAR_PUBLIC_KEY` أو `TAP_SECRET_KEY`
 - `NEXT_PUBLIC_APP_URL`
 - `NEXT_PUBLIC_ROOT_DOMAIN`
+
+## واتساب
+
+- النشر الحالي يعمل بدون واتساب: `WHATSAPP_ENABLED=false`.
+- عند الحاجة لتفعيله لاحقا: اجعل `WHATSAPP_ENABLED=true` ثم أضف `WHATSAPP_BUSINESS_TOKEN` و`WHATSAPP_PHONE_NUMBER_ID` و`WHATSAPP_VERIFY_TOKEN` و`WHATSAPP_APP_SECRET` وقوالب Meta المعتمدة.
 
 ## اختبار القبول قبل تسليم عميل فعلي
 
@@ -34,9 +36,8 @@
 2. تسجيل دخول مالك الصالون.
 3. إضافة خدمة وموظفة وربطهما.
 4. إنشاء حجز من بوابة العميل.
-5. إرسال OTP حقيقي من قالب Meta معتمد.
-6. تحصيل عربون حقيقي.
-7. تحديث حالة الحجز من مؤكد إلى وصلت ثم مكتمل.
-8. استقبال Webhook دفع وWebhook واتساب بدون أخطاء.
-9. مراجعة `/admin` والتأكد أن الجاهزية 100%.
-10. تشغيل يوم كامل على staging قبل نقل صالون حقيقي.
+5. تحصيل عربون حقيقي.
+6. تحديث حالة الحجز من مؤكد إلى وصلت ثم مكتمل.
+7. استقبال Webhook دفع بدون أخطاء.
+8. مراجعة `/admin` والتأكد أن الجاهزية 100%.
+9. تشغيل يوم كامل على staging قبل نقل صالون حقيقي.

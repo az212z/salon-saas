@@ -639,7 +639,7 @@ export default function BookingFlow() {
         <div className="text-6xl mb-4">🎉</div>
         <h2 className="text-3xl font-extrabold text-gray-800 mb-4">تم الحجز بنجاح!</h2>
         <p className="text-gray-500 mb-2">
-          وصلك تأكيد عبر واتساب
+          تم حفظ تأكيد الحجز في تجربة النظام
         </p>
         <p className="text-gray-500 mb-8">
           رقم الحجز: <span className="font-bold text-primary">BK-20250611-0001</span>

@@ -1779,10 +1779,10 @@ function OperationsReadinessStrip({ context }: { context: DashboardContext }) {
     },
     {
       title: "واتساب",
-      detail: "OTP وحملات تعمل كتجربة فقط",
-      status: "Demo",
-      tone: "amber",
-      action: "واتساب يعمل كتجربة. الإرسال الحقيقي يحتاج مفاتيح Meta.",
+      detail: "مستثنى من النشر الحالي",
+      status: "معطل",
+      tone: "rose",
+      action: "واتساب معطل في هذا النشر ولا يرسل رسائل حقيقية.",
     },
     {
       title: "الدفع",
@@ -2161,9 +2161,9 @@ function WhatsappPage({ context }: { context: DashboardContext }) {
       <Panel title="حالة الربط">
         <div className="grid gap-4 p-5">
           <div className="rounded-lg border border-[#f0dfb8] bg-[#fff8e7] p-4">
-            <p className="font-semibold text-[#7d5a10]">وضع تجريبي</p>
+            <p className="font-semibold text-[#7d5a10]">معطل في النشر الحالي</p>
             <p className="mt-2 text-sm leading-6 text-[#846d3d]">
-              رموز التحقق والحملات تظهر في النظام، لكن الإرسال من رقم حقيقي يحتاج مفاتيح Meta WhatsApp Business Cloud API.
+              رموز التحقق والحملات تظهر كنموذج عمل فقط. النظام لا يرسل من رقم واتساب حقيقي حتى يتم تفعيل WHATSAPP_ENABLED=true وإضافة مفاتيح Meta.
             </p>
           </div>
           <div className="rounded-lg border border-[#eadfdd] p-4">
@@ -2174,7 +2174,7 @@ function WhatsappPage({ context }: { context: DashboardContext }) {
             {whatsappStatus.requiredEnv.map((env) => (
               <div key={env} className="flex items-center justify-between rounded-lg border border-[#eadfdd] bg-[#fbf7f6] px-3 py-2 text-sm">
                 <span dir="ltr">{env}</span>
-                <StatusPill status="مطلوب" />
+                <StatusPill status={env === "WHATSAPP_ENABLED=true" ? "اختياري" : "لاحقا"} />
               </div>
             ))}
           </div>

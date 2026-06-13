@@ -1,12 +1,20 @@
 export type WhatsAppConfig = {
+  enabled: boolean;
   token?: string;
   phoneNumberId?: string;
   verifyToken?: string;
   appSecret?: string;
 };
 
+export function isWhatsAppEnabled() {
+  const value = process.env.WHATSAPP_ENABLED?.trim().toLowerCase();
+  if (!value) return false;
+  return !["0", "false", "off", "disabled", "no"].includes(value);
+}
+
 export function getWhatsAppConfig(): WhatsAppConfig {
   return {
+    enabled: isWhatsAppEnabled(),
     token: process.env.WHATSAPP_BUSINESS_TOKEN,
     phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
     verifyToken: process.env.WHATSAPP_VERIFY_TOKEN,
@@ -16,11 +24,20 @@ export function getWhatsAppConfig(): WhatsAppConfig {
 
 export function isWhatsAppConfigured() {
   const config = getWhatsAppConfig();
-  return Boolean(config.token && config.phoneNumberId && config.verifyToken);
+  return Boolean(config.enabled && config.token && config.phoneNumberId && config.verifyToken);
 }
 
 export async function sendWhatsAppCloudMessage(to: string, body: string) {
   const config = getWhatsAppConfig();
+  if (!config.enabled) {
+    return {
+      ok: false,
+      demo: true,
+      disabled: true,
+      error: "WhatsApp is disabled for this deployment. Message was not sent.",
+    };
+  }
+
   if (!isWhatsAppConfigured()) {
     return {
       ok: false,

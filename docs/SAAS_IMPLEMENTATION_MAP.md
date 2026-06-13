@@ -11,7 +11,7 @@ The product is a multi-tenant SaaS platform for salons and spas with four surfac
 - Client portal: `/client` and `/[slug]`
 - Staff portal: `/staff`
 
-The app is Arabic-first, RTL, mobile responsive, and built with Next.js App Router, React, Tailwind, Supabase-oriented data structures, WhatsApp Cloud API placeholders, and Moyasar payment helpers.
+The app is Arabic-first, RTL, mobile responsive, and built with Next.js App Router, React, Tailwind, Supabase-oriented data structures, optional WhatsApp Cloud API placeholders, and Moyasar payment helpers.
 
 ## Database And Tenancy
 
@@ -43,7 +43,7 @@ It includes:
 | Salon admin dashboard | Demo working | `/dashboard`, `/manager` |
 | CRM | Demo working | `/dashboard/customers` |
 | Services/staff/settings | Demo working | `/dashboard/services`, `/dashboard/staff`, `/dashboard/settings` |
-| WhatsApp center | Demo working, not live-sending | `/dashboard/whatsapp` |
+| WhatsApp center | Optional, disabled in the current deployment | `/dashboard/whatsapp` |
 | Staff portal | MVP demo | `/staff` |
 | Platform owner control plane | Demo working | `/admin` |
 | Salon onboarding | Demo working | `/auth/register` |
@@ -52,7 +52,7 @@ It includes:
 
 These are intentionally not claimed as live until real credentials are present:
 
-- WhatsApp sending requires Meta WhatsApp Cloud API token, phone number ID, verify token, app secret, and approved templates.
+- WhatsApp is disabled for the current live deployment with `WHATSAPP_ENABLED=false`. Enabling it later requires a Meta WhatsApp Cloud API token, phone number ID, verify token, app secret, and approved templates.
 - Moyasar/Tap payments require production/test keys and webhook secrets.
 - Supabase production auth/RLS requires a real project and seed data.
 - Custom domains and wildcard subdomains require final DNS/Vercel domain configuration.
@@ -62,4 +62,3 @@ These are intentionally not claimed as live until real credentials are present:
 - Email: `ali212@icloud.com`
 - Password: `123123`
 - Demo OTP: `123123`
-

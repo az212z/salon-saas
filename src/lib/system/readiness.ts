@@ -26,6 +26,12 @@ function envLooksConfigured(name: string) {
   return !placeholderFragments.some((fragment) => value.toLowerCase().includes(fragment));
 }
 
+function envFlagEnabled(name: string, fallback = false) {
+  const value = process.env[name]?.trim().toLowerCase();
+  if (!value) return fallback;
+  return !["0", "false", "off", "disabled", "no"].includes(value);
+}
+
 function missing(names: string[]) {
   return names.filter((name) => !envLooksConfigured(name));
 }
@@ -43,6 +49,30 @@ function checkRequired(id: string, label: string, requiredFor: RequiredFor, name
     detail,
     missing: missingKeys,
   };
+}
+
+function checkWhatsApp(): ReadinessCheck {
+  const enabled = envFlagEnabled("WHATSAPP_ENABLED", false);
+
+  if (!enabled) {
+    return {
+      id: "whatsapp",
+      label: "WhatsApp Business Cloud API",
+      requiredFor: "production",
+      ready: true,
+      status: "معطل بطلبك",
+      detail: "واتساب مستثنى من التشغيل الحالي. لن يحاول النظام إرسال OTP أو حملات من Meta حتى يتم تفعيل WHATSAPP_ENABLED=true.",
+      missing: [],
+    };
+  }
+
+  return checkRequired(
+    "whatsapp",
+    "WhatsApp Business Cloud API",
+    "production",
+    ["WHATSAPP_BUSINESS_TOKEN", "WHATSAPP_PHONE_NUMBER_ID", "WHATSAPP_VERIFY_TOKEN", "WHATSAPP_APP_SECRET"],
+    "مطلوب لإرسال OTP والتذكيرات والحملات من رقم واتساب أعمال معتمد.",
+  );
 }
 
 export function getSystemReadiness() {
@@ -63,13 +93,7 @@ export function getSystemReadiness() {
       ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
       "مطلوبة لأي تشغيل يومي حقيقي حتى تحفظ الحجوزات والعملاء والصلاحيات.",
     ),
-    checkRequired(
-      "whatsapp",
-      "WhatsApp Business Cloud API",
-      "production",
-      ["WHATSAPP_BUSINESS_TOKEN", "WHATSAPP_PHONE_NUMBER_ID", "WHATSAPP_VERIFY_TOKEN", "WHATSAPP_APP_SECRET"],
-      "مطلوب لإرسال OTP والتذكيرات والحملات من رقم واتساب أعمال معتمد.",
-    ),
+    checkWhatsApp(),
     {
       id: "payments",
       label: "بوابة الدفع",

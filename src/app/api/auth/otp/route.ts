@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 
 import { demoOwner, whatsappStatus } from "@/lib/demo-platform";
+import { isWhatsAppEnabled } from "@/lib/whatsapp/client";
 
 function hasWhatsAppCredentials() {
   return Boolean(
+    isWhatsAppEnabled() &&
     process.env.WHATSAPP_BUSINESS_TOKEN &&
       process.env.WHATSAPP_PHONE_NUMBER_ID &&
       process.env.WHATSAPP_VERIFY_TOKEN
@@ -19,14 +21,17 @@ export async function POST(request: Request) {
   }
 
   const configured = hasWhatsAppCredentials();
+  const disabled = !isWhatsAppEnabled();
 
   return NextResponse.json({
     ok: true,
-    mode: configured ? "ready_for_whatsapp_business" : whatsappStatus.mode,
+    mode: configured ? "ready_for_whatsapp_business" : disabled ? "whatsapp_disabled_demo" : whatsappStatus.mode,
     sent: configured ? false : true,
     code: configured ? undefined : demoOwner.otp,
     message: configured
       ? "مفاتيح واتساب موجودة. الإرسال الفعلي يحتاج قالب OTP معتمد في Meta قبل تشغيله."
-      : `وضع demo مفعل. رمز التحقق هو ${demoOwner.otp}.`,
+      : disabled
+        ? `واتساب معطل في هذا النشر. رمز التحقق التجريبي هو ${demoOwner.otp}.`
+        : `وضع demo مفعل. رمز التحقق هو ${demoOwner.otp}.`,
   });
 }

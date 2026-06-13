@@ -6,6 +6,12 @@ const WHATSAPP_API_URL = 'https://graph.facebook.com/v18.0';
 const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
 const WHATSAPP_BUSINESS_TOKEN = process.env.WHATSAPP_BUSINESS_TOKEN;
 
+function isWhatsAppEnabled() {
+  const value = process.env.WHATSAPP_ENABLED?.trim().toLowerCase();
+  if (!value) return false;
+  return !['0', 'false', 'off', 'disabled', 'no'].includes(value);
+}
+
 interface WhatsAppMessage {
   to: string;
   type: 'template' | 'text';
@@ -24,6 +30,13 @@ interface WhatsAppMessage {
 // ============================================================
 export async function sendWhatsAppMessage(message: WhatsAppMessage): Promise<{ success: boolean; messageId?: string; error?: string }> {
   try {
+    if (!isWhatsAppEnabled()) {
+      return {
+        success: false,
+        error: 'واتساب معطل في هذه البيئة بطلبك. لم يتم إرسال الرسالة من رقم حقيقي.',
+      };
+    }
+
     if (!WHATSAPP_PHONE_NUMBER_ID || !WHATSAPP_BUSINESS_TOKEN) {
       return {
         success: false,
@@ -219,6 +232,8 @@ export async function sendWaitlistNotification(
 // Webhook handler for WhatsApp status updates
 // ============================================================
 export function verifyWhatsAppWebhook(mode: string, token: string, challenge: string): string | null {
+  if (!isWhatsAppEnabled()) return null;
+
   const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
   if (mode === 'subscribe' && token === verifyToken) {
     return challenge;

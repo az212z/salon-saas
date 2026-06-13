@@ -639,7 +639,7 @@ export const platformTenants = [
 export const integrationChecks = [
   { name: "Supabase PostgreSQL + Auth + RLS", status: "جاهز بالبنية", value: 100, note: "tenant_id وRLS في المخطط" },
   { name: "Vercel Wildcard Subdomains", status: "جاهز للنشر", value: 92, note: "يتطلب ربط الدومين النهائي" },
-  { name: "WhatsApp Business Cloud API", status: "ينتظر مفاتيح Meta", value: 54, note: "OTP والحملات تعمل Demo" },
+  { name: "WhatsApp Business Cloud API", status: "معطل بطلبك", value: 100, note: "خارج نطاق النشر الحالي" },
   { name: "Moyasar / Tap Payments", status: "ينتظر مفاتيح الدفع", value: 58, note: "موجود في الكود كتكامل قابل للتهيئة" },
   { name: "PWA + Mobile RTL", status: "جاهز", value: 88, note: "manifest وواجهة متجاوبة" },
 ];
@@ -685,8 +685,8 @@ export const marketBenchmarks = [
 export const salesReadinessSummary = {
   score: "84%",
   decision: "جاهز للبيع كعرض تجريبي احترافي، ويحتاج مفاتيح الإنتاج قبل تشغيل صالون فعلي يوميا.",
-  dailyUse: "قابل لتجربة يوم تشغيل كامل على بيانات demo، وليس بديلا عن Supabase/WhatsApp/Payment في الإنتاج.",
-  nextGate: "ربط Supabase، Meta WhatsApp Business، وبوابة الدفع ثم اختبار حجز مدفوع حقيقي.",
+  dailyUse: "قابل لتجربة يوم تشغيل كامل على بيانات demo، وليس بديلا عن Supabase/Payment في الإنتاج.",
+  nextGate: "ربط Supabase وبوابة الدفع ثم اختبار حجز مدفوع حقيقي. واتساب مستثنى من النشر الحالي.",
 };
 
 export const launchReadinessItems = [
@@ -708,7 +708,7 @@ export const launchReadinessItems = [
     area: "الربط الحقيقي",
     status: "ينتظر مفاتيح",
     owner: "الفريق التقني",
-    proof: "Supabase وWhatsApp وMoyasar/Tap موضحة كحالة ربط وليست مدعاة.",
+    proof: "Supabase وMoyasar/Tap موضحة كحالة ربط وليست مدعاة، وواتساب مستثنى بوضوح.",
     action: "أضف مفاتيح الإنتاج وشغل فحص /api/system/readiness.",
   },
   {
@@ -754,7 +754,7 @@ export const dailyOperationsChecklist = [
   {
     title: "قبل البيع التجاري",
     owner: "مالك المنصة",
-    detail: "لا يتم تسليم صالون فعلي إلا بعد مفاتيح Supabase وWhatsApp والدفع واختبار Webhooks.",
+    detail: "لا يتم تسليم صالون فعلي إلا بعد مفاتيح Supabase والدفع واختبار Webhooks. واتساب اختياري ومعطل حاليا.",
     ready: false,
   },
 ];
@@ -765,7 +765,7 @@ export const implementationPhases = [
   { phase: "2", title: "بوابة العميل", status: "جاهزة للعرض", progress: 82, detail: "حجز متعدد الخطوات، OTP تجريبي، ملف عميلة وولاء." },
   { phase: "3", title: "لوحة الصالون + CRM", status: "جاهزة للعرض", progress: 84, detail: "تقويم، حجوزات، عملاء، خدمات، فريق، تقارير، واتساب." },
   { phase: "4", title: "بوابة الموظفات", status: "MVP", progress: 62, detail: "جدول اليوم وتسجيل حضور وملاحظات الخدمة." },
-  { phase: "5", title: "واتساب والأتمتة", status: "ينتظر ربط حقيقي", progress: 55, detail: "القوالب والحملات موجودة؛ الإرسال يحتاج Meta." },
+  { phase: "5", title: "واتساب والأتمتة", status: "خارج النشر الحالي", progress: 100, detail: "القوالب والحملات موجودة، لكن الإرسال معطل بطلبك." },
   { phase: "6", title: "الولاء والهدايا والعروض", status: "جاهزة للعرض", progress: 76, detail: "نقاط، مستويات، كوبونات، بطاقات هدايا في المخطط." },
   { phase: "7", title: "طبقة SaaS والدفع", status: "قيد التقوية", progress: 68, detail: "لوحة مالك المنصة، التجارب، الخطط، الفوترة، Subdomains." },
 ];
@@ -804,10 +804,12 @@ export const onboardingSteps = [
 ];
 
 export const whatsappStatus = {
-  mode: "demo",
+  mode: "disabled_demo",
   sender: "WhatsApp Business Cloud API",
   verificationCode: demoOwner.otp,
+  note: "واتساب معطل في النشر الحالي. فعله لاحقا بإضافة WHATSAPP_ENABLED=true ومفاتيح Meta.",
   requiredEnv: [
+    "WHATSAPP_ENABLED=true",
     "WHATSAPP_BUSINESS_TOKEN",
     "WHATSAPP_PHONE_NUMBER_ID",
     "WHATSAPP_VERIFY_TOKEN",
