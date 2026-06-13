@@ -1,0 +1,16 @@
+.git
+.github
+.next
+.next-stale-*
+.netlify
+.supabase
+node_modules
+coverage
+marketing/raw-screens
+out
+out 2
+tmp
+.DS_Store
+*.tsbuildinfo
+.env
+.env*.local
